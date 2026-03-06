@@ -2,7 +2,7 @@
 //  MatrixDecoder.swift
 //  DataTransmission
 //
-//  Decodes a color matrix image back into UTF-8 text.
+//  Decodes a 3-bit color matrix image back into UTF-8 text.
 //  Two paths:
 //    1. decodeDirect  — pixel-perfect rendered images (exact cell alignment)
 //    2. decode        — screenshots / camera captures (finder-based perspective sampling)
@@ -332,8 +332,9 @@ struct MatrixDecoder {
                 x2p: brF.cx, y2p: brF.cy,
                 x3p: blF.cx, y3p: blF.cy) else { continue }
 
+            // 32 bits requires ceil(32 / 3) = 11 symbols
             var peekSyms: [UInt8] = []
-            peekSyms.reserveCapacity(7)
+            peekSyms.reserveCapacity(11)
 
             outerFast: for row in 0..<gs {
                 for col in 0..<gs {
@@ -344,21 +345,21 @@ struct MatrixDecoder {
                     let iy = min(max(Int(round(sy)), 0), h - 1)
                     let idx = (iy * w + ix) * 4
                     peekSyms.append(ColorPalette.closestIndex(r: px[idx], g: px[idx+1], b: px[idx+2]))
-                    if peekSyms.count == 7 { break outerFast }
+                    if peekSyms.count == 11 { break outerFast }
                 }
             }
-            if peekSyms.count < 7 { continue }
+            if peekSyms.count < 11 { continue }
 
             var bits: [Bool] = []
             for v in peekSyms {
-                for sh in stride(from: 4, through: 0, by: -1) {
+                for sh in stride(from: 2, through: 0, by: -1) {
                     bits.append((v >> sh) & 1 == 1)
                 }
             }
             var bc: UInt32 = 0
             for i in 0..<32 { bc <<= 1; if bits[i] { bc |= 1 } }
 
-            let reqSymbols = (Int(bc) * 8 + 32 + 4) / 5
+            let reqSymbols = (Int(bc) * 8 + 32 + 2) / 3
             if bc > 0 && bc < 10_000_000 && reqSymbols > 0 {
                 var expectedSize = 21
                 while expectedSize * expectedSize - 292 < reqSymbols {
@@ -439,7 +440,7 @@ struct MatrixDecoder {
     private static func reassemble(_ s: [UInt8]) -> String? {
         var bits: [Bool] = []
         for v in s {
-            for sh in stride(from: 4, through: 0, by: -1) {
+            for sh in stride(from: 2, through: 0, by: -1) {
                 bits.append((v >> sh) & 1 == 1)
             }
         }

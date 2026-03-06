@@ -2,19 +2,19 @@
 //  MatrixEncoder.swift
 //  DataTransmission
 //
-//  Encodes arbitrary UTF-8 text into a 2D grid of 5-bit color indices
-//  with alignment markers and a length header.
+//  Encodes arbitrary UTF-8 text into a 2D grid of 3-bit color indices
+//  with alignment markers and a length header (3 bits per color).
 //
 
 import Foundation
 
 // MARK: - Data model
 
-/// A 2D grid of color-palette indices (0–31) plus metadata.
+/// A 2D grid of color-palette indices (0–7) plus metadata.
 struct ColorMatrix {
     let width: Int
     let height: Int
-    /// Row-major: cells[row][col], each value 0–31.
+    /// Row-major: cells[row][col], each value 0–7.
     var cells: [[UInt8]]
     /// The number of payload bytes (so the decoder knows when to stop).
     let dataByteCount: Int
@@ -49,19 +49,19 @@ struct MatrixEncoder {
 
         let allBits = headerBits + bits
 
-        // pack into 5-bit symbols, zero-pad the last symbol if needed
+        // pack into 3-bit symbols
         var symbols: [UInt8] = []
         var idx = 0
         while idx < allBits.count {
             var val: UInt8 = 0
-            for bit in 0..<5 {
+            for bit in 0..<3 {
                 val <<= 1
                 if idx + bit < allBits.count && allBits[idx + bit] {
                     val |= 1
                 }
             }
             symbols.append(val)
-            idx += 5
+            idx += 3
         }
 
         // ---------- compute grid dimensions ----------

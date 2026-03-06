@@ -2,66 +2,33 @@
 //  ColorPalette.swift
 //  DataTransmission
 //
-//  32 maximally-distinct colors for 5-bit-per-cell encoding.
+//  8 maximally-distinct colors for 3-bit-per-cell encoding.
 //
 
 import UIKit
 
 struct ColorPalette {
 
-    /// RGBA tuples for 32 colors chosen for maximum perceptual spread.
-    /// Indices 0–31 each map to a unique 5-bit value.
+    /// RGBA tuples for 8 colors chosen for absolute maximum perceptual distance
+    /// (> 65,000 Euclidean distance squared between ANY two colors).
+    /// Used to encode 3-bit chunks into 1 symbol.
     static let colors: [(r: UInt8, g: UInt8, b: UInt8)] = [
-        // ── Row 0: dark / low-saturation anchors ──
+        // ── Extreme Corners (Max Contrast) ──
         (  0,   0,   0),   //  0  black
         (255, 255, 255),   //  1  white
-        (128, 128, 128),   //  2  mid-gray
-
-        // ── Row 1: pure primaries / secondaries ──
-        (255,   0,   0),   //  3  red
-        (  0, 255,   0),   //  4  green
-        (  0,   0, 255),   //  5  blue
-        (255, 255,   0),   //  6  yellow
-        (  0, 255, 255),   //  7  cyan
-        (255,   0, 255),   //  8  magenta
-
-        // ── Row 2: dark primaries ──
-        (128,   0,   0),   //  9  dark red / maroon
-        (  0, 128,   0),   // 10  dark green
-        (  0,   0, 128),   // 11  navy
-        (128, 128,   0),   // 12  olive
-        (  0, 128, 128),   // 13  teal
-        (128,   0, 128),   // 14  purple
-
-        // ── Row 3: warm tones ──
-        (255, 128,   0),   // 15  orange
-        (255, 128, 128),   // 16  salmon
-        (255, 200,   0),   // 17  gold
-        (200, 100,  50),   // 18  brown / sienna
-
-        // ── Row 4: cool mid-tones ──
-        (  0, 128, 255),   // 19  sky blue
-        (128,   0, 255),   // 20  violet
-        (  0, 255, 128),   // 21  spring green
-        (128, 255,   0),   // 22  chartreuse
-
-        // ── Row 5: pastels & lights ──
-        (255, 180, 200),   // 23  pink
-        (180, 220, 255),   // 24  light blue
-        (200, 255, 200),   // 25  light green
-        (255, 255, 180),   // 26  cream
-
-        // ── Row 6: remaining fills ──
-        (100,  50,   0),   // 27  dark brown
-        ( 50, 50,  50),    // 28  charcoal
-        (200, 200, 200),   // 29  silver
-        (255, 100, 255),   // 30  hot pink
-        (100, 200, 100),   // 31  medium green
+        (255,   0,   0),   //  2  red
+        (  0, 255,   0),   //  3  green
+        (  0,   0, 255),   //  4  blue
+        (255, 255,   0),   //  5  yellow
+        (  0, 255, 255),   //  6  cyan
+        (255,   0, 255),   //  7  magenta
     ]
 
-    /// Return the UIColor for a given 5-bit index (0–31).
+    /// Return the UIColor for a given index (0–7).
     static func color(for index: UInt8) -> UIColor {
-        let c = colors[Int(index & 0x1F)]
+        let maxIdx = UInt8(colors.count - 1)
+        let safeIdx = index > maxIdx ? maxIdx : index
+        let c = colors[Int(safeIdx)]
         return UIColor(
             red:   CGFloat(c.r) / 255.0,
             green: CGFloat(c.g) / 255.0,
