@@ -159,7 +159,6 @@ struct MatrixDecoder {
             var cx: Double
             var cy: Double
             var extent: Double
-            var pixelCount: Int
         }
 
         var validated: [FinderInfo] = []
@@ -225,35 +224,52 @@ struct MatrixDecoder {
 
             // Accept if: center is finderCenter AND has concentric ring structure
             if centerOK && middleRingHits >= 3 {
-                validated.append(FinderInfo(cx: cx, cy: cy, extent: ext, pixelCount: cl.count))
+                validated.append(FinderInfo(cx: cx, cy: cy, extent: ext))
             }
         }
 
         print("[Decode]   \(validated.count) validated finders")
         guard validated.count >= 3 else { return nil }
 
-        // ── Step 4: Select 4 markers (3 finders + 1 orient) ──
-        // The orient marker (5x5) has a smaller extent than the 3 finders (7x7).
-        // Sort by extent descending to easily distinguish them if needed.
+        // ── Step 4: Select the 3 main finders (exclude orient marker) ──
+        // The 3 finders are 7×7 with similar extents. The orient marker is 5×5
+        // (smaller extent). Use tight ratio (0.7–1.4) to keep only finders.
+        // Sort by extent descending so we pick the 3 largest (7×7 finders).
         validated.sort { $0.extent > $1.extent }
-        let markers = Array(validated.prefix(4))
-        print("[Decode]   Selected \(markers.count) top markers: exts=\(markers.map { String(format:"%.0f", $0.extent) })")
-        guard markers.count >= 3 else {
-            print("[Decode]   FAILED: need at least 3 markers, got \(markers.count)")
+
+        // Group by similar extent
+        var finders: [FinderInfo] = []
+        for i in 0..<validated.count {
+            if finders.isEmpty {
+                finders.append(validated[i])
+                continue
+            }
+            let ratio = validated[i].extent / finders[0].extent
+            if ratio > 0.7 && ratio < 1.4 {
+                finders.append(validated[i])
+            }
+        }
+        print("[Decode]   \(finders.count) finders with consistent extent (excluded orient)")
+        guard finders.count >= 3 else {
+            print("[Decode]   FAILED: need 3 consistent finders, got \(finders.count)")
             return nil
         }
 
-        // ── Step 5: Assign to TL, TR, BL, BR corners ──
-        let meanX = markers.map(\.cx).reduce(0, +) / Double(markers.count)
-        let meanY = markers.map(\.cy).reduce(0, +) / Double(markers.count)
+        // ── Step 5: Assign to TL, TR, BL corners ──
+        // Use only the 3 main finders. Always infer BR from the parallelogram
+        // (the orient marker center is at a different grid position).
+        let topFinders = Array(finders.prefix(3))
+        let meanX = topFinders.map(\.cx).reduce(0, +) / Double(topFinders.count)
+        let meanY = topFinders.map(\.cy).reduce(0, +) / Double(topFinders.count)
 
-        var tl: FinderInfo?, tr: FinderInfo?, bl: FinderInfo?, br: FinderInfo?
-        for f in markers {
+        var tl: FinderInfo?, tr: FinderInfo?, bl: FinderInfo?
+        for f in topFinders {
             switch (f.cx < meanX, f.cy < meanY) {
-            case (true, true):   tl = tl ?? f   // top-left
-            case (false, true):  tr = tr ?? f   // top-right
-            case (true, false):  bl = bl ?? f   // bottom-left
-            case (false, false): br = br ?? f   // bottom-right
+            case (true, true):   tl = tl ?? f
+            case (false, true):  tr = tr ?? f
+            case (true, false):  bl = bl ?? f
+            case (false, false):
+                if tl == nil { tl = f } else if tr == nil { tr = f } else { bl = f }
             }
         }
 
@@ -262,111 +278,64 @@ struct MatrixDecoder {
             return nil
         }
 
-        let isTrueBR = (br != nil)
-        let brCx = br?.cx ?? (trF.cx + blF.cx - tlF.cx)
-        let brCy = br?.cy ?? (trF.cy + blF.cy - tlF.cy)
+        // Always infer BR from the parallelogram of the 3 finders
+        let brCx = trF.cx + blF.cx - tlF.cx
+        let brCy = trF.cy + blF.cy - tlF.cy
 
         print("[Decode]   TL=(\(String(format:"%.0f",tlF.cx)),\(String(format:"%.0f",tlF.cy))) " +
               "TR=(\(String(format:"%.0f",trF.cx)),\(String(format:"%.0f",trF.cy))) " +
               "BL=(\(String(format:"%.0f",blF.cx)),\(String(format:"%.0f",blF.cy))) " +
-              "BR=(\(String(format:"%.0f",brCx)),\(String(format:"%.0f",brCy))) [trueBR=\(isTrueBR)]")
+              "BR=(\(String(format:"%.0f",brCx)),\(String(format:"%.0f",brCy))) [inferred]")
 
         // ── Step 6: Compute cell size and grid size ──
-        // Use the 3 main finders for extent/count estimation.
-        let mainFinders = [tlF, trF, blF]
+        // Use inter-finder distance for precise cellPx (more accurate than extent/7).
         let topDist = hypot(trF.cx - tlF.cx, trF.cy - tlF.cy)
         let leftDist = hypot(blF.cx - tlF.cx, blF.cy - tlF.cy)
         let avgDist = (topDist + leftDist) / 2.0
 
-        // Estimate 1: from extent (biased high when rotated)
-        let cellPxFromExtent = mainFinders.reduce(0) { $0 + $1.extent } / 3.0 / 7.0
+        // Also compute cellPx from extent as a fallback/validation
+        let cellPxFromExtent = (tlF.extent + trF.extent + blF.extent) / 3.0 / 7.0
 
-        // Estimate 2: from cluster pixel count (rotation-invariant)
-        // A 7×7 finder has 33 finderCenter cells, so count ≈ 33 × cellPx²
-        let avgCount = Double(mainFinders.reduce(0) { $0 + $1.pixelCount }) / 3.0
-        let cellPxFromCount = sqrt(avgCount / 33.0)
-        
-        // Estimate 3: average of the two (often closest to reality)
-        let cellPxAvg = (cellPxFromExtent + cellPxFromCount) / 2.0
+        // Round grid size using extent-based cellPx first
+        let gridSize = Int(round(avgDist / cellPxFromExtent)) + 9
+        guard gridSize >= 21 else { return nil }
 
-        // Generate candidate grid sizes from estimates
-        let gs1 = Int(round(avgDist / cellPxFromExtent)) + 9
-        let gs2 = Int(round(avgDist / cellPxFromCount)) + 9
-        let gs3 = Int(round(avgDist / cellPxAvg)) + 9
+        // Then derive precise cellPx from distance / known grid span
+        let cellPx = avgDist / Double(gridSize - 9)
+        guard cellPx >= 1.0 else { return nil }
 
-        // Collect unique candidates: wide net (±8) around estimates
-        // since rotation/perspective can skew bounding boxes by 10-15%.
-        var candidates = Set<Int>()
-        for base in [gs1, gs2, gs3] {
-            for delta in -8...8 {
-                let gs = base + delta
-                if gs >= 21 { candidates.insert(gs) }
-            }
-        }
-        let sortedCandidates = candidates.sorted()
+        print("[Decode]   cellPx=\(String(format:"%.3f",cellPx)) (fromExtent=\(String(format:"%.3f",cellPxFromExtent))) grid=\(gridSize)")
 
-        print("[Decode]   cellPx estimates: ext=\(String(format:"%.2f",cellPxFromExtent)) count=\(String(format:"%.2f",cellPxFromCount)) avg=\(String(format:"%.2f",cellPxAvg))")
-        print("[Decode]   grid candidates: \(sortedCandidates)")
-
-        // ── Step 7: True Perspective (Homography) ──
-        // Calculate the projective transform mapping (u,v) in [0,1]x[0,1]
-        // to the 4 physical corners.
-        let dx1 = trF.cx - brCx
-        let dx2 = blF.cx - brCx
-        let dx3 = tlF.cx - trF.cx + brCx - blF.cx
-        let dy1 = trF.cy - brCy
-        let dy2 = blF.cy - brCy
-        let dy3 = tlF.cy - trF.cy + brCy - blF.cy
-
-        let det = dx1 * dy2 - dx2 * dy1
-        let hg = det == 0 ? 0 : (dx3 * dy2 - dx2 * dy3) / det
-        let hh = det == 0 ? 0 : (dx1 * dy3 - dx3 * dy1) / det
-
-        let a = trF.cx - tlF.cx + hg * trF.cx
-        let b = blF.cx - tlF.cx + hh * blF.cx
-        let c = tlF.cx
-        let d = trF.cy - tlF.cy + hg * trF.cy
-        let e = blF.cy - tlF.cy + hh * blF.cy
-        let f = tlF.cy
-
+        // ── Step 7: Perspective-correct sampling ──
+        let span = Double(gridSize - 9)
         let rC = MatrixEncoder.finderSize + 2
         let rO = MatrixEncoder.orientSize + 2
+        var syms: [UInt8] = []
 
-        for gridSize in sortedCandidates {
-            let span = Double(gridSize - 9)
-            guard span > 0 else { continue }
-            var syms: [UInt8] = []
-
-            for row in 0..<gridSize {
-                let v = Double(row - 4) / span
-                for col in 0..<gridSize {
-                    if MatrixEncoder.isReserved(row: row, col: col, gridSize: gridSize,
-                                                reservedCorner: rC, reservedOrient: rO) {
-                        continue
-                    }
-                    let u = Double(col - 4) / span
-
-                    // True perspective projection
-                    let denom = hg * u + hh * v + 1.0
-                    let sampleX = (a * u + b * v + c) / denom
-                    let sampleY = (d * u + e * v + f) / denom
-
-                    let cxInt = Int(sampleX.rounded())
-                    let cyInt = Int(sampleY.rounded())
-                    let ix = max(0, min(cxInt, w - 1))
-                    let iy = max(0, min(cyInt, h - 1))
-                    let idx = (iy * w + ix) * 4
-                    syms.append(ColorPalette.closestIndex(r: px[idx], g: px[idx+1], b: px[idx+2]))
+        for row in 0..<gridSize {
+            let v = Double(row - 4) / span
+            for col in 0..<gridSize {
+                if MatrixEncoder.isReserved(row: row, col: col, gridSize: gridSize,
+                                            reservedCorner: rC, reservedOrient: rO) {
+                    continue
                 }
-            }
+                let u = Double(col - 4) / span
 
-            print("[Decode]   trying gridSize=\(gridSize) (\(syms.count) symbols)")
-            if let result = reassemble(syms) {
-                return result
+                let topX = lerp(tlF.cx, trF.cx, u)
+                let topY = lerp(tlF.cy, trF.cy, u)
+                let botX = lerp(blF.cx, brCx, u)
+                let botY = lerp(blF.cy, brCy, u)
+                let sampleX = lerp(topX, botX, v)
+                let sampleY = lerp(topY, botY, v)
+
+                let ix = min(max(Int(round(sampleX)), 0), w - 1)
+                let iy = min(max(Int(round(sampleY)), 0), h - 1)
+                let idx = (iy * w + ix) * 4
+                syms.append(ColorPalette.closestIndex(r: px[idx], g: px[idx+1], b: px[idx+2]))
             }
         }
 
-        return nil
+        return reassemble(syms)
     }
 
     // MARK: - Helpers
