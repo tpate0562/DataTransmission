@@ -2,20 +2,24 @@
 //  ContentView.swift
 //  DataTransmission
 //
-//  Created by Tejas Patel on 3/5/26.
+//  Root view with tab navigation between Send and Receive.
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            SenderView()
+                .tabItem {
+                    Label("Send", systemImage: "arrow.up.doc.fill")
+                }
+
+            ReceiverView()
+                .tabItem {
+                    Label("Receive", systemImage: "arrow.down.doc.fill")
+                }
         }
-        .padding()
     }
 }
 
