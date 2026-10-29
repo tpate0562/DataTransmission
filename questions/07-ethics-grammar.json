@@ -621,7 +621,7 @@
       "`color`, a grade from D (best) to J (worst)"
     ],
     "answer": 2,
-    "explain": "Carat is a measured weight that can take any value in a range. `cut`, `clarity`, and `color` are graded categories with a natural order (ordered categorical), even though they can be ranked."
+    "explain": "Carat is a measured weight that can take any value in a range. `cut`, `clarity`, and `color` are grades: categories with a natural order, so they are ordered categorical, not quantitative."
   },
   {
     "id": "ethicsviz-049",

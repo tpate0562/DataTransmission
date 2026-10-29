@@ -57,7 +57,7 @@
     "q": "`bb_long` is the Billboard data after `pivot_longer(starts_with(\"wk\"), names_to = \"week\", values_to = \"rank\", values_drop_na = TRUE)`, so each row is one song in one week it was on the chart. What does `top` measure?\n```r\nbb_long |>\n  group_by(artist, track) |>\n  summarize(top = sum(rank == 1))\n```",
     "choices": [
       "Whether each song ever reached number one, as `TRUE` or `FALSE`",
-      "The number of weeks each song spent at number one",
+      "The number of weeks that each song spent at number one on the chart",
       "The proportion of each song's chart weeks spent at number one",
       "Each song's best chart position over its whole run"
     ],
@@ -161,7 +161,7 @@
     "q": "A student runs the code below on the BRFSS data and notices that the five `prop_ace` values add up to 2.7. What does that indicate?\n```r\nbrfss |>\n  group_by(genhlth) |>\n  summarize(prop_ace = mean(ace))\n```",
     "choices": [
       "The code double-counts respondents who fall in more than one health group",
-      "Nothing: each is a proportion within a different health group",
+      "Nothing is wrong: each value is a proportion within its own health group",
       "`mean()` should be replaced by `sum()` so that the values add up to 1",
       "`na.rm = TRUE` is missing, and the missing values inflate each proportion"
     ],
@@ -188,7 +188,7 @@
     "choices": [
       "Among women in poor health, 71% reported at least one ACE",
       "Among respondents who reported an ACE, 71% were women in poor health",
-      "71% of the women in the sample rated their general health as poor",
+      "71% of the women in the sample said their health was poor",
       "Among respondents in poor health, 71% were women who reported an ACE"
     ],
     "answer": 0,
@@ -202,7 +202,7 @@
       "Adverse childhood experiences cause depression in about 23% of adults",
       "78% of the respondents who reported an ACE also report depression",
       "ACEs are more common among respondents who report depression",
-      "Depression is reported by 78% of all respondents in the sample"
+      "78% of all respondents in the sample report depression"
     ],
     "answer": 2,
     "explain": "Each number is the share with ACEs within a depression group, so comparing them shows an association among these respondents. Observational survey data don't establish cause, and 0.78 is the ACE rate among the depressed, not the depression rate among those with ACEs."
@@ -228,7 +228,7 @@
       "So each district counts once, as a single unit of analysis",
       "So that missing grades get filled in with values from other districts",
       "Because gaps in SD units cannot be compared across different grades",
-      "Because `group_by()` cannot be used on data with one row per grade"
+      "Because `group_by()` can't handle one row per grade"
     ],
     "answer": 0,
     "explain": "Before aggregating, a district with six reported grades contributes six rows and one with two grades contributes two, so the comparison is not really about districts. Averaging within each district gives one observation per district."
@@ -238,7 +238,7 @@
     "section": "2.6",
     "q": "`seda_district` has one row per district, with its grade-averaged `math_gap` (positive means boys ahead, in SD units) and its `income_bracket`. What does `prop` hold?\n```r\nseda_district |>\n  mutate(boys_ahead = math_gap > 0.1) |>\n  group_by(income_bracket) |>\n  summarize(prop = mean(boys_ahead))\n```",
     "choices": [
-      "For each bracket, the average math gap among the districts in which boys are ahead",
+      "For each bracket, the mean gap of districts where boys are ahead",
       "For each bracket, the number of its districts whose math gap is larger than 0.1 SD",
       "The share of all districts that are both in a given bracket and have a gap above 0.1 SD",
       "For each bracket, the share of its districts with a gap above 0.1 SD"
@@ -290,7 +290,7 @@
     "section": "2.6",
     "q": "Will `overall` equal the proportion of all respondents who reported an ACE?\n```r\nbrfss |>\n  group_by(genhlth) |>\n  summarize(prop_ace = mean(ace)) |>\n  summarize(overall = mean(prop_ace))\n```",
     "choices": [
-      "Not in general: it weights each health group equally, not each respondent",
+      "Not in general: it weights each health group equally rather than each respondent",
       "Yes: the mean of the group means always equals the overall mean",
       "No: the second `summarize()` is still grouped by `genhlth`, giving five rows",
       "No: it is always smaller than the proportion over all respondents"
@@ -305,7 +305,7 @@
     "choices": [
       "All rows of the summarized tibble",
       "The rows with the same `sex` value",
-      "The rows with the same `genhlth` value",
+      "All the rows that share the same `genhlth` value",
       "Each row alone, so `share` is always 1"
     ],
     "answer": 2,
@@ -384,7 +384,7 @@
       "`mean()` of a logical vector returns 1 whenever any of its values is `TRUE`",
       "`group_by()` has to come before `filter()` when computing grouped proportions",
       "The missing values in `math_gap` are counted as `TRUE` inside `mean()`",
-      "After `filter()`, every district left meets the condition"
+      "After `filter()`, every district left meets the condition, so the mean is 1"
     ],
     "answer": 3,
     "explain": "`filter()` removed the districts that fail the condition, so they are gone from the denominator. Keep all districts and average the indicator, for example `summarize(prop = mean(math_gap > 0.1))` without the filter."
@@ -394,7 +394,7 @@
     "section": "3",
     "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 NA\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
     "choices": [
-      "`id` 0, `x` 0.5, `y` 0.25: share missing per column",
+      "`id` 0, `x` 0.5, `y` 0.25: the share missing per column",
       "`id` 0, `x` 2, `y` 1: the number missing in each column",
       "0.25: the share of all the cells in `df` that are missing",
       "0, 0.33, 0.33, 0.33: the share missing in each row of `df`"
@@ -488,7 +488,7 @@
       "All U.S. adults, since the filtered sample is still very large",
       "All U.S. adults, since removing the NAs leaves unbiased data",
       "Only the respondents themselves; no generalization is possible",
-      "Adults in the states that administered the ACE module"
+      "Adults living in the states that administered the ACE module"
     ],
     "answer": 3,
     "explain": "The respondents who remain come only from module states, so the scope of inference shrinks to those states. A large sample can't make up for states that were never asked, but within the module states the sample still supports inference."
@@ -498,7 +498,7 @@
     "section": "3",
     "q": "A classmate proposes filling in ACE answers for respondents in states that skipped the module, using the ACE rate from states that ran it. What is the main problem?",
     "choices": [
-      "It assumes, untestably, that those states match the module states",
+      "It assumes, with no way to check, that those states match the module states",
       "It makes the sample smaller than simply dropping those states would",
       "A logical column like `ace` cannot hold filled-in values",
       "Nothing; filling NAs with a rate from other states removes bias"
@@ -526,7 +526,7 @@
     "choices": [
       "Small districts are not required to give their students math tests",
       "Gaps in small districts are always zero, and zeros were recorded as `NA`",
-      "Estimates based on too few tested students are suppressed as unreliable",
+      "Estimates resting on too few tested students are suppressed as unreliable",
       "The estimates were lost at random while the data were being processed"
     ],
     "answer": 2,
@@ -537,7 +537,7 @@
     "section": "3",
     "q": "A student drops every SEDA district that has any missing gap estimate, then compares gaps across income brackets. What is the main concern?",
     "choices": [
-      "The districts left skew large; small, often rural ones are lost",
+      "The districts left skew large, so small and often rural ones drop out",
       "The analysis will be left with too many districts to summarize clearly",
       "None; dropping rows is safe because missing values are always random",
       "Dropping some districts changes the gap values of the districts that remain"
@@ -553,7 +553,7 @@
       "About 15% of the district-grade rows in the data have a missing gap estimate",
       "Missing gap estimates show up in every grade from 3 through 8",
       "`colMeans(is.na(seda))` is 0 for the district `id` column",
-      "Districts with missing gaps have much smaller enrollments than the rest"
+      "Districts with missing gaps have much smaller enrollments than the other districts"
     ],
     "answer": 3,
     "explain": "If missingness were pure chance, missing and observed districts would look alike. A systematic difference in enrollment shows missingness is tied to district size; the overall missing rate or which columns are complete says nothing about why values are missing."
@@ -592,7 +592,7 @@
       "Ranks recorded after week 20 were lost at random when the data were entered",
       "Songs that make it to week 21 are usually climbing back up the chart",
       "`pivot_longer()` drops the values stored after the twentieth week column",
-      "A chart rule drops songs that have charted 20 weeks and fall below a cutoff"
+      "A chart rule drops songs that have charted 20 weeks and fall below a cutoff rank"
     ],
     "answer": 3,
     "explain": "A sudden jump at a fixed week points to a rule, not chance: Billboard moves songs that have been on the Hot 100 for 20 weeks and rank below 50 off the chart. The missing values record how the chart works, which is why missingness is data."
@@ -602,7 +602,7 @@
     "section": "3",
     "q": "To get rid of the NAs in the long Billboard data, a student replaces each missing `rank` with that song's average rank. What's wrong with this?",
     "choices": [
-      "It invents chart weeks: NA means off the chart, not an unknown rank",
+      "It invents chart weeks: an NA means off the chart, not an unknown rank",
       "Nothing; replacing NAs with a song's mean rank leaves every summary unchanged",
       "It is wrong only because the song's median rank should be used instead",
       "It fails because `rank` becomes a character column after `pivot_longer()`"
@@ -657,7 +657,7 @@
       "It replaces each missing value with the mean of the values that were observed",
       "It drops the units that had a low probability of being observed in the first place",
       "It gives the most weight to the units that were the most likely to be observed",
-      "It gives more weight to observed units that had a low chance of being observed"
+      "It up-weights observed units that were unlikely to be observed, to stand in for missing ones"
     ],
     "answer": 3,
     "explain": "If small districts are often missing, the few observed small districts get weight \\( 1/P(\\text{observed}) \\), so the weighted data resemble the full set of districts. It is the same correction used for unequal inclusion probabilities in sampling."
@@ -721,7 +721,7 @@
     "choices": [
       "Yes; adding up the column proportions always gives the row proportion",
       "No; it must be exactly 0.30, the largest of the column proportions",
-      "Not necessarily; it can be anywhere from 0.30 to 0.50",
+      "Not necessarily; depending on overlap it is between 0.30 and 0.50",
       "No; it must be 0.25, the average of the two column proportions"
     ],
     "answer": 2,
@@ -734,7 +734,7 @@
     "choices": [
       "About the same value in every state, showing that the ACE NAs are random",
       "Near 0 everywhere, because `is.na()` skips states with no ACE answers",
-      "Near 1 in some states and near 0 in others: missing by design",
+      "Near 1 in some states and near 0 in others, showing missing by design",
       "One overall value, because `mean()` collapses all of the groups together"
     ],
     "answer": 2,
@@ -772,7 +772,7 @@
     "q": "Before computing ACE proportions by smoking status, a student runs `brfss |> drop_na()` on the full BRFSS data, which has dozens of columns. What's the problem?",
     "choices": [
       "It keeps the rows with a missing `ace`, so the proportions come out as `NA`",
-      "It also drops anyone missing an unrelated variable, changing the sample",
+      "It also drops anyone missing an unrelated variable, changing who is in the sample",
       "It removes the columns that contain missing values, not the rows",
       "Nothing; dropping rows with NAs never changes who ends up being analyzed"
     ],

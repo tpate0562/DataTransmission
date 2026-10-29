@@ -134,7 +134,7 @@
     "section": "4.4",
     "q": "Two students run identical simulation code with `reps = 200` and no seed set. One gets \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] = 2.31 \\) and the other \\( 2.47 \\). What is the best explanation?",
     "choices": [
-      "Simulation error: the runs used different random samples, and more `reps` would tend to shrink the gap",
+      "Simulation error: the runs used different random samples, and more `reps` would shrink the gap",
       "One student made a coding mistake, since running the same code twice always gives the same output",
       "The estimator is biased, and bias shows up as disagreement between simulation runs",
       "The true variance of \\( \\hat{\\mu} \\) changed between the two runs of the simulation"
@@ -280,7 +280,7 @@
       "Yes: any estimate that differs from \\( \\mu \\) shows that the sampling design is biased",
       "Not necessarily: the SRS mean is unbiased, but any one sample can miss \\( \\mu \\) by chance",
       "Yes: the error is positive, so this design overestimates the mean GPA on average",
-      "Not necessarily: the design is biased only if the error exceeds the population SD"
+      "Not necessarily: the design counts as biased only if the error exceeds the population SD"
     ],
     "answer": 1,
     "explain": "Bias is about the average over all possible samples, \\( E[\\hat{\\mu}] - \\mu \\), and under SRS that is 0. One sample being off by 0.3 is sampling variability, or bad luck; the sign or size of a single error can't reveal bias."
@@ -682,7 +682,7 @@
     "choices": [
       "Removing the bias with weights also lowers the variance, so the IPW estimator always ends up with the smaller MSE",
       "Bias and variance always change by equal amounts, so the two estimators always have the same MSE",
-      "Removing bias with weights costs extra variance, so the better estimator depends on which effect dominates the MSE",
+      "Removing bias with weights costs extra variance, so the better choice depends on which effect dominates the MSE",
       "The naive mean is always better, because bias can be corrected after the fact but variance cannot"
     ],
     "answer": 2,
