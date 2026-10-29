@@ -10,7 +10,7 @@ function downloadDeck() {
         termsAndDefs[i] = document.getElementById("input" + (i + 1)).value;
         if (termsAndDefs[i] === '') {
             validDownload = false;
-            document.getElementById("input" + (i + 1)).style.borderColor = "#ff3029";
+            document.getElementById("input" + (i + 1)).style.borderColor = "#ff7a7a";
         }
 
         if (termsAndDefs[i].includes('\\')) {
@@ -23,7 +23,7 @@ function downloadDeck() {
 
     if (document.getElementById("title").value === '') {
         validDownload = false;
-        document.getElementById("title").style.borderColor = "#ff3029";
+        document.getElementById("title").style.borderColor = "#ff7a7a";
     }
 
     if (validDownload) {
@@ -43,7 +43,7 @@ function downloadDeck() {
 }
 
 addEventListener("input", function(event) {
-    event.target.style.borderColor = "#000000";
+    event.target.style.removeProperty("border-color");
     document.getElementById("create-error").style.display = "none";
 });
 
@@ -52,15 +52,16 @@ function addTermInput() {
     newTerm.setAttribute("type", "text");
     newTerm.setAttribute("placeholder", "Term");
     newTerm.setAttribute("id", "input" + totalTerms);
+    newTerm.setAttribute("autocomplete", "off");
 
     let newDef = document.createElement("input");
     newDef.setAttribute("type", "text");
     newDef.setAttribute("placeholder", "Definition");
     newDef.setAttribute("id", "input" + (totalTerms + 1));
+    newDef.setAttribute("autocomplete", "off");
 
     document.getElementById("deck-input").appendChild(newTerm);
     document.getElementById("deck-input").appendChild(newDef);
-    document.getElementById("deck-input").appendChild(document.createElement("br"));
 
     totalTerms += 2;
 

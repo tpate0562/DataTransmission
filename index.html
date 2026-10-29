@@ -2,49 +2,33 @@
 <html lang="en-US">
 <head>
     <title>Dashcards</title>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script>
-    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
-        alert("This website is currently not designed for mobile! Please open in a desktop web browser instead.");
-      }
-      </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="vendor/katex/katex.min.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#373e98">
-    <meta name="msapplication-TileColor" content="#2b5797">
-    <meta name="theme-color" content="#373e98">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="theme-color" content="#000000">
 </head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7D8ZYG3FQY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-7D8ZYG3FQY');
-</script>
 <body>
     <div class="header">
         <a href="index.html" id="logo">Dashcards</a>
-        <a href="about.html" style="margin-right: 25px">About</a>
-        <a href="createdeck.html">Create Deck</a>
-        <div class="dropdown">
-            <button>&#9660; Load Deck</button>
-            <div class="dropdown-options">
-                <label for="upload">From File</label>
-                <input type="file" id="upload" name="userdeck" accept=".txt" onchange="getUserDeck()">
-                <a class="dropdown" onclick="showPresetMenu()">From Preset</a>
-            </div>
-        </div>        
+        <nav>
+            <a href="createdeck.html">Create Deck</a>
+            <a href="about.html">About</a>
+            <label for="upload" title="Load a deck made with Create Deck">Load File</label>
+            <input type="file" id="upload" name="userdeck" accept=".txt" onchange="getUserDeck()">
+        </nav>
     </div>
-    <div style="padding-top: 76px"></div>
-    <div id="settings">  
-        <button id="settings-open" onclick="toggleSettingsMenu()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+    <div id="settings">
+        <button id="settings-open" onclick="toggleSettingsMenu()" title="Settings" aria-label="Settings">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <circle cx="14" cy="6" r="2" />
                 <line x1="4" y1="6" x2="12" y2="6" />
@@ -58,86 +42,133 @@
             </svg>
         </button>
         <div id="settings-menu" style="display: none">
-            <button id="settings-close" onclick="toggleSettingsMenu()">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <button id="settings-close" onclick="toggleSettingsMenu()" title="Close" aria-label="Close settings">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </button>
-            <h2 class="text">Settings</h2><br>
-            <form id="settings-options" autocomplete="off">
-                <fieldset id="input-options" onchange="changeInputMode()">
-                    <legend align="center" style="font-weight: bold">Input type</legend>
+            <h2>Settings</h2>
+            <form id="settings-options" autocomplete="off" onchange="saveSettingsFromForm()">
+                <fieldset id="input-options">
+                    <legend>Input type</legend>
                     <label for="multiple-choice" class="radio-label">
                         <input type="radio" id="multiple-choice" value="multiple-choice" name="input" checked>
                         Multiple choice
                     </label>
                     <label for="write-in" class="radio-label">
                         <input type="radio" id="write-in" value="write-in" name="input">
-                        Write-in
+                        Write-in <span class="hint">(term decks only)</span>
+                    </label>
+                </fieldset>
+                <fieldset>
+                    <legend>Answering</legend>
+                    <label for="shuffle-choices" class="check-label">
+                        <input type="checkbox" id="shuffle-choices" checked>
+                        Shuffle answer choices each time
+                    </label>
+                    <label for="auto-advance" class="check-label">
+                        <input type="checkbox" id="auto-advance">
+                        Skip ahead automatically after a correct answer
                     </label>
                 </fieldset>
             </form>
+            <button class="btn small danger" onclick="clearAllProgress()">Erase all saved progress</button>
         </div>
     </div>
+
     <div id="content">
-        <h2 id="startprompt">Load or create a deck to start!</h2>
-        <div>
-            <form id="preset-menu" style="display: none">
-                <label class="text" for="preset-select">Select a Preset:</label>
-                <select id="preset-select"  onchange="getPresetDeck()" autocomplete="off">
-                    <option value="none" selected disabled hidden>Deck Select</option>
-                    <optgroup label="AP English Literature Vocab">
-                        <option value="animus-voluptuous.txt">List 1: Animus &ndash; Voluptuous</option>
-                        <option value="abate-corroborate.txt">List 2: Abate &ndash; Corroborate</option>
-                        <option value="aberration-vicissitude.txt">List 3: Aberration &ndash; Vicissitude</option>
-                        <option value="affluent-wheedle.txt">List 4: Affluent &ndash; Wheedle</option>
-                        <option value="comeuppance-huffy.txt">List 5: Comeuppance &ndash; Huffy</option>
-                        <option value="ap-lit-cumulative.txt">AP English Literature Cumulative</option>
-                    </optgroup>
-                    <optgroup label="AP English Language Vocab">
-                        <option value="abrade-vainglorious.txt">List 1: Abrade &ndash; Vainglorious</option>
-                        <option value="abrogate-zealous.txt">List 2: Abrogate &ndash; Zealous</option>
-                        <option value="abscond-wistful.txt">List 3: Abscond &ndash; Wistful</option>
-                        <option value="absolve-zenith.txt">List 4: Absolve &ndash; Zenith</option>
-                        <option value="aegis-vitriolic.txt">List 5: Aegis &ndash; Vitriolic</option>
-                        <option value="ad-nauseam-vindicate.txt">List 6: Ad Nauseam &ndash; Vindicate</option>
-                        <option value="camaraderie-torpid.txt">List 7: Camaraderie &ndash; Torpid</option>
-                        <option value="ap-lang-cumulative.txt">AP English Language Cumulative</option>
-                    </optgroup>
-                    <optgroup label="Miscellaneous">
-                        <option value="international-morse-code.txt">International Morse Code (A-Z)</option>
-                        <option value="world-capitals.txt">195 Country Capitals</option>
-                    </optgroup>
-                </select>
-                <br><br>
+        <section id="home">
+            <h1 class="title">Practice until you clear every card</h1>
+            <p class="lede">Get a question right on the first try and it's cleared. Miss it and it goes to the back of the queue,
+                and it only clears once you get it right <strong>two times in a row</strong>.</p>
+
+            <form id="deck-form" onsubmit="return false" autocomplete="off">
+                <label class="field-label" for="deck-select">Deck</label>
+                <select id="deck-select" onchange="selectDeck(this.value)"></select>
+
+                <div id="section-picker" style="display: none">
+                    <div class="picker-head">
+                        <span class="field-label">Topics</span>
+                        <span class="picker-actions">
+                            <button type="button" class="link" onclick="setAllSections(true)">All</button>
+                            <button type="button" class="link" onclick="setAllSections(false)">None</button>
+                        </span>
+                    </div>
+                    <div id="section-list"></div>
+                </div>
+
+                <label class="field-label" for="limit-select">Questions</label>
+                <select id="limit-select" onchange="updateStartSummary()"></select>
             </form>
-            <button id="startbutton" onclick="startQuiz()">Start</button>
-        </div>
-        <h2 id="question"></h2>
-        <div class="center" id="buttons" style="display: none">
-            <button class="btn" id="btn1" onclick="clickButton(0)">wordOneFromList</button>
-            <button class="btn" id="btn2" onclick="clickButton(1)">wordTwoFromList</button>
-            <button class="btn" id="btn3" onclick="clickButton(2)">wordThreeFromList</button>
-            <button class="btn" id="btn4" onclick="clickButton(3)">wordFourFromList</button>
-        </div>
-        <div id="write-input" style="display: none">
-            <input type="text" id="write-answer" autocomplete="off" placeholder="Write Answer">
-            <button class="btn" id="writebutton" onclick="writeSubmit()">Answer</button>
-        </div>
-        <div id="stats" style="display: none">
-            <h4 id="rsp"></h4>
-            <div class="counter">
-                <h2>Correct: <span id="rsp-correct"></span></h2>
-                <h2>Incorrect: <span id="rsp-incorrect"></span></h2>
-                <h2 id="answeraccuracy"></h2>
+
+            <div id="resume-box" style="display: none">
+                <p id="resume-text"></p>
+                <button class="btn" id="resumebutton" onclick="resumeSession()">Resume</button>
             </div>
-            <div class="ttf">
-                <h2 id="ttf"></h2>
+
+            <p id="start-summary"></p>
+            <button class="btn primary" id="startbutton" onclick="startQuiz()">Start</button>
+            <p id="startprompt"></p>
+        </section>
+
+        <section id="quiz" style="display: none">
+            <div id="progress">
+                <div id="progress-bar"><div id="progress-fill"></div></div>
+                <div id="progress-text">
+                    <span>Cleared <strong id="count-cleared">0</strong> / <span id="count-total">0</span></span>
+                    <span>In queue <strong id="count-queue">0</strong></span>
+                    <span>Reviewing <strong id="count-review">0</strong></span>
+                </div>
             </div>
-        </div>
+
+            <article id="card">
+                <div id="meta">
+                    <span id="meta-section"></span>
+                    <span id="meta-badge"></span>
+                </div>
+                <div id="question"></div>
+                <div id="buttons"></div>
+                <div id="write-input" style="display: none">
+                    <input type="text" id="write-answer" autocomplete="off" placeholder="Write answer">
+                    <button class="btn" id="writebutton" onclick="writeSubmit()">Answer</button>
+                </div>
+                <div id="feedback" style="display: none">
+                    <h3 id="rsp"></h3>
+                    <p id="rsp-status"></p>
+                    <div id="explain"></div>
+                    <button class="btn primary" id="nextbutton" onclick="nextQuestion()">Next</button>
+                </div>
+            </article>
+
+            <div id="stats">
+                <span>Correct <strong id="rsp-correct">0</strong></span>
+                <span>Incorrect <strong id="rsp-incorrect">0</strong></span>
+                <span id="answeraccuracy"></span>
+                <span id="ttf"></span>
+            </div>
+            <p class="keys">Keys: <kbd>1</kbd>&ndash;<kbd>4</kbd> or <kbd>A</kbd>&ndash;<kbd>D</kbd> to answer, <kbd>Enter</kbd> for the next question.
+                <button class="link" onclick="quitToHome()">Back to decks</button> (progress is saved)</p>
+        </section>
+
+        <section id="done" style="display: none">
+            <h1 class="title">Queue cleared</h1>
+            <div id="done-summary"></div>
+            <div class="done-actions">
+                <button class="btn primary" id="retry-missed" onclick="startMissedSession()">Practice the ones I missed again</button>
+                <button class="btn" onclick="startQuiz()">Start the whole deck over</button>
+                <button class="btn" onclick="quitToHome()">Choose another deck</button>
+            </div>
+            <h2 id="missed-heading"></h2>
+            <ol id="missed-list"></ol>
+        </section>
     </div>
+
+    <script src="vendor/katex/katex.min.js"></script>
+    <script src="render.js"></script>
+    <script src="preset-decks/presets.js"></script>
+    <script src="decks/pstat100-midterm.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

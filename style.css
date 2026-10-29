@@ -1,459 +1,582 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
-
 :root {
-    --dashcards-blue: #1c00bc;
-    --dashcards-orange: #ffb444;
+    --bg: #000000;
+    --text: #ffffff;
+    --muted: #a8a8a8;
+    --faint: #5c5c5c;
+    --line: #333333;
+    --raised: #0d0d0d;
+    --code-bg: #121212;
+    --right: #7ee08f;
+    --wrong: #ff7a7a;
+    --review: #f5c86b;
+    --serif: "CMU Serif", "Computer Modern Serif", "Latin Modern Roman", "KaTeX_Main", Georgia, serif;
+    --mono: "CMU Typewriter Text", "Latin Modern Mono", "Courier New", monospace;
+    color-scheme: dark;
 }
 
 html { scroll-behavior: smooth; }
-html, body { height: 100%; }
 
 body {
     margin: 0;
     padding: 0;
-    background-attachment: fixed;
-    background-image: linear-gradient(180deg, #4949c2, #6f6fe4, var(--dashcards-orange));
     min-height: 100vh;
-    background-repeat: no-repeat;
-    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.5;
     box-sizing: border-box;
-
-    /* background-image: radial-gradient(rgb(4, 45, 157), rgb(64, 116, 237)); */
+    -webkit-font-smoothing: antialiased;
 }
+
+*, *::before, *::after { box-sizing: inherit; }
+
+button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+}
+
+a { color: var(--text); }
+
+code {
+    font-family: var(--mono);
+    font-size: 0.95em;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0 0.25em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+pre {
+    margin: 0.6em 0;
+    padding: 0.7em 0.9em;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow-x: auto;
+    text-align: left;
+    line-height: 1.35;
+}
+
+pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: 0.88em;
+    white-space: pre;
+}
+
+/* CMU Serif and KaTeX's fonts are both Computer Modern, so math matches the text at 1em */
+.katex { font-size: 1em; }
+.katex-display { margin: 0.6em 0; overflow-x: auto; overflow-y: hidden; }
+.math-error { font-family: var(--mono); color: var(--wrong); }
+
+kbd {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    border: 1px solid var(--faint);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0 0.3em;
+}
+
+/* HEADER */
 
 .header {
-    position: fixed;
-    background-color: var(--dashcards-blue);
-    padding: 15px 10px;
-    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
 }
 
-.header a, .header button, .header label {
-    display: block;
-    float: right;
-    padding: 12px;
-    line-height: 22px;
-    text-align: center;
+.header nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 56px;
+}
+
+.header nav a, .header nav label {
+    padding: 6px 12px;
     text-decoration: none;
-    border: #00000000;
-    background-color: #00000000;
-    font-family: "Roboto Condensed";
-    font-size: 22px;
-    color: #ffffff;
+    font-size: 19px;
+    color: var(--muted);
     border-radius: 5px;
+    cursor: pointer;
     user-select: none;
-    cursor: pointer;
 }
 
-.header label {
-    cursor: pointer;
+.header nav a:hover, .header nav label:hover {
+    color: var(--text);
 }
 
-.header input {
-    display: none;
-}
-
-.header a:hover, .header label:hover, .dropdown:hover button {
-    background: linear-gradient(90deg, var(--dashcards-orange), #ffffff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    color: transparent;
-    transition: 0.5s;
-}
-
-.dropdown {
-    position: relative;
-    display: block;
-    float: right;
-}
-
-.dropdown-options {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: var(--dashcards-blue);
-    margin-top: 40px;
-    padding-top: 20px;
-    min-width: 160px;
-    border-radius: 5px;
-    z-index: 1;
-}
-
-.dropdown-options a, .dropdown-options label {
-    padding: 12px 16px;
-    text-align: right;
-    width: 80%;
-}
-
-.dropdown:hover .dropdown-options {
-    display: block;
-}
+.header input[type=file] { display: none; }
 
 #logo {
-    float: left;
-    font-size: 40px;
+    font-size: 34px;
     font-weight: bold;
     font-style: italic;
-    background: linear-gradient(90deg, var(--dashcards-orange), #ffffff, #ffffff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: #00000000;
+    text-decoration: none;
+    color: var(--text);
 }
 
-/* This can be deleted if we change how the grid works */
-.btn1 { grid-area: button1; }
-.btn2 { grid-area: button2; }
-.btn3 { grid-area: button3; }
-.btn4 { grid-area: button4; }
+/* BUTTONS AND FORMS */
 
-/* TODO: resize text based on button size */
 .btn {
     display: inline-block;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--dashcards-blue);
-    color: #ffffff;
-    text-decoration: none;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    padding: auto;
-    margin: 10px 10px;
-    width: 400px;
-    height: 65px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.btn button:hover {
-    background-color: #2300e6;
-    transition: 0.2s;
-}
-
-#write-input {
-    display: flex;
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    width: 1000px;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    color: #ffffff;
-}
-
-#settings-open, #settings-close {
-    display: block;
-    position: absolute;
-    right: 0px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--dashcards-blue);
-    color: #ffffff;
-    padding: 10px 10px;
-    margin-top: 20px;
-    margin-right: 20px;
-    cursor: pointer;
-    user-select: none;
-}
-
-#settings-menu {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--dashcards-blue);
-    width: 40%;
-    height: auto;
-    max-width: 1200px;
-    max-height: 960px;
-    text-align: center;
-    text-decoration: underline;
-    font-family: "Inter";
-    font-size: 25px;
-    color: #ffffff;
+    border: 1px solid var(--faint);
     border-radius: 8px;
-    z-index: 1;
+    background: var(--bg);
+    color: var(--text);
+    padding: 10px 22px;
+    margin: 6px 8px 6px 0;
+    font-size: 19px;
+    cursor: pointer;
+    user-select: none;
 }
 
-#input-options {
-    display: block;
-    float: left;
-    text-align: left;
-    font-size: 22px;
-    border: 0;
-}
-
-.radio-label {
-    font-size: 20px;
-    display: grid;
-    grid-template-columns: 1em auto;
-    gap: 0.5em;
-}
-
-.radio-label + .radio-label {
-    margin-top: 0.5em;
-}
-
-input[type="radio"] {
-    appearance: none;
-    margin: 0;
-    font: inherit;
-    color: currentColor;
-    width: 1.0em;
-    height: 1.0em;
-    border: 0.12em solid currentColor;
-    border-radius: 50%;
-    transform: translateY(-0.06em);
-    display: grid;
-    place-content: center;
-}
-
-input[type="radio"]::before {
-    content: "";
-    width: 0.6em;
-    height: 0.6em;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em var(--dashcards-orange);
-}
-input[type="radio"]:checked::before {
-    transform: scale(1);
-}
-
+.btn:hover:not(:disabled) { border-color: var(--text); }
+.btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn.primary:hover:not(:disabled) { background: #d9d9d9; }
+.btn.small { font-size: 16px; padding: 6px 14px; }
+.btn.danger { color: var(--wrong); border-color: #6b2b2b; }
+.btn.danger:hover { border-color: var(--wrong); }
 
 button:disabled, button[disabled] {
-    opacity: 60%;
+    opacity: 50%;
     cursor: default;
 }
 
-input[type=text] {
-    width: 40%;
-    padding: 10px 15px;
-    margin: 10px;
-    box-sizing: border-box;
-    border: 3px solid #000000;
-    border-radius: 4px;
-    outline: none;
-}
-
-#startprompt {
-    display: flex;
-    justify-content: center;
-    font-family: "Inter";
-    font-size: 30px;
-    font-style: italic;
-    color: #ffffff;
-}
-
-#startbutton {
-    display: none;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--dashcards-blue);
-    color: #ffffff;
-    text-decoration: none;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    padding: 10px 100px;
-    margin: 10px 10px;
+button.link {
+    background: none;
+    border: 0;
+    padding: 0 4px;
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
     cursor: pointer;
-    user-select: none;
 }
 
-.text {
-    margin-left: 10px;
-    font-family: "Inter";
-    font-size: 25px;
-    color: #ffffff;
-}
+button.link:hover { color: var(--text); }
 
-#preset-select {
-    display: flex;
-    font-family: "Inter";
-    font-size: 16px;
-    color: #ffffff;
-    background-color: var(--dashcards-blue);
-    width: 40%;
-    padding: 10px 15px;
-    margin: 10px;
-    box-sizing: border-box;
-    border: 3px solid;
-    border-color: #00000000;
-    border-radius: 4px;
+select, input[type=text] {
+    width: 100%;
+    max-width: 640px;
+    padding: 9px 12px;
+    background: var(--raised);
+    border: 1px solid var(--faint);
+    border-radius: 6px;
     outline: none;
 }
 
-select optgroup {
-    font-style: normal;
+select:focus, input[type=text]:focus { border-color: var(--text); }
+select optgroup { font-style: normal; color: var(--muted); }
+select option { color: var(--text); background: var(--raised); }
+
+input[type=checkbox], input[type=radio] {
+    accent-color: var(--text);
+    width: 1em;
+    height: 1em;
+    margin: 0;
 }
 
-/* THIS GRID ISN'T RIGHT. Needs to have button sizes not based on other text (and still needs vertical centering) */
-.center {
+.check-label, .radio-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    cursor: pointer;
+}
+
+.hint, .count { color: var(--muted); }
+.count { font-size: 0.85em; }
+.count::before { content: "("; }
+.count::after { content: ")"; }
+
+/* LAYOUT */
+
+#content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+}
+
+.title {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0.2em 0 0.4em;
+}
+
+.lede {
+    color: var(--muted);
+    margin: 0 0 1.5em;
+}
+
+.field-label {
+    display: block;
+    margin: 18px 0 6px;
+    font-weight: bold;
+}
+
+/* HOME */
+
+#section-picker { margin-top: 4px; }
+
+.picker-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    max-width: 640px;
+}
+
+.picker-actions { font-size: 16px; }
+
+#section-list {
+    max-width: 640px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 14px;
+}
+
+.chapter { padding: 8px 0; }
+.chapter + .chapter { border-top: 1px solid var(--line); }
+.chapter-label { font-weight: bold; }
+
+.section-checks {
     display: grid;
-    align-items: center;
-    justify-content: center;
-    vertical-align: middle;
-    grid-template-areas: 
-    'button1 button2'
-    'button3 button4';
-    padding: 10px;
+    gap: 2px;
+    margin: 4px 0 0 1.5em;
+    font-size: 16px;
 }
 
-.counter {
+#resume-box {
+    max-width: 640px;
+    margin-top: 22px;
+    padding: 12px 16px;
+    border: 1px solid var(--review);
+    border-radius: 8px;
+}
+
+#resume-box p { margin: 0 0 6px; }
+#start-summary { color: var(--muted); margin: 22px 0 4px; }
+#startprompt { color: var(--wrong); min-height: 1.5em; }
+
+/* QUIZ */
+
+#progress { margin-bottom: 20px; }
+
+#progress-bar {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--text);
+    transition: width 0.3s ease-out;
+}
+
+#progress-text, #stats {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Inter";
-    font-size: 22px;
-    color: #ffffff;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin-top: 8px;
+    font-size: 16px;
+    color: var(--muted);
 }
 
-#rsp-correct, #rsp-incorrect {
-    display: inline-block;
-    margin-right: 20px;
+#progress-text strong, #stats strong { color: var(--text); }
+
+#card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 26px 24px;
+    background: var(--bg);
 }
-.ttf {
+
+#meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.badge {
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    padding: 0 10px;
+}
+
+.badge.review { color: var(--review); border-color: var(--review); }
+
+#question {
+    font-size: 21px;
+    margin-bottom: 18px;
+    overflow-wrap: break-word;
+}
+
+#buttons {
+    display: grid;
+    gap: 10px;
+}
+
+.choice {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--faint);
+    border-radius: 8px;
+    cursor: pointer;
+    line-height: 1.45;
+}
+
+.choice:hover:not(:disabled) { border-color: var(--text); }
+.choice:disabled { opacity: 1; cursor: default; color: var(--muted); }
+
+.choice .letter {
+    flex: none;
+    width: 1.6em;
+    height: 1.6em;
+    line-height: 1.5em;
+    text-align: center;
+    border: 1px solid var(--faint);
+    border-radius: 50%;
+    font-size: 0.85em;
+}
+
+.choice-text { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.choice-text pre { margin: 0.3em 0; }
+
+.choice.right { color: var(--text); border-color: var(--right); box-shadow: inset 0 0 0 1px var(--right); }
+.choice.right .letter { background: var(--right); border-color: var(--right); color: var(--bg); }
+.choice.wrong { color: var(--text); border-color: var(--wrong); box-shadow: inset 0 0 0 1px var(--wrong); }
+.choice.wrong .letter { background: var(--wrong); border-color: var(--wrong); color: var(--bg); }
+
+#write-input {
+    display: flex;
+    gap: 10px;
+}
+
+#write-input input { max-width: none; }
+#write-input .btn { margin: 0; }
+
+#feedback {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+#rsp {
+    margin: 0;
+    font-size: 23px;
+}
+
+#rsp.right { color: var(--right); }
+#rsp.wrong { color: var(--wrong); }
+#rsp.right::before { content: "\2713\2002"; }
+#rsp.wrong::before { content: "\2717\2002"; }
+
+#rsp-status {
+    margin: 4px 0 10px;
+    color: var(--muted);
+    font-size: 17px;
+}
+
+#explain { margin-bottom: 14px; }
+#nextbutton { margin: 0; }
+
+#stats { margin-top: 16px; }
+
+.keys {
+    margin-top: 18px;
+    font-size: 15px;
+    color: var(--faint);
+}
+
+/* DONE */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin: 10px 0 18px;
+}
+
+.summary-grid div {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--muted);
+    font-size: 16px;
+}
+
+.summary-grid strong {
+    display: block;
+    font-size: 30px;
+    color: var(--text);
+}
+
+.done-actions { margin-bottom: 28px; }
+
+#missed-heading { font-size: 24px; margin: 0 0 8px; }
+
+#missed-list {
+    padding-left: 1.4em;
+}
+
+#missed-list li {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.missed-meta { font-size: 15px; color: var(--muted); }
+.missed-q { margin: 4px 0 8px; }
+.missed-a .label, .missed-explain { color: var(--muted); }
+.missed-a .label { font-weight: bold; margin-right: 0.3em; }
+.missed-explain { margin-top: 6px; font-size: 17px; }
+
+/* SETTINGS */
+
+#settings-open {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 3;
+    display: flex;
+    padding: 7px;
+    border: 1px solid var(--faint);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+}
+
+#settings-open:hover { border-color: var(--text); }
+
+#settings-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: min(92vw, 480px);
+    padding: 22px 26px;
+    background: var(--bg);
+    border: 1px solid var(--text);
+    border-radius: 10px;
+}
+
+#settings-menu h2 { margin: 0 0 8px; }
+
+#settings-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    padding: 4px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+}
+
+#settings-menu fieldset {
+    border: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    font-family: "Inter";
-    color: #ffffff;
-    font-size: 24px;
+    margin: 0 0 16px;
+    display: grid;
+    gap: 6px;
 }
 
-#question, #rsp {
-    /*display: flex;*/
-    display: none;
-    justify-content: center;
-    font-family: "Inter";
-    color: #ffffff;
+#settings-menu legend {
+    font-weight: bold;
+    padding: 0;
+    margin-bottom: 6px;
 }
 
-/* ANIMATIONS */
+/* PHONES */
 
-.counter-anim {
-    animation: scorescale 0.2s 1;
-    animation-timing-function: ease-out;
+@media (max-width: 640px) {
+    body { font-size: 17px; }
+    .header { padding: 10px 16px; }
+    .header nav { margin-right: 44px; }
+    .header nav a, .header nav label { padding: 4px 6px; font-size: 16px; }
+    #logo { font-size: 26px; }
+    #settings-open { top: 12px; right: 12px; padding: 5px; }
+    #content { padding: 20px 16px 48px; }
+    .title { font-size: 27px; }
+    #card { padding: 16px; }
+    #question { font-size: 19px; }
+    .choice { padding: 10px 12px; gap: 10px; }
 }
-
-@keyframes scorescale {
-    0% {transform: scale(1.2)}
-    100% {transform: scale(1.0)}
-}
-
-
-
-.rsp-correct-anim {
-    animation: correctflash 0.3s 1;
-    animation-timing-function: ease-out;
-}
- 
-@keyframes correctflash {
-    0% {color: #00ff62}
-    100% {color: #ffffff}
-}
-
-.rsp-incorrect-anim {
-    animation: incorrectflash 0.3s 1;
-    animation-timing-function: ease-out;
-}
-
-@keyframes incorrectflash {
-    0% {color: #ff0000}
-    100% {color: #ffffff}
-}
-
-
-
-
 
 /**************************************************************************************************************************************
 createdeck.html-SPECIFIC STYLES GO DOWN HERE. I know it's probably a bad idea to put it all on one stylesheet but we can fix that later.
 ***************************************************************************************************************************************/
 
-
 #deck-input {
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    width: 1000px;
-    flex-flow: row wrap;
-    justify-content: center;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    color: #ffffff;
-    padding-left: 10%;
-    padding-right: 10%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 #title-input {
-    align-self: center;
-    text-align: center;
-    flex-basis: 100%;
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
 }
 
-#deck-input > input[type=text] {
-    flex-basis: 40%;
-}
+#title-input label { display: block; font-weight: bold; margin-bottom: 6px; }
+#deck-input input[type=text] { max-width: none; }
 
 #button-controls {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    bottom: 16px;
+    right: 16px;
+    display: grid;
+    gap: 8px;
 }
+
+#button-controls .btn { margin: 0; }
 
 #create-error {
-    display: block;
     text-align: center;
-    font-family: "Inter";
     font-size: 18px;
-    color: #ffffff;
+    color: var(--wrong);
 }
 
-#create-error span {
-    padding: 0.3em;
-    background-color: #ff3029;
-    border: 4px solid #ff3029;
-}
-
-::placeholder {
-    font-family: "Roboto Condensed";
-}
+::placeholder { color: var(--faint); }
 
 /*********
 about.html
 *********/
 
 .section-title {
-    display: block;
-    justify-content: center;
-    margin-left: 20%;
-    margin-right: 20%;
-    text-align: left;
-    text-decoration: underline;
-    text-decoration-color: var(--dashcards-orange);
-    font-family: "Inter";
     font-size: 25px;
-    color: #ffffff;
+    margin: 1.2em 0 0.3em;
 }
 
-p {
-    display: inline-block;
-    margin-left: 20%;
-    margin-right: 20%;
-    margin-top: 0%;
-    font-family: "Inter";
-    font-size: 18px;
-    color: #ffffff;
-}
+p { margin-top: 0; }
 
 .text-link {
-    display: inline-block;
-    font-family: "Inter";
-    font-size: 18px;
-    color: #ffffff;
-    text-decoration-color: var(--dashcards-orange);
+    color: var(--text);
+    text-underline-offset: 3px;
 }
