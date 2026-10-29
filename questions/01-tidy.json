@@ -123,7 +123,7 @@
     "choices": [
       "Rename the file `Seda Gaps.csv` so each word stands out clearly",
       "Switch to `read.csv()`, which ignores capitalization in file names",
-      "Rename the file `seda_gaps.csv` and keep all file names lowercase",
+      "Rename the file to `seda_gaps.csv` and keep all file names lowercase",
       "Wrap the file name in backticks instead of quotation marks"
     ],
     "answer": 2,
@@ -227,7 +227,7 @@
     "choices": [
       "1,203 columns and 6 rows; `district` and `state` are text, the rest numeric",
       "1,203 districts, each measured in 6 different grades",
-      "1,203 rows and 6 columns; `district` and `state` are text, the rest numeric",
+      "1,203 rows and 6 columns; `district` and `state` are text, the others numeric",
       "1,203 rows and 6 columns; `<chr>` marks the columns with missing values"
     ],
     "answer": 2,
@@ -267,7 +267,7 @@
       "The long one holds more information, because it has more rows",
       "The wide one holds more information, because each year has a column",
       "They hold different data, since only the long one has a `year` column",
-      "They hold the same information in two layouts, wide and long"
+      "They hold the same information in two different layouts, wide and long"
     ],
     "answer": 3,
     "explain": "Every country, year, and case count appears in both: the wide table stores the year in its column names, the long table in a `year` column. Reshaping changes the arrangement, not the information."
@@ -447,7 +447,7 @@
     "q": "The Billboard data look like this (columns `wk4` through `wk76` not shown):\n```\n# A tibble: 317 × 79\n  artist       track                   date.entered   wk1   wk2   wk3\n  <chr>        <chr>                   <date>       <dbl> <dbl> <dbl>\n1 2 Pac        Baby Don't Cry (Keep... 2000-02-26      87    82    72\n2 2Ge+her      The Hardest Part Of ... 2000-09-02      91    87    92\n3 3 Doors Down Kryptonite              2000-04-08      81    70    68\n```\nWhy is this layout not tidy?",
     "choices": [
       "Each week's ranks should be stored in a separate table, with one table per week",
-      "Week is a variable stored in column names, so each row holds many observations",
+      "Week is a variable stored in the column names, so each row holds many observations",
       "`artist` and `track` both identify the song, so they should be one column",
       "Songs that left the chart have `NA` ranks, and tidy data can't contain `NA`"
     ],
@@ -655,7 +655,7 @@
     "q": "Which of these is an advantage of storing data in tidy form?",
     "choices": [
       "Tidy tables take less storage than wide ones, since identifiers are never repeated",
-      "Every dataset has the same organization, so the same tools work on all of them",
+      "Every dataset has the same organization, so the same `dplyr` and `ggplot2` code works on all",
       "Tidy tables are the easiest layout to read by eye in a printed report",
       "Tidy tables can't contain missing values, so they never need cleaning"
     ],
@@ -771,7 +771,7 @@
     "section": "1.4",
     "q": "Which pair lists two genuine disadvantages of tidy data?",
     "choices": [
-      "A learning curve, and storage inefficiency from repeated values",
+      "A learning curve, and storage inefficiency from repeated identifiers",
       "Incompatibility with `ggplot2`, and no way to store dates",
       "Loss of information, and slower vectorized transformations",
       "A ban on missing values, and a rule that every column be numeric"

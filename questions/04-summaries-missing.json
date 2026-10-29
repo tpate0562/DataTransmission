@@ -244,7 +244,7 @@
       "For each bracket, the share of its districts with a gap above 0.1 SD"
     ],
     "answer": 3,
-    "explain": "`boys_ahead` is TRUE or FALSE for each district, and its mean within a bracket is the fraction of that bracket's districts meeting the condition. `sum()` would give the count, and the last option wrongly uses all districts as the denominator."
+    "explain": "`boys_ahead` is TRUE or FALSE for each district, and its mean within a bracket is the fraction of that bracket's districts meeting the condition. `sum()` would give the count instead, and dividing by all districts rather than the bracket's districts would answer a different question."
   },
   {
     "id": "summ-020",
@@ -465,7 +465,7 @@
       "`seda |> drop_na(gap) |> group_by(id) |> summarize(p = n()) |> summarize(p = mean(p))`"
     ],
     "answer": 1,
-    "explain": "First flag each district with `any(is.na(gap))`, then average the flags across districts. Grouping by `id` and `grade` ends with each district's share of missing grades (one row per district), the ungrouped version gives the share of rows, and the last option averages counts of observed grades."
+    "explain": "First flag each district with `any(is.na(gap))`, then average the flags across districts. Grouping by `id` and `grade` ends with each district's share of missing grades (one row per district), the ungrouped version gives the share of rows, and the `drop_na()` version averages counts of observed grades."
   },
   {
     "id": "summ-037",
