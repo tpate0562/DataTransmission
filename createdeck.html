@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Dashcards - Create Deck</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { overflow: scroll; overflow-x: hidden; height: 100vh; };
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <script>
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+        alert("This website is currently not designed for mobile! Please open in a desktop web browser instead.");
+        }
+    </script>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#373e98">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="theme-color" content="#373e98">
+</head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7D8ZYG3FQY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7D8ZYG3FQY');
+</script>
+<body>
+    <div class="header">
+        <a href="index.html" id="logo">Dashcards</a>
+        <a href="about.html" style="margin-right: 25px">About</a>
+        <a href="createdeck.html">Create Deck</a>
+        <a href="index.html">Home</a>
+    </div>
+    <div style="padding-top: 76px"></div>
+
+    <!--TODO: make list element for term inputs. So they're labeled 1, 2, etc-->
+    <div id="content">
+        <h2 id="create-error" style="display: none">
+            <span>Fill in every input before downloading!</span>
+        </h2>
+        <div id="deck-input">
+            <div id="title-input">
+                <label for="title">Dashdeck Title:</label>
+                <input type="text" id="title" autocomplete="off" placeholder="Title"><br>
+            </div>
+            <input type="text" id="input1" autocomplete="off" placeholder="Term">
+            <input type="text" id="input2" autocomplete="off" placeholder="Definition"><br>
+            <input type="text" id="input3" autocomplete="off" placeholder="Term">
+            <input type="text" id="input4" autocomplete="off" placeholder="Definition"><br>
+            <input type="text" id="input5" autocomplete="off" placeholder="Term">
+            <input type="text" id="input6" autocomplete="off" placeholder="Definition"><br>
+            <input type="text" id="input7" autocomplete="off" placeholder="Term">
+            <input type="text" id="input8" autocomplete="off" placeholder="Definition"><br>
+            <input type="text" id="input9" autocomplete="off" placeholder="Term">
+            <input type="text" id="input10" autocomplete="off" placeholder="Definition"><br>
+        </div>
+        <br><br><br>
+        <div id="button-controls">
+            <button class="btn" onclick="addTermInput()">Add a card</button><br>
+            <button class="btn" onclick="downloadDeck()">Download</button>
+        </div>
+    </div>
+    <script src="createdeck.js"></script>
+</body>
+</html>
