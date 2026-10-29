@@ -101,7 +101,7 @@
       "track Kryptonite, week `\"wk3\"`, rank `NA`"
     ],
     "answer": 0,
-    "explain": "`pivot_longer()` walks through the original rows in order and, within each row, through the pivoted columns: Breathe wk1, wk2, wk3, then Kryptonite wk1, wk2, wk3. Stacking column by column would put Kryptonite wk2 fourth, but that is not tidyr's order."
+    "explain": "`pivot_longer()` walks through the original rows in order and, within each row, through the pivoted columns: Breathe `wk1`, `wk2`, `wk3`, then Kryptonite `wk1`, `wk2`, `wk3`. Stacking column by column would put Kryptonite `wk2` fourth, but that is not tidyr's order."
   },
   {
     "id": "reshape-009",
@@ -293,7 +293,7 @@
       "6,000 rows, 4 columns",
       "3,000 rows, 4 columns",
       "3,000 rows, 3 columns",
-      "500 rows, 14 columns"
+      "500 rows, 13 columns"
     ],
     "answer": 1,
     "explain": "The long table has \\( 500 \\times 6 \\times 2 = 6{,}000 \\) rows; widening by subject leaves one row per district-grade, \\( 500 \\times 6 = 3{,}000 \\). `subject` and `gap` are replaced by `math` and `rla`, so the columns are `id`, `grade`, `math`, `rla`."
@@ -645,7 +645,7 @@
       "9,000,000"
     ],
     "answer": 2,
-    "explain": "With `id` as the only key, each `gaps` row matches all 6 `covars` rows for its district: \\( 3{,}000 \\times 6 = 18{,}000 \\). Joining by = c(\"id\", \"grade\") matches each row to exactly one covariate row and keeps 3,000; 9,000,000 would pair every row with every row."
+    "explain": "With `id` as the only key, each `gaps` row matches all 6 `covars` rows for its district: \\( 3{,}000 \\times 6 = 18{,}000 \\). Joining with `by = c(\"id\", \"grade\")` matches each row to exactly one covariate row and keeps 3,000; 9,000,000 would pair every row with every row."
   },
   {
     "id": "reshape-051",
@@ -736,7 +736,7 @@
       "With no `by`, `source` was used as a key too, and no source value matches"
     ],
     "answer": 3,
-    "explain": "A natural join matches on all shared columns, so rows had to agree on `country`, `year`, and `source`; `\"WB\"` never equals `\"UN\"`, so nothing matched. Use by = c(\"country\", \"year\"); the two `source` columns then come through as `source.x` and `source.y`."
+    "explain": "A natural join matches on all shared columns, so rows had to agree on `country`, `year`, and `source`; `\"WB\"` never equals `\"UN\"`, so nothing matched. Use `by = c(\"country\", \"year\")`; the two `source` columns then come through as `source.x` and `source.y`."
   },
   {
     "id": "reshape-058",
