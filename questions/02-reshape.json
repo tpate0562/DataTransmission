@@ -522,7 +522,7 @@
   {
     "id": "reshape-041",
     "section": "1.6",
-    "q": "Table `x` has keys A, B, C and table `y` has keys B, C, D, each appearing once. Which call returns rows for exactly B, C, and D?",
+    "q": "Tables `x` and `y` share a column `key`. In `x` it holds A, B, C; in `y` it holds B, C, D; no value repeats. Which call returns rows for exactly B, C, and D?",
     "choices": [
       "`left_join(x, y, by = \"key\")`",
       "`inner_join(x, y, by = \"key\")`",
