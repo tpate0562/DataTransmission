@@ -1,0 +1,780 @@
+[
+  {
+    "id": "reshape-001",
+    "section": "1.5",
+    "q": "In a call to `pivot_longer()`, what happens to the **names** of the columns selected by `cols`?",
+    "choices": [
+      "They become values in a new column, named by `values_to`",
+      "They become the row names of the reshaped result",
+      "They are dropped, and only the cell values are kept",
+      "They become values in a new column, named by `names_to`"
+    ],
+    "answer": 3,
+    "explain": "`pivot_longer()` turns column names into data: each selected name is written into the new `names_to` column, and the cells under it go into the `values_to` column. Turning values into column names is the opposite move, `pivot_wider()`."
+  },
+  {
+    "id": "reshape-002",
+    "section": "1.5",
+    "q": "In `pivot_wider(names_from = sex, values_from = prop_ace)`, what role does the `sex` column play?",
+    "choices": [
+      "Its values are what fill the cells of the new columns",
+      "It identifies the rows, so each sex gets its own row",
+      "Its distinct values become the names of the new columns",
+      "It names a new column that holds the old column names"
+    ],
+    "answer": 2,
+    "explain": "`names_from` supplies the new column names (one column per sex) and `values_from` supplies the cell contents. Rows are identified by `id_cols`, which by default are all the columns not named in `names_from` or `values_from`."
+  },
+  {
+    "id": "reshape-003",
+    "section": "1.5",
+    "q": "The Billboard data has one row per song, with weekly chart positions in columns `wk1` to `wk76`. Fill in the blank so the chart positions end up in a column called `rank`:\n```r\nbillboard |>\n  pivot_longer(\n    cols = starts_with(\"wk\"),\n    names_to = \"week\",\n    ____ = \"rank\"\n  )\n```",
+    "choices": [
+      "`values_from`",
+      "`values_to`",
+      "`names_from`",
+      "`names_prefix`"
+    ],
+    "answer": 1,
+    "explain": "`values_to` names the new column that receives the cell values, just as `names_to` names the one that receives the old column names. `values_from` and `names_from` are `pivot_wider()` arguments, and `names_prefix` strips text from the old names."
+  },
+  {
+    "id": "reshape-004",
+    "section": "1.5",
+    "q": "What does `names_prefix = \"wk\"` do in this call?\n```r\nbillboard |>\n  pivot_longer(\n    cols = starts_with(\"wk\"),\n    names_to = \"week\",\n    names_prefix = \"wk\",\n    values_to = \"rank\"\n  )\n```",
+    "choices": [
+      "Strips the leading `wk` from each name, so `week` holds `\"1\"`, `\"2\"`, …",
+      "Selects the columns that start with `wk`, so `cols` is no longer needed",
+      "Converts `week` to an integer column holding the numbers 1 through 76",
+      "Drops the rows where a song has no rank in that week"
+    ],
+    "answer": 0,
+    "explain": "`names_prefix` removes matching text from the start of each column name before it is stored in `week`. The values are still character strings; turning them into numbers is the job of `names_transform`, and dropping missing ranks is `values_drop_na`."
+  },
+  {
+    "id": "reshape-005",
+    "section": "1.5",
+    "q": "Both extra arguments are used here:\n```r\nbillboard |>\n  pivot_longer(\n    cols = starts_with(\"wk\"),\n    names_to = \"week\",\n    names_prefix = \"wk\",\n    names_transform = as.integer,\n    values_to = \"rank\"\n  )\n```\nCompared with deleting only the `names_transform` line, what is different about the result?",
+    "choices": [
+      "`rank` is an integer column instead of a double column",
+      "The `wk` prefix is removed, which `names_prefix` alone does not do",
+      "The rows are sorted by week number instead of by song",
+      "`week` is an integer column instead of a character column"
+    ],
+    "answer": 3,
+    "explain": "`names_transform` is applied to the new `names_to` column after the prefix is stripped, turning `\"1\"`, `\"2\"`, … into the integers 1, 2, …. It never touches the cell values (that would be `values_transform`) and does not reorder rows."
+  },
+  {
+    "id": "reshape-006",
+    "section": "1.5",
+    "q": "A student keeps `names_transform = as.integer` but forgets `names_prefix`:\n```r\nbillboard |>\n  pivot_longer(\n    cols = starts_with(\"wk\"),\n    names_to = \"week\",\n    names_transform = as.integer,\n    values_to = \"rank\"\n  )\n```\nWhat ends up in `week`?",
+    "choices": [
+      "The integers 1 to 76, since `as.integer()` skips the letters",
+      "The strings `\"wk1\"` to `\"wk76\"`, since the transform is ignored",
+      "`NA` in every row, along with a warning about coercion",
+      "Nothing: the call errors because `names_prefix` is required"
+    ],
+    "answer": 2,
+    "explain": "The transform is applied to the full names, and `as.integer(\"wk1\")` is `NA` (R warns that NAs were introduced by coercion). Strip the prefix first with `names_prefix = \"wk\"` so the names are `\"1\"`, `\"2\"`, … before converting."
+  },
+  {
+    "id": "reshape-007",
+    "section": "1.5",
+    "q": "With `names_prefix = \"wk\"` but no `names_transform`, the Billboard `week` column holds the strings `\"1\"`, `\"2\"`, …, `\"76\"`. Why is it worth converting it to integer?",
+    "choices": [
+      "`pivot_wider()` cannot use a character column as its `names_from`",
+      "As text it sorts `\"10\"` before `\"2\"`, and it is treated as categories, not numbers",
+      "`pivot_longer()` will not finish until `week` has a numeric type",
+      "The `rank` values stay stored as text until `week` is converted"
+    ],
+    "answer": 1,
+    "explain": "Character values compare letter by letter, so `\"10\"` comes before `\"2\"`, and a character `week` gives a discrete plot axis in that alphabetical order (1, 10, 11, …, 2, 20, …). `names_transform = as.integer` makes week a real number."
+  },
+  {
+    "id": "reshape-008",
+    "section": "1.5",
+    "q": "`songs`:\n```\n# A tibble: 2 × 4\n  track        wk1   wk2   wk3\n  <chr>      <dbl> <dbl> <dbl>\n1 Breathe       81    68    50\n2 Kryptonite    74    61    NA\n```\nWhat is the **fourth** row of the result?\n```r\nsongs |>\n  pivot_longer(cols = wk1:wk3, names_to = \"week\", values_to = \"rank\")\n```",
+    "choices": [
+      "track Kryptonite, week `\"wk1\"`, rank 74",
+      "track Kryptonite, week `\"wk2\"`, rank 61",
+      "track Breathe, week `\"wk2\"`, rank 68",
+      "track Kryptonite, week `\"wk3\"`, rank `NA`"
+    ],
+    "answer": 0,
+    "explain": "`pivot_longer()` walks through the original rows in order and, within each row, through the pivoted columns: Breathe wk1, wk2, wk3, then Kryptonite wk1, wk2, wk3. Stacking column by column would put Kryptonite wk2 fourth, but that is not tidyr's order."
+  },
+  {
+    "id": "reshape-009",
+    "section": "1.5",
+    "q": "`quiz` has 3 rows and 6 columns: `student`, `section`, and the scores `q1`, `q2`, `q3`, `q4`. What are the dimensions of the result?\n```r\nquiz |>\n  pivot_longer(cols = q1:q4, names_to = \"question\", values_to = \"points\")\n```",
+    "choices": [
+      "12 rows, 3 columns",
+      "18 rows, 4 columns",
+      "12 rows, 6 columns",
+      "12 rows, 4 columns"
+    ],
+    "answer": 3,
+    "explain": "Each of the 3 rows becomes 4 rows, one per pivoted column: \\( 3 \\times 4 = 12 \\). The untouched `student` and `section` are kept, and `question` and `points` are added, so there are 4 columns."
+  },
+  {
+    "id": "reshape-010",
+    "section": "1.5",
+    "q": "`billboard` is a 317 × 79 tibble: `artist`, `track`, `date.entered`, and `wk1` through `wk76`. What are the dimensions of the result?\n```r\nbillboard |>\n  pivot_longer(cols = starts_with(\"wk\"), names_to = \"week\", values_to = \"rank\")\n```",
+    "choices": [
+      "24,092 rows, 79 columns",
+      "25,043 rows, 5 columns",
+      "24,092 rows, 5 columns",
+      "317 rows, 5 columns"
+    ],
+    "answer": 2,
+    "explain": "One row per song per pivoted column: \\( 317 \\times 76 = 24{,}092 \\). The 3 identifier columns stay and `week` and `rank` are added, giving 5 columns. Multiplying by all 79 columns is the classic slip."
+  },
+  {
+    "id": "reshape-011",
+    "section": "1.5",
+    "q": "Adding `values_drop_na = TRUE` to the Billboard `pivot_longer()` call cuts the result from 24,092 rows to 5,307. What do the removed rows represent?",
+    "choices": [
+      "Songs that charted for fewer than 76 weeks, removed entirely",
+      "Song-weeks in which the song was not on the chart",
+      "Duplicate song-weeks that the pivot created by mistake",
+      "Weeks after each song had already left the top 10"
+    ],
+    "answer": 1,
+    "explain": "In the wide table a song that charted for 20 weeks has `NA` in its other 56 `wk` columns. Pivoting turns each of those cells into a row with a missing rank, and `values_drop_na = TRUE` removes just those rows; every song keeps the weeks it was on the chart."
+  },
+  {
+    "id": "reshape-012",
+    "section": "1.5",
+    "q": "You want a line plot of each Billboard song's rank (y) against week (x), one line per song. Why does the data have to be pivoted longer first?",
+    "choices": [
+      "`aes(x = week)` needs week in one column, but it is spread across 76 column names",
+      "`ggplot()` refuses tibbles with more than a few dozen columns",
+      "`geom_line()` needs rows pre-sorted by rank, which only the long form has",
+      "`ggplot()` cannot draw anything from a table that contains `NA`"
+    ],
+    "answer": 0,
+    "explain": "ggplot2 maps aesthetics to variables stored in columns. In the wide table, week isn't a column at all; it lives in 76 column names, so there is nothing to map to x. After pivoting, `aes(x = week, y = rank, group = track)` works directly."
+  },
+  {
+    "id": "reshape-013",
+    "section": "1.5",
+    "q": "Which call turns `gdp_wide` into `gdp_long`?\n`gdp_wide`:\n```\n# A tibble: 2 × 3\n  country `2019` `2020`\n  <chr>    <dbl>  <dbl>\n1 Chile      279    254\n2 Peru       228    202\n```\n`gdp_long`:\n```\n# A tibble: 4 × 3\n  country year    gdp\n  <chr>   <chr> <dbl>\n1 Chile   2019    279\n2 Chile   2020    254\n3 Peru    2019    228\n4 Peru    2020    202\n```",
+    "choices": [
+      "`pivot_longer(gdp_wide, cols = -country, names_to = \"gdp\", values_to = \"year\")`",
+      "`pivot_longer(gdp_wide, cols = country, names_to = \"year\", values_to = \"gdp\")`",
+      "`pivot_wider(gdp_wide, names_from = year, values_from = gdp)`",
+      "`pivot_longer(gdp_wide, cols = -country, names_to = \"year\", values_to = \"gdp\")`"
+    ],
+    "answer": 3,
+    "explain": "The old column names `2019` and `2020` land in `year` (`names_to = \"year\"`) and the cells land in `gdp` (`values_to = \"gdp\"`); `cols = -country` stacks everything except the identifier. `year` comes out as character because it was made from column names."
+  },
+  {
+    "id": "reshape-014",
+    "section": "1.5",
+    "q": "`gdp_wide` has the columns `country`, `2019`, `2020`, `2021`. Fill in the blank to stack the three year columns:\n```r\ngdp_wide |>\n  pivot_longer(____, names_to = \"year\", values_to = \"gdp\")\n```",
+    "choices": [
+      "`cols = country`",
+      "`cols = \"year\"`",
+      "`cols = -country`",
+      "`names_from = -country`"
+    ],
+    "answer": 2,
+    "explain": "`cols` selects the columns to stack, and `-country` means every column except `country`. `cols = country` would stack the identifier instead, `\"year\"` is not a column yet (it names the new one), and `names_from` is a `pivot_wider()` argument."
+  },
+  {
+    "id": "reshape-015",
+    "section": "1.5",
+    "q": "`gdp_wide` has a character column `country` and numeric columns `2019` and `2020`. Why does this call stop with an error?\n```r\ngdp_wide |>\n  pivot_longer(cols = everything(), names_to = \"year\", values_to = \"gdp\")\n```",
+    "choices": [
+      "`everything()` cannot be used to choose columns inside `pivot_longer()`",
+      "It tries to put `country` text and numeric GDP values into the same `gdp` column",
+      "`names_to` must name an existing column, and there is no `year` column",
+      "Columns whose names are numbers, like `2019`, cannot be pivoted at all"
+    ],
+    "answer": 1,
+    "explain": "`everything()` includes `country`, so its character values would have to share one value column with doubles, and `pivot_longer()` refuses to combine the two types. Leave the identifier out with `cols = -country`."
+  },
+  {
+    "id": "reshape-016",
+    "section": "1.5",
+    "q": "`long` was made with\n```r\nlong <- wide |>\n  pivot_longer(cols = -country, names_to = \"year\", values_to = \"cases\")\n```\nWhich call puts `long` back in the original layout?",
+    "choices": [
+      "`pivot_wider(long, names_from = year, values_from = cases)`",
+      "`pivot_wider(long, names_from = cases, values_from = year)`",
+      "`pivot_wider(long, names_to = \"year\", values_to = \"cases\")`",
+      "`pivot_longer(long, cols = c(year, cases), names_to = \"country\")`"
+    ],
+    "answer": 0,
+    "explain": "`pivot_wider()` is the inverse of `pivot_longer()`: the column that `names_to` created supplies the new column names (`names_from = year`) and the one `values_to` created supplies the cells (`values_from = cases`). The others swap those roles or borrow `pivot_longer()` argument names."
+  },
+  {
+    "id": "reshape-017",
+    "section": "1.5",
+    "q": "`long` was made with `pivot_longer(cols = starts_with(\"wk\"), names_to = \"week\", names_prefix = \"wk\", values_to = \"rank\")`. Pivoting it back with `pivot_wider(long, names_from = week, values_from = rank)` gives columns named `1`, `2`, `3`, …. Which extra argument to `pivot_wider()` brings back the names `wk1`, `wk2`, …?",
+    "choices": [
+      "`names_to = \"wk\"`",
+      "`names_sep = \"wk\"`",
+      "`id_cols = starts_with(\"wk\")`",
+      "`names_prefix = \"wk\"`"
+    ],
+    "answer": 3,
+    "explain": "In `pivot_wider()`, `names_prefix` is a string pasted onto the front of every new column name, the mirror image of `pivot_longer()`, where it is stripped off. `names_sep` only joins the pieces when several columns build each name."
+  },
+  {
+    "id": "reshape-018",
+    "section": "1.5",
+    "q": "The HW1 summary `ace_summary` gives the proportion of BRFSS respondents reporting adverse childhood experiences, by general health and sex:\n```\n# A tibble: 10 × 3\n   genhlth   sex    prop_ace\n   <fct>     <chr>     <dbl>\n 1 Excellent Female     0.55\n 2 Excellent Male       0.49\n 3 Very good Female     0.61\n 4 Very good Male       0.53\n 5 Good      Female     0.63\n 6 Good      Male       0.56\n 7 Fair      Female     0.69\n 8 Fair      Male       0.61\n 9 Poor      Female     0.74\n10 Poor      Male       0.66\n```\nFill in the blanks to get one row per health category and one column per sex:\n```r\nace_summary |>\n  pivot_wider(names_from = ____, values_from = ____)\n```",
+    "choices": [
+      "`prop_ace`, then `sex`",
+      "`genhlth`, then `prop_ace`",
+      "`sex`, then `prop_ace`",
+      "`genhlth`, then `sex`"
+    ],
+    "answer": 2,
+    "explain": "The values of `sex` become the column names and `prop_ace` fills the cells; the leftover column, `genhlth`, identifies the rows. `names_from = genhlth` would instead give one row per sex and one column per health category."
+  },
+  {
+    "id": "reshape-019",
+    "section": "1.5",
+    "q": "`ace_summary` has 10 rows and 3 columns: `genhlth` (5 categories), `sex` (Female, Male), and `prop_ace`. What are the dimensions of `pivot_wider(ace_summary, names_from = sex, values_from = prop_ace)`?",
+    "choices": [
+      "5 rows, 2 columns",
+      "5 rows, 3 columns",
+      "2 rows, 6 columns",
+      "10 rows, 4 columns"
+    ],
+    "answer": 1,
+    "explain": "The only column the pivot doesn't use, `genhlth`, identifies rows, so there is one row per category (5). The columns are `genhlth`, `Female`, and `Male`: the same 10 proportions, rearranged."
+  },
+  {
+    "id": "reshape-020",
+    "section": "1.5",
+    "q": "In HW1, the grouped summary of ACE proportions by general health and sex was pivoted wider before it was displayed. What is that step for?",
+    "choices": [
+      "Females and males sit side by side, so they're easy to compare in each category",
+      "The `summarize()` output is untidy, and widening it is what makes it tidy",
+      "ggplot2 needs a separate column for each sex to color the bars by sex",
+      "The wide table stores fewer numbers, so its proportions are more precise"
+    ],
+    "answer": 0,
+    "explain": "The long summary is already tidy, and it's the one to plot (with `fill = sex`). The wide version holds the same 10 proportions, laid out for a human reader who scans across a row to compare the sexes."
+  },
+  {
+    "id": "reshape-021",
+    "section": "1.5",
+    "q": "Starting from the 10-row `ace_summary` (columns `genhlth`, `sex`, `prop_ace`), which call produces this table?\n```\n# A tibble: 2 × 6\n  sex    Excellent `Very good`  Good  Fair  Poor\n  <chr>      <dbl>       <dbl> <dbl> <dbl> <dbl>\n1 Female      0.55        0.61  0.63  0.69  0.74\n2 Male        0.49        0.53  0.56  0.61  0.66\n```",
+    "choices": [
+      "`pivot_wider(ace_summary, names_from = sex, values_from = prop_ace)`",
+      "`pivot_wider(ace_summary, names_from = prop_ace, values_from = genhlth)`",
+      "`pivot_longer(ace_summary, cols = -sex, names_to = \"genhlth\")`",
+      "`pivot_wider(ace_summary, names_from = genhlth, values_from = prop_ace)`"
+    ],
+    "answer": 3,
+    "explain": "The health categories became column names, so they came from `names_from = genhlth`, and the cells are proportions (`values_from = prop_ace`). With those two used up, `sex` is the identifier, giving one row per sex."
+  },
+  {
+    "id": "reshape-022",
+    "section": "1.5",
+    "q": "In the HW2 SEDA data, `gap` holds two kinds of measurement, a math gap and a reading (`rla`) gap, told apart by `subject`:\n```\n# A tibble: 4 × 4\n     id grade subject   gap\n  <dbl> <dbl> <chr>   <dbl>\n1   101     3 math     0.12\n2   101     3 rla     -0.21\n3   101     4 math     0.15\n4   101     4 rla     -0.18\n```\nWhich call gives one row per district-grade, with separate `math` and `rla` columns?",
+    "choices": [
+      "`pivot_wider(seda, names_from = gap, values_from = subject)`",
+      "`pivot_wider(seda, names_from = c(id, grade), values_from = gap)`",
+      "`pivot_wider(seda, names_from = subject, values_from = gap)`",
+      "`pivot_longer(seda, cols = c(math, rla), names_to = \"subject\")`"
+    ],
+    "answer": 2,
+    "explain": "The subject labels become column names (`names_from = subject`) and the gap estimates fill them (`values_from = gap`); `id` and `grade` stay as identifiers, so both subjects for a district-grade land in one row. There are no `math` or `rla` columns to stack yet."
+  },
+  {
+    "id": "reshape-023",
+    "section": "1.5",
+    "q": "A long SEDA table has one row per district × grade × subject (500 districts, grades 3–8, math and rla) and the columns `id`, `grade`, `subject`, `gap`. What are its dimensions after `pivot_wider(names_from = subject, values_from = gap)`?",
+    "choices": [
+      "6,000 rows, 4 columns",
+      "3,000 rows, 4 columns",
+      "3,000 rows, 3 columns",
+      "500 rows, 14 columns"
+    ],
+    "answer": 1,
+    "explain": "The long table has \\( 500 \\times 6 \\times 2 = 6{,}000 \\) rows; widening by subject leaves one row per district-grade, \\( 500 \\times 6 = 3{,}000 \\). `subject` and `gap` are replaced by `math` and `rla`, so the columns are `id`, `grade`, `math`, `rla`."
+  },
+  {
+    "id": "reshape-024",
+    "section": "1.5",
+    "q": "This version of the SEDA data also has a standard error `se` for each gap:\n```\n# A tibble: 4 × 5\n     id grade subject   gap    se\n  <dbl> <dbl> <chr>   <dbl> <dbl>\n1   101     3 math     0.12  0.04\n2   101     3 rla     -0.21  0.05\n3   101     4 math     0.15  0.03\n4   101     4 rla     -0.18  0.06\n```\nWhat does `pivot_wider(seda, names_from = subject, values_from = gap)` return?",
+    "choices": [
+      "4 rows: `se` acts as an identifier, so math and rla never share a row",
+      "2 rows, one per district-grade, with the `se` column silently dropped",
+      "2 rows, one per district-grade, with `se` averaged over the subjects",
+      "An error, because `se` is not named in `values_from`"
+    ],
+    "answer": 0,
+    "explain": "By default `id_cols` is every column not used in `names_from` or `values_from`: here `id`, `grade`, and `se`. Every row has a different `se`, so every row stays separate, giving a staircase with `math` filled and `rla` `NA` in one row, and the reverse in the next."
+  },
+  {
+    "id": "reshape-025",
+    "section": "1.5",
+    "q": "Using the same SEDA table (`id`, `grade`, `subject`, `gap`, `se`), which call returns one row per district-grade with exactly the columns `id`, `grade`, `math`, `rla`?",
+    "choices": [
+      "`pivot_wider(seda, id_cols = c(id, grade, se), names_from = subject, values_from = gap)`",
+      "`pivot_wider(seda, id_cols = se, names_from = subject, values_from = gap)`",
+      "`pivot_wider(seda, names_from = c(subject, se), values_from = gap)`",
+      "`pivot_wider(seda, id_cols = c(id, grade), names_from = subject, values_from = gap)`"
+    ],
+    "answer": 3,
+    "explain": "`id_cols = c(id, grade)` says only those columns identify a row, so `se` is dropped and the two subjects collapse into one row. Keeping `se` among the ids still gives the 4-row staircase, and putting `se` in `names_from` creates columns like `math_0.04`."
+  },
+  {
+    "id": "reshape-026",
+    "section": "1.5",
+    "q": "Using the same SEDA table (`id`, `grade`, `subject`, `gap`, `se`), what columns does this return?\n```r\nseda |>\n  pivot_wider(names_from = subject, values_from = c(gap, se))\n```",
+    "choices": [
+      "`id`, `grade`, `math_gap`, `math_se`, `rla_gap`, `rla_se`",
+      "`id`, `grade`, `se`, `math`, `rla`",
+      "`id`, `grade`, `gap_math`, `gap_rla`, `se_math`, `se_rla`",
+      "`id`, `grade`, `math`, `rla`"
+    ],
+    "answer": 2,
+    "explain": "With two value columns, each new name is the value column's name, an underscore, and the subject, so both `gap` and `se` get a math and an rla version, and the rows collapse to one per district-grade. It's a common fix when each estimate has its own standard error."
+  },
+  {
+    "id": "reshape-027",
+    "section": "1.5",
+    "q": "`gdp_long`:\n```\n# A tibble: 5 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n5 Bolivia  2020    37\n```\nWhat does the Bolivia row look like after `pivot_wider(gdp_long, names_from = year, values_from = gdp)`?",
+    "choices": [
+      "0 under `2019` and 37 under `2020`",
+      "`NA` under `2019` and 37 under `2020`",
+      "There is no Bolivia row, since it lacks a 2019 value",
+      "37 under `2020`; the `2019` column is dropped for every country"
+    ],
+    "answer": 1,
+    "explain": "Every country-year combination gets a cell, and combinations missing from the long data are filled with `NA` (`values_fill` can supply something else). The result has 3 rows (Chile, Peru, Bolivia) and 3 columns (`country`, `2019`, `2020`)."
+  },
+  {
+    "id": "reshape-028",
+    "section": "1.5",
+    "q": "A student drops `grade` from the SEDA table before widening, leaving `no_grade`:\n```\n# A tibble: 4 × 3\n     id subject   gap\n  <dbl> <chr>   <dbl>\n1   101 math     0.12\n2   101 rla     -0.21\n3   101 math     0.15\n4   101 rla     -0.18\n```\nWhat does `pivot_wider(no_grade, names_from = subject, values_from = gap)` do?",
+    "choices": [
+      "Returns one row, with list-columns `math` and `rla` holding two gaps each, and warns",
+      "Returns two rows for district 101, one for each grade, as before",
+      "Returns one row, with each subject's two gaps averaged together",
+      "Returns one row, keeping only the first gap for each subject"
+    ],
+    "answer": 0,
+    "explain": "Without `grade`, `id` and `subject` no longer pin down a single `gap`: district 101 has two math values. `pivot_wider()` won't guess, so it stores both in a list-column and warns that the values are not uniquely identified. Keep every identifying column."
+  },
+  {
+    "id": "reshape-029",
+    "section": "1.5",
+    "q": "Each table below holds tuberculosis data by country and year. Which one needs `pivot_longer()` to become tidy?",
+    "choices": [
+      "Columns `country`, `year`, `type`, `count`, where `type` is `cases` or `population`",
+      "Columns `country`, `year`, `cases`, `population`",
+      "Columns `country`, `year`, `rate`, holding text like `\"745/19987071\"`",
+      "Columns `country`, `1999`, `2000`, with case counts under each year"
+    ],
+    "answer": 3,
+    "explain": "Values of a variable (years) sitting in column names is the signal for `pivot_longer()`. The `type`/`count` table has the opposite problem, two variables stacked in one column, fixed by `pivot_wider()`; the `cases`/`population` table is already tidy; `rate` needs splitting, not pivoting."
+  },
+  {
+    "id": "reshape-030",
+    "section": "1.5",
+    "q": "To compute, for each district-grade, the difference between its math gap and its reading gap, why pivot the long SEDA table (one row per district × grade × subject) wider first?",
+    "choices": [
+      "`mutate()` cannot do arithmetic on a column next to a character column",
+      "The long table is untidy, and `mutate()` refuses untidy input",
+      "`mutate()` works within a row, and the two gaps start out in different rows",
+      "Widening sorts the rows so that math and rla rows alternate"
+    ],
+    "answer": 2,
+    "explain": "`mutate()` computes from values in the same row. After `pivot_wider(names_from = subject, values_from = gap)` each district-grade has `math` and `rla` side by side, so `mutate(diff = math - rla)` works directly."
+  },
+  {
+    "id": "reshape-031",
+    "section": "1.5",
+    "q": "Why is it `names_to = \"week\"` (quoted) in `pivot_longer()`, but `names_from = week` (bare) in `pivot_wider()`?",
+    "choices": [
+      "Quoting makes the new column character, while a bare name would make it numeric",
+      "`names_to` names a column that doesn't exist yet; `names_from` refers to an existing one",
+      "`pivot_longer()` uses base R evaluation, while `pivot_wider()` uses tidy evaluation",
+      "Bare column names only work once a pipe `|>` has supplied the data frame"
+    ],
+    "answer": 1,
+    "explain": "Arguments that pick existing columns (`cols`, `names_from`, `values_from`, `id_cols`) use tidy selection, so bare names work. `names_to` and `values_to` name columns that will be created, so they take strings; the column's type comes from the data, not the quotes."
+  },
+  {
+    "id": "reshape-032",
+    "section": "1.6",
+    "q": "When joining `gdp` and `pop` (each with one row per country-year), `country` and `year` together serve as the key. What makes them the key?",
+    "choices": [
+      "They are the columns used to match each row of one table to rows of the other",
+      "They are the only columns with no missing values in either table",
+      "They come first in both tables, and joins always match on leading columns",
+      "They are the columns the join copies over from the second table"
+    ],
+    "answer": 0,
+    "explain": "A key is whatever column or columns you match rows on; the join pairs rows whose key values are equal. One country-year identifies a row here, so both columns are needed: matching on `country` alone would pair each GDP year with every population year."
+  },
+  {
+    "id": "reshape-033",
+    "section": "1.6",
+    "q": "`inner_join()`, `left_join()`, `right_join()`, and `full_join()` can all be run with the same key. What does choosing among them decide?",
+    "choices": [
+      "Which columns are used to match rows between the two tables",
+      "Whether a key that matches several rows gets duplicated",
+      "Whether key columns are compared as text or as numbers",
+      "What happens to rows whose key has no match in the other table"
+    ],
+    "answer": 3,
+    "explain": "The key says how rows are matched; the join type is the rule for unmatched rows: drop them (inner), keep the first table's (left), keep the second table's (right), or keep both (full). In every type, a key that matches several rows gives one output row per match."
+  },
+  {
+    "id": "reshape-034",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nWhat are the dimensions of `inner_join(gdp, pop, by = c(\"country\", \"year\"))`?",
+    "choices": [
+      "4 rows, 4 columns",
+      "5 rows, 4 columns",
+      "3 rows, 4 columns",
+      "3 rows, 6 columns"
+    ],
+    "answer": 2,
+    "explain": "Only Chile 2019, Chile 2020, and Peru 2020 are in both tables; Peru 2019 (GDP only) and Bolivia 2020 (population only) are dropped. The key columns appear once, followed by `gdp` and `pop`, so there are 4 columns."
+  },
+  {
+    "id": "reshape-035",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nAfter `left_join(gdp, pop, by = c(\"country\", \"year\"))`, where is there an `NA`?",
+    "choices": [
+      "In `gdp`, for Bolivia in 2020",
+      "In `pop`, for Peru in 2019",
+      "In `pop` for Peru 2019, and in `gdp` for Bolivia 2020",
+      "Nowhere, because unmatched rows are dropped"
+    ],
+    "answer": 1,
+    "explain": "A left join keeps all 4 rows of `gdp`. Peru 2019 has no population row, so its `pop` is `NA`; Bolivia isn't in `gdp`, so it never appears. You would see both `NA`s only in a `full_join()`."
+  },
+  {
+    "id": "reshape-036",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nHow many rows does `full_join(gdp, pop, by = c(\"country\", \"year\"))` have, and how many `NA` values?",
+    "choices": [
+      "5 rows, 2 `NA`s",
+      "4 rows, 1 `NA`",
+      "6 rows, 2 `NA`s",
+      "8 rows, 8 `NA`s"
+    ],
+    "answer": 0,
+    "explain": "A full join keeps every key from either table: the 3 shared country-years plus Peru 2019 (`pop` is `NA`) and Bolivia 2020 (`gdp` is `NA`). Stacking the tables with `bind_rows()` would instead give 8 rows and 8 `NA`s."
+  },
+  {
+    "id": "reshape-037",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nWhich call produces this?\n```\n# A tibble: 4 × 4\n  country  year   gdp   pop\n  <chr>   <dbl> <dbl> <dbl>\n1 Chile    2019   279  18.9\n2 Chile    2020   254  19.3\n3 Peru     2020   202  33.3\n4 Bolivia  2020    NA  11.9\n```",
+    "choices": [
+      "`left_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`full_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`inner_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`right_join(gdp, pop, by = c(\"country\", \"year\"))`"
+    ],
+    "answer": 3,
+    "explain": "Every `pop` row is present, including Bolivia with `NA` for `gdp`, while Peru 2019 (only in `gdp`) is gone. Keeping all keys of the second table is a right join; a full join would also have kept Peru 2019."
+  },
+  {
+    "id": "reshape-038",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nHow many rows does this return?\n```r\nright_join(gdp, pop, by = c(\"country\", \"year\")) |>\n  filter(is.na(pop))\n```",
+    "choices": [
+      "1: Peru in 2019",
+      "1: Bolivia in 2020",
+      "0",
+      "2: Peru 2019 and Bolivia 2020"
+    ],
+    "answer": 2,
+    "explain": "A right join keeps only keys from `pop`, and each of those has a population value, so `pop` is never `NA`. Peru 2019, the country-year missing a population, was dropped; to find it, filter a `left_join()` or `full_join()` on `is.na(pop)`."
+  },
+  {
+    "id": "reshape-039",
+    "section": "1.6",
+    "q": "You want GDP per person for exactly the country-years that have both a GDP value and a population value, with no rows padded by `NA`. Which call gives that table?",
+    "choices": [
+      "`full_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`inner_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`left_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`right_join(gdp, pop, by = c(\"country\", \"year\"))`"
+    ],
+    "answer": 1,
+    "explain": "An inner join keeps only keys found in both tables, so every row has both numbers and `gdp / pop` is never `NA`. Left, right, and full joins keep some unmatched keys and fill the missing side with `NA`."
+  },
+  {
+    "id": "reshape-040",
+    "section": "1.6",
+    "q": "`right_join(gdp, pop, by = c(\"country\", \"year\"))` keeps the same rows as which other call?",
+    "choices": [
+      "`left_join(pop, gdp, by = c(\"country\", \"year\"))`",
+      "`left_join(gdp, pop, by = c(\"country\", \"year\"))`",
+      "`inner_join(pop, gdp, by = c(\"country\", \"year\"))`",
+      "`full_join(pop, gdp, by = c(\"country\", \"year\"))`"
+    ],
+    "answer": 0,
+    "explain": "Both keep every row of `pop` and put `NA` in `gdp` where there's no match; only the column order (and possibly the row order) differs. `left_join(gdp, pop)` keeps every row of `gdp` instead."
+  },
+  {
+    "id": "reshape-041",
+    "section": "1.6",
+    "q": "Table `x` has keys A, B, C and table `y` has keys B, C, D, each appearing once. Which call returns rows for exactly B, C, and D?",
+    "choices": [
+      "`left_join(x, y, by = \"key\")`",
+      "`inner_join(x, y, by = \"key\")`",
+      "`full_join(x, y, by = \"key\")`",
+      "`right_join(x, y, by = \"key\")`"
+    ],
+    "answer": 3,
+    "explain": "A right join keeps every key of the second table (B, C, D), with `NA` in `x`'s columns for D. `left_join()` gives A, B, C; `inner_join()` gives B, C; `full_join()` gives A through D."
+  },
+  {
+    "id": "reshape-042",
+    "section": "1.6",
+    "q": "True or false: swapping the two tables in an inner join (`inner_join(y, x)` instead of `inner_join(x, y)`) changes which keys appear in the result.",
+    "choices": [
+      "True",
+      "False"
+    ],
+    "answer": 1,
+    "explain": "An inner join keeps the keys found in both tables, and being in both doesn't depend on the order. Swapping only changes the column (and row) order. For `left_join()` the order matters, since it decides which table keeps all its rows.",
+    "fixed": true
+  },
+  {
+    "id": "reshape-043",
+    "section": "1.6",
+    "q": "True or false: `left_join(x, y)` always returns exactly `nrow(x)` rows.",
+    "choices": [
+      "True",
+      "False"
+    ],
+    "answer": 1,
+    "explain": "It returns at least `nrow(x)` rows. Any row of `x` whose key matches several rows of `y` is repeated once per match, so the row count grows unless the key is unique in `y`.",
+    "fixed": true
+  },
+  {
+    "id": "reshape-044",
+    "section": "1.6",
+    "q": "`gdp2020` has one row per country for 190 countries, and `pop2020` has one row per country for 200 countries; 185 countries appear in both. How many rows does `full_join(gdp2020, pop2020, by = \"country\")` return?",
+    "choices": [
+      "205",
+      "185",
+      "200",
+      "390"
+    ],
+    "answer": 0,
+    "explain": "The 185 shared countries, plus 5 found only in `gdp2020` and 15 only in `pop2020`: \\( 185 + 5 + 15 = 205 \\). An inner join would give 185, a left join 190, and a right join 200."
+  },
+  {
+    "id": "reshape-045",
+    "section": "1.6",
+    "q": "`gdp` (billions of US dollars):\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop` (millions of people):\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Peru     2020  33.3\n4 Bolivia  2020  11.9\n```\nA student joins on `country` only: `left_join(gdp, pop, by = \"country\")`. Which of these rows is in the result?",
+    "choices": [
+      "Peru, `year.x` 2019, `gdp` 228, `year.y` 2019, `pop` `NA`",
+      "Peru, `year` 2019, `gdp` 228, `pop` `NA`",
+      "Bolivia, `year.x` `NA`, `gdp` `NA`, `year.y` 2020, `pop` 11.9",
+      "Peru, `year.x` 2019, `gdp` 228, `year.y` 2020, `pop` 33.3"
+    ],
+    "answer": 3,
+    "explain": "Matching on `country` alone pairs every Peru GDP row with Peru's only population row, so 2019 GDP gets the 2020 population: no error, just wrong data. Since `year` isn't a key, both copies are kept as `year.x` and `year.y`, and the result has 6 rows (dplyr also warns of a many-to-many match)."
+  },
+  {
+    "id": "reshape-046",
+    "section": "1.6",
+    "q": "In HW2, district-by-grade gaps were joined to district-by-grade covariates (`ses` is socioeconomic status).\n`gaps`:\n```\n# A tibble: 4 × 4\n     id grade  math   rla\n  <dbl> <dbl> <dbl> <dbl>\n1   101     3  0.12 -0.21\n2   101     4  0.15 -0.18\n3   102     3  0.05 -0.31\n4   102     4  0.08 -0.25\n```\n`covars`:\n```\n# A tibble: 4 × 3\n     id grade   ses\n  <dbl> <dbl> <dbl>\n1   101     3  0.42\n2   101     4  0.47\n3   102     3 -1.13\n4   102     4 -0.95\n```\nFill in the blank so rows are matched on both district and grade:\n```r\nleft_join(gaps, covars, by = ____)\n```",
+    "choices": [
+      "`\"id\"`",
+      "`c(\"id\" = \"grade\")`",
+      "`c(\"id\", \"grade\")`",
+      "`c(id, grade)`"
+    ],
+    "answer": 2,
+    "explain": "`by` takes a character vector of key names, so `c(\"id\", \"grade\")` matches on district and grade together (`join_by(id, grade)` is equivalent). `c(\"id\" = \"grade\")` would match `gaps$id` to `covars$grade`, and bare `c(id, grade)` looks for R objects named `id` and `grade`."
+  },
+  {
+    "id": "reshape-047",
+    "section": "1.6",
+    "q": "Suppose `covars` calls the district ID `district` instead of `id`, so its columns are `district`, `grade`, `ses`. Which call matches `gaps` (columns `id`, `grade`, `math`, `rla`) to `covars` on district and grade?",
+    "choices": [
+      "`left_join(gaps, covars, join_by(id, district, grade))`",
+      "`left_join(gaps, covars, join_by(id == district, grade))`",
+      "`left_join(gaps, covars, join_by(id == grade, district))`",
+      "`left_join(gaps, covars, by = c(\"id\", \"district\", \"grade\"))`"
+    ],
+    "answer": 1,
+    "explain": "In `join_by()`, `id == district` pairs a column of the left table with a differently named column of the right, and plain `grade` means the same name on both sides; `by = c(\"id\" = \"district\", \"grade\")` is the older equivalent. Listing `id` and `district` as separate keys fails, since each table lacks one of them."
+  },
+  {
+    "id": "reshape-048",
+    "section": "1.6",
+    "q": "`gaps` has columns `id`, `grade`, `math`, `rla`, and `covars` has `district`, `grade`, `ses`. What columns does `left_join(gaps, covars, join_by(id == district, grade))` return?",
+    "choices": [
+      "`id`, `grade`, `math`, `rla`, `ses`",
+      "`id`, `grade`, `math`, `rla`, `district`, `ses`",
+      "`district`, `grade`, `math`, `rla`, `ses`",
+      "`id`, `grade.x`, `math`, `rla`, `district`, `grade.y`, `ses`"
+    ],
+    "answer": 0,
+    "explain": "Matched key columns hold the same values, so dplyr keeps one copy under the left table's name (`id`) and then adds the right table's non-key columns. The `.x`/`.y` suffixes appear only for non-key columns that share a name."
+  },
+  {
+    "id": "reshape-049",
+    "section": "1.6",
+    "q": "`gaps`:\n```\n# A tibble: 4 × 4\n     id grade  math   rla\n  <dbl> <dbl> <dbl> <dbl>\n1   101     3  0.12 -0.21\n2   101     4  0.15 -0.18\n3   102     3  0.05 -0.31\n4   102     4  0.08 -0.25\n```\n`covars`:\n```\n# A tibble: 4 × 3\n     id grade   ses\n  <dbl> <dbl> <dbl>\n1   101     3  0.42\n2   101     4  0.47\n3   102     3 -1.13\n4   102     4 -0.95\n```\nA student forgets `grade` and runs `left_join(gaps, covars, by = \"id\")`. What does it return?",
+    "choices": [
+      "4 rows, with a single `grade` column",
+      "8 rows, with a single `grade` column",
+      "4 rows, with columns `grade.x` and `grade.y`",
+      "8 rows, with columns `grade.x` and `grade.y`"
+    ],
+    "answer": 3,
+    "explain": "Each `gaps` row matches both `covars` rows for its district, so 4 rows become \\( 4 \\times 2 = 8 \\), half of them pairing one grade's gaps with another grade's `ses`. Because `grade` wasn't a key, both copies are kept as `grade.x` and `grade.y`."
+  },
+  {
+    "id": "reshape-050",
+    "section": "1.6",
+    "q": "The SEDA `gaps` and `covars` tables each have 3,000 rows: 500 districts × 6 grades, one row per district-grade. How many rows does `left_join(gaps, covars, by = \"id\")` return?",
+    "choices": [
+      "3,000",
+      "6,000",
+      "18,000",
+      "9,000,000"
+    ],
+    "answer": 2,
+    "explain": "With `id` as the only key, each `gaps` row matches all 6 `covars` rows for its district: \\( 3{,}000 \\times 6 = 18{,}000 \\). Joining by = c(\"id\", \"grade\") matches each row to exactly one covariate row and keeps 3,000; 9,000,000 would pair every row with every row."
+  },
+  {
+    "id": "reshape-051",
+    "section": "1.6",
+    "q": "Some district-grades in `gaps` have no row in `covars`. You want every row of `gaps` kept, with `ses` set to `NA` where covariates are missing. Which call?",
+    "choices": [
+      "`inner_join(gaps, covars, by = c(\"id\", \"grade\"))`",
+      "`left_join(gaps, covars, by = c(\"id\", \"grade\"))`",
+      "`right_join(gaps, covars, by = c(\"id\", \"grade\"))`",
+      "`left_join(covars, gaps, by = c(\"id\", \"grade\"))`"
+    ],
+    "answer": 1,
+    "explain": "A left join keeps every row of its first table and fills the second table's columns with `NA` where there is no match. The inner join drops the unmatched district-grades, and the last two keep all of `covars` instead."
+  },
+  {
+    "id": "reshape-052",
+    "section": "1.6",
+    "q": "`gdp`:\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`info` has one row per country:\n```\n# A tibble: 3 × 2\n  country continent\n  <chr>   <chr>\n1 Chile   South America\n2 Peru    South America\n3 Kenya   Africa\n```\nHow many rows does `left_join(gdp, info, by = \"country\")` return?",
+    "choices": [
+      "4: each `gdp` row matches one `info` row, whose continent is repeated",
+      "2: one row per country, because `info` has one row per country",
+      "5: Kenya is added, with `NA` for its `year` and `gdp`",
+      "8: each `gdp` row is paired with both South American countries"
+    ],
+    "answer": 0,
+    "explain": "This is many-to-one: several `gdp` rows share a key, but each key appears once in `info`, so every `gdp` row gets exactly one match and the continent is copied onto both years. Kenya has no GDP row, and a left join doesn't add it."
+  },
+  {
+    "id": "reshape-053",
+    "section": "1.6",
+    "q": "`districts`:\n```\n# A tibble: 3 × 2\n     id name\n  <dbl> <chr>\n1   101 North\n2   102 Central\n3   103 South\n```\n`scores`:\n```\n# A tibble: 5 × 3\n     id grade  math\n  <dbl> <dbl> <dbl>\n1   101     3  0.12\n2   101     4  0.15\n3   101     5  0.11\n4   102     3  0.05\n5   102     4  0.08\n```\nHow many rows does `left_join(districts, scores, by = \"id\")` return?",
+    "choices": [
+      "3",
+      "5",
+      "15",
+      "6"
+    ],
+    "answer": 3,
+    "explain": "District 101 matches 3 rows of `scores` and 102 matches 2, so they become 3 and 2 rows; 103 has no match, but a left join keeps it once with `NA` for `grade` and `math`: 3 + 2 + 1 = 6. A left join can return more rows than its left table."
+  },
+  {
+    "id": "reshape-054",
+    "section": "1.6",
+    "q": "`gdp`:\n```\n# A tibble: 4 × 3\n  country  year   gdp\n  <chr>   <dbl> <dbl>\n1 Chile    2019   279\n2 Chile    2020   254\n3 Peru     2019   228\n4 Peru     2020   202\n```\n`pop2` accidentally lists Chile 2020 twice, from two sources:\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 Chile    2019  18.9\n2 Chile    2020  19.3\n3 Chile    2020  19.5\n4 Peru     2020  33.3\n```\nWhat does `left_join(gdp, pop2, by = c(\"country\", \"year\"))` return?",
+    "choices": [
+      "4 rows, keeping the first Chile 2020 population",
+      "4 rows, with the two Chile 2020 populations averaged",
+      "5 rows, with Chile's 2020 GDP of 254 appearing twice",
+      "An error, because a key appears twice in `pop2`"
+    ],
+    "answer": 2,
+    "explain": "A left join keeps every `gdp` row, and a row whose key matches two `pop2` rows comes out twice, once per match (Peru 2019 still gets `NA`). A total of GDP computed afterwards would count Chile 2020 twice, so check that keys are unique in the lookup table first."
+  },
+  {
+    "id": "reshape-055",
+    "section": "1.6",
+    "q": "Before running `left_join(gaps, covars, by = c(\"id\", \"grade\"))`, you want to be sure the result will have exactly `nrow(gaps)` rows. Which check guarantees that?",
+    "choices": [
+      "`gaps |> count(id, grade) |> filter(n > 1)` returns no rows",
+      "`covars |> count(id, grade) |> filter(n > 1)` returns no rows",
+      "`nrow(gaps) == nrow(covars)` is `TRUE`",
+      "`all(gaps$id %in% covars$id)` is `TRUE`"
+    ],
+    "answer": 1,
+    "explain": "A left join adds rows only when a key matches several rows of the right table, so the key must be unique in `covars`. Repeated keys in `gaps` are just carried through, equal row counts don't rule out duplicates, and `%in%` checks for matches, not uniqueness."
+  },
+  {
+    "id": "reshape-056",
+    "section": "1.6",
+    "q": "What does `left_join(gdp, pop)` do when `by` is left out?",
+    "choices": [
+      "Joins on every column name the two tables share, here `country` and `year`",
+      "Joins on just the first column of each table, which here is `country`",
+      "Matches rows by position: row 1 with row 1, row 2 with row 2, and so on",
+      "Stops with an error, because `by` is a required argument of every join"
+    ],
+    "answer": 0,
+    "explain": "With no `by`, dplyr does a natural join on all columns with the same name and prints a message naming them (`join_by(country, year)`). That's right here, but a shared column that isn't meant as a key gets matched too, so it's safer to spell out `by`."
+  },
+  {
+    "id": "reshape-057",
+    "section": "1.6",
+    "q": "Both `gdp` and `pop` have a `source` column (`\"WB\"` in every `gdp` row, `\"UN\"` in every `pop` row). `left_join(gdp, pop)` runs without error, but `pop` is `NA` in every row. Why?",
+    "choices": [
+      "A left join fills `pop` only when both tables have the same number of rows",
+      "The `source` columns were renamed `source.x` and `source.y`, breaking the match",
+      "Without `by`, `left_join()` adds the columns of `pop` but never fills them",
+      "With no `by`, `source` was used as a key too, and no source value matches"
+    ],
+    "answer": 3,
+    "explain": "A natural join matches on all shared columns, so rows had to agree on `country`, `year`, and `source`; `\"WB\"` never equals `\"UN\"`, so nothing matched. Use by = c(\"country\", \"year\"); the two `source` columns then come through as `source.x` and `source.y`."
+  },
+  {
+    "id": "reshape-058",
+    "section": "1.6",
+    "q": "`gdp` uses country names (`Chile`, `Peru`), but a new population table uses country codes:\n```\n# A tibble: 4 × 3\n  country  year   pop\n  <chr>   <dbl> <dbl>\n1 CHL      2019  18.9\n2 CHL      2020  19.3\n3 PER      2020  33.3\n4 BOL      2020  11.9\n```\n`inner_join(gdp, pop_codes, by = c(\"country\", \"year\"))` returns 0 rows. Why?",
+    "choices": [
+      "`inner_join()` needs both tables sorted by country and year first",
+      "Keys must be character columns, and `year` is numeric",
+      "Keys must match exactly, and `\"Chile\"` is not equal to `\"CHL\"`",
+      "An inner join drops every country that is missing a year in either table"
+    ],
+    "answer": 2,
+    "explain": "Joins compare key values for exact equality, so names never match codes and an inner join keeps nothing (a left join would keep every `gdp` row with `pop` all `NA`). Recode one table, for example with a names-to-codes lookup, before joining."
+  },
+  {
+    "id": "reshape-059",
+    "section": "1.6",
+    "q": "In `covars`, `grade` was read in as character (`\"3\"`, `\"4\"`, …), while in `gaps` it is numeric. What happens with `left_join(gaps, covars, by = c(\"id\", \"grade\"))`?",
+    "choices": [
+      "It converts both `grade` columns to text and joins normally",
+      "An error saying `grade` has incompatible types in the two tables",
+      "It runs, but `ses` is `NA` in every row because no grade matches",
+      "It quietly joins on `id` alone and ignores the `grade` key"
+    ],
+    "answer": 1,
+    "explain": "dplyr won't compare numbers with strings in a key; it stops and reports that `x$grade` is a double and `y$grade` is a character. Convert one side first, for example `mutate(grade = as.numeric(grade))` on `covars`."
+  },
+  {
+    "id": "reshape-060",
+    "section": "1.6",
+    "q": "`seda_long` has 3,000 rows (250 districts × grades 3–8 × math and rla) with columns `id`, `grade`, `subject`, `gap`. `covars` has one row for each of the 1,500 district-grades, with columns `id`, `grade`, `ses`. What are the dimensions of the result?\n```r\nseda_long |>\n  pivot_wider(names_from = subject, values_from = gap) |>\n  left_join(covars, by = c(\"id\", \"grade\"))\n```",
+    "choices": [
+      "1,500 rows, 5 columns",
+      "3,000 rows, 5 columns",
+      "1,500 rows, 4 columns",
+      "3,000 rows, 6 columns"
+    ],
+    "answer": 0,
+    "explain": "Widening by subject leaves one row per district-grade: 1,500 rows with `id`, `grade`, `math`, `rla`. Each of those matches exactly one `covars` row on the two keys, so the join keeps 1,500 rows and adds `ses`, for 5 columns."
+  }
+]

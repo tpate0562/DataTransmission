@@ -231,7 +231,7 @@
       "1,203 rows and 6 columns; `<chr>` marks the columns with missing values"
     ],
     "answer": 2,
-    "explain": "A tibble's header gives rows × columns, and the line under the column names gives each column's type: `<chr>` is character, `<dbl>` is numeric (double). How many districts or grades there are depends on the values, not on the dimensions."
+    "explain": "A tibble's header gives the number of rows and then the number of columns, and the line under the column names gives each column's type: `<chr>` is character, `<dbl>` is numeric (double). How many districts or grades there are depends on the values, not on the dimensions."
   },
   {
     "id": "tidy-019",
@@ -387,7 +387,7 @@
       "1,020"
     ],
     "answer": 2,
-    "explain": "Rows after pivoting equal the original rows times the number of pivoted columns, so there were \\(1040 / 20 = 52\\) week columns. Subtracting (1,020) would treat pivoting as adding rows rather than multiplying them."
+    "explain": "Rows after pivoting equal the original rows times the number of pivoted columns, so there were \\(1040 / 20 = 52\\) week columns. 1,020 comes from subtracting the 20 original rows instead of dividing by them."
   },
   {
     "id": "tidy-031",
@@ -517,7 +517,7 @@
       "Each country's growth series should be stored in its own table"
     ],
     "answer": 0,
-    "explain": "The headers `1961` through `2019` are values of a year variable, and every cell holds the same variable, growth. The tidy version has columns `country`, `year`, `growth` with one row per country-year; transposing the table just moves the years from the columns into the rows' labels."
+    "explain": "The headers `1961` through `2019` are values of a year variable, and every cell holds the same variable, growth. The tidy version has columns `country`, `year`, `growth` with one row per country-year; transposing would just move the problem, putting the country names in the column headers instead."
   },
   {
     "id": "tidy-041",
@@ -563,7 +563,7 @@
     "section": "1.4",
     "q": "Is this table tidy?\n```\n# A tibble: 4 × 4\n  country  year type           count\n  <chr>   <dbl> <chr>          <dbl>\n1 Brazil   1999 cases          37737\n2 Brazil   1999 population 172006362\n3 Brazil   2000 cases          80488\n4 Brazil   2000 population 174504898\n```",
     "choices": [
-      "No: the variables `cases` and `population` are values of `type`",
+      "No: the variables `cases` and `population` appear as values of `type`",
       "Yes: every column has a single type and no two rows are exactly identical",
       "No: `year` should be spread out into a separate column for each year",
       "Yes: it is in long format, and a long table is always a tidy table"
@@ -600,7 +600,7 @@
   {
     "id": "tidy-047",
     "section": "1.4",
-    "q": "Each row of this SEDA table gives the estimated achievement gap for one school district in one grade, computed from many students' test scores:\n```\n# A tibble: 4 × 5\n  district  state grade   gap gap_se\n  <chr>     <chr> <dbl> <dbl>  <dbl>\n1 Alder USD CA        3 0.412  0.091\n2 Alder USD CA        4 0.385  0.088\n3 Birch USD CA        3 0.297  0.12\n4 Birch USD CA        4 0.351  0.117\n```\nWhat is the observational unit?",
+    "q": "SEDA achievement-gap estimates are computed from the test scores of millions of students. Here are a few rows of a SEDA table:\n```\n# A tibble: 4 × 5\n  district  state grade   gap gap_se\n  <chr>     <chr> <dbl> <dbl>  <dbl>\n1 Alder USD CA        3 0.412  0.091\n2 Alder USD CA        4 0.385  0.088\n3 Birch USD CA        3 0.297  0.12\n4 Birch USD CA        4 0.351  0.117\n```\nWhat is the observational unit?",
     "choices": [
       "A student who took the state tests",
       "A district in a particular grade",
@@ -695,7 +695,7 @@
     "choices": [
       "The wide version is tidy, because each sensor is one row and tidiness only requires distinct rows",
       "The tidy version loses information, because it has only 3 columns instead of 366",
-      "Tidy repeats each `sensor_id` 365 times but makes per-sensor `group_by()` summaries easy",
+      "The tidy version repeats each `sensor_id` 365 times but makes per-sensor summaries easy",
       "The wide version is easier to plot with `ggplot2`, because each day already has its own column"
     ],
     "answer": 2,
@@ -717,7 +717,7 @@
   {
     "id": "tidy-056",
     "section": "1.4",
-    "q": "Each tibble below records the same mammal measurements. Which one is tidy?\n```\nt1\n  species measure    value\n  <chr>   <chr>      <dbl>\n1 Cat     body_wt_kg  3.3\n2 Cat     brain_wt_g 25.6\n3 Mouse   body_wt_kg  0.02\n4 Mouse   brain_wt_g  0.4\n\nt2\n  measure      Cat Mouse\n  <chr>      <dbl> <dbl>\n1 body_wt_kg   3.3  0.02\n2 brain_wt_g  25.6  0.4\n\nt3\n  species body_wt_kg brain_wt_g\n  <chr>        <dbl>      <dbl>\n1 Cat           3.3        25.6\n2 Mouse         0.02        0.4\n\nt4\n  species wt\n  <chr>   <chr>\n1 Cat     3.3/25.6\n2 Mouse   0.02/0.4\n```",
+    "q": "Each tibble below records the same mammal measurements. Which one is tidy?\n```\nt1\n# A tibble: 4 × 3\n  species measure    value\n  <chr>   <chr>      <dbl>\n1 Cat     body_wt_kg  3.3\n2 Cat     brain_wt_g 25.6\n3 Mouse   body_wt_kg  0.02\n4 Mouse   brain_wt_g  0.4\n\nt2\n# A tibble: 2 × 3\n  measure      Cat Mouse\n  <chr>      <dbl> <dbl>\n1 body_wt_kg   3.3  0.02\n2 brain_wt_g  25.6  0.4\n\nt3\n# A tibble: 2 × 3\n  species body_wt_kg brain_wt_g\n  <chr>        <dbl>      <dbl>\n1 Cat           3.3        25.6\n2 Mouse         0.02        0.4\n\nt4\n# A tibble: 2 × 2\n  species wt\n  <chr>   <chr>\n1 Cat     3.3/25.6\n2 Mouse   0.02/0.4\n```",
     "choices": [
       "`t3`",
       "`t1`",
@@ -738,7 +738,7 @@
       "12"
     ],
     "answer": 3,
-    "explain": "Each growth value is an observation of one country in one year: \\(3 \\times 4 = 12\\). The table has only 3 rows because each row packs four country-year observations, which is why it isn't tidy; 15 wrongly counts the `country` column as observations too."
+    "explain": "Each growth value is an observation of one country in one year: \\(3 \\times 4 = 12\\). The table has only 3 rows because each row packs four country-year observations, which is why it isn't tidy; 15 counts every cell, including the `country` names."
   },
   {
     "id": "tidy-058",
