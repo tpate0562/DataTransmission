@@ -392,7 +392,7 @@
   {
     "id": "summ-031",
     "section": "3",
-    "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 NA\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
+    "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 <NA>\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
     "choices": [
       "`id` 0, `x` 0.5, `y` 0.25: the share missing per column",
       "`id` 0, `x` 2, `y` 1: the number missing in each column",
@@ -561,7 +561,7 @@
   {
     "id": "summ-044",
     "section": "3",
-    "q": "Given `df`:\n```\n# A tibble: 5 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     2 a\n2     2    NA b\n3     3     5 NA\n4     4    NA NA\n5     5     7 e\n```\nhow many rows do `df |> drop_na()` and `df |> drop_na(x)` return?",
+    "q": "Given `df`:\n```\n# A tibble: 5 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     2 a\n2     2    NA b\n3     3     5 <NA>\n4     4    NA <NA>\n5     5     7 e\n```\nhow many rows do `df |> drop_na()` and `df |> drop_na(x)` return?",
     "choices": [
       "3 and 2",
       "2 and 3",

@@ -127,7 +127,7 @@
       "`group = genhlth`"
     ],
     "answer": 0,
-    "explain": "Mapping `fill = sex` splits each category into one group per sex with its own fill color, and `position = \"dodge\"` then sets those bars side by side. Quoting `\"sex\"` maps a constant string, so every bar is in the same group and the same color."
+    "explain": "Mapping `fill = sex` splits each category into one group per sex with its own fill color, and `position = \"dodge\"` then sets those bars side by side. Quoting `\"sex\"` maps a constant string, so the two sexes' bars are not split into groups: they share one color and overlap instead of dodging."
   },
   {
     "id": "graphics-011",
