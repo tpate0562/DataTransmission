@@ -238,8 +238,8 @@
     "section": "4.5",
     "q": "A simulation plots \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) against \\( n \\) for a population of \\( N = 200 \\), once using `sample(pop, n)` and once using `sample(pop, n, replace = TRUE)`, for \\( n \\) from 10 to 200. What pattern should appear?",
     "choices": [
-      "The without-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
-      "The with-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
+      "The without-replacement curve is lower, and it pulls further below the other, relative to its size, as \\( n \\) nears 200, where that curve hits 0",
+      "The with-replacement curve is lower, and it pulls further below the other, relative to its size, as \\( n \\) nears 200, where that curve hits 0",
       "The two curves lie on top of each other, because both sample means are unbiased for \\( \\mu \\)",
       "The without-replacement curve is lower for small \\( n \\), but the curves cross near \\( n = 100 \\)"
     ],
