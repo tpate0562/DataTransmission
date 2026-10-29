@@ -658,7 +658,7 @@
       "`left_join(covars, gaps, by = c(\"id\", \"grade\"))`"
     ],
     "answer": 1,
-    "explain": "A left join keeps every row of its first table and fills the second table's columns with `NA` where there is no match. The inner join drops the unmatched district-grades, and the last two keep all of `covars` instead."
+    "explain": "A left join keeps every row of its first table and fills the second table's columns with `NA` where there is no match. The inner join drops the unmatched district-grades, and `right_join(gaps, covars)` and `left_join(covars, gaps)` keep all of `covars` instead."
   },
   {
     "id": "reshape-052",
