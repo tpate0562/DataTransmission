@@ -1,0 +1,782 @@
+[
+  {
+    "id": "summ-001",
+    "section": "2.6",
+    "q": "Given `df`:\n```\n# A tibble: 6 × 3\n  region sex       y\n  <chr>  <chr> <dbl>\n1 N      F         2\n2 N      M         4\n3 N      F         6\n4 S      F         1\n5 S      F         3\n6 S      F         5\n```\nwhat does this pipeline return?\n```r\ndf |>\n  group_by(region, sex) |>\n  summarize(avg = mean(y))\n```",
+    "choices": [
+      "4 rows, one for each possible region and sex pair",
+      "6 rows, with columns `region`, `sex`, `y`, and `avg`",
+      "3 rows, with columns `region`, `sex`, and `avg`",
+      "2 rows, with columns `region` and `avg`"
+    ],
+    "answer": 2,
+    "explain": "`summarize()` returns one row per combination of grouping values that actually occurs: (N, F), (N, M) and (S, F). There is no S/M row because no such rows exist, and only the grouping columns plus the new summary column are kept."
+  },
+  {
+    "id": "summ-002",
+    "section": "2.6",
+    "q": "Given this tibble of hawk weights in grams:\n```\n# A tibble: 5 × 2\n  species weight\n  <chr>    <dbl>\n1 RT        1100\n2 RT         900\n3 CH         400\n4 CH          NA\n5 SS         150\n```\nwhat is `mean_wt` in the `CH` row of the output?\n```r\nhawks |>\n  group_by(species) |>\n  summarize(mean_wt = mean(weight))\n```",
+    "choices": [
+      "`NA`",
+      "400",
+      "200",
+      "An error, because one group contains `NA`"
+    ],
+    "answer": 0,
+    "explain": "`mean()` returns `NA` whenever its input contains `NA`, unless you pass `na.rm = TRUE`. Only the CH group is affected (RT is 1000 and SS is 150); 200 would treat the missing weight as 0."
+  },
+  {
+    "id": "summ-003",
+    "section": "2.6",
+    "q": "After this code runs, how is `res` grouped?\n```r\nres <- brfss |>\n  group_by(genhlth, sex) |>\n  summarize(prop_ace = mean(ace))\n```",
+    "choices": [
+      "By `genhlth` and `sex`",
+      "By `sex` only",
+      "It is not grouped at all",
+      "By `genhlth` only"
+    ],
+    "answer": 3,
+    "explain": "`summarize()` drops the last grouping variable, so the result is still grouped by `genhlth` (dplyr prints a message saying so). Use `.groups = \"drop\"` or `ungroup()` to remove the grouping entirely."
+  },
+  {
+    "id": "summ-004",
+    "section": "2.6",
+    "q": "For `x <- c(2, 7, 9, 4, 6)`, what does `mean(x > 5)` return?",
+    "choices": [
+      "3",
+      "0.6",
+      "7.33",
+      "`TRUE`"
+    ],
+    "answer": 1,
+    "explain": "`x > 5` is `FALSE, TRUE, TRUE, FALSE, TRUE`. Averaging a logical vector treats TRUE as 1 and FALSE as 0, so the result is the proportion \\( 3/5 = 0.6 \\). `sum(x > 5)` would give the count 3, and 7.33 is the mean of the values above 5."
+  },
+  {
+    "id": "summ-005",
+    "section": "2.6",
+    "q": "`bb_long` is the Billboard data after `pivot_longer(starts_with(\"wk\"), names_to = \"week\", values_to = \"rank\", values_drop_na = TRUE)`, so each row is one song in one week it was on the chart. What does `top` measure?\n```r\nbb_long |>\n  group_by(artist, track) |>\n  summarize(top = sum(rank == 1))\n```",
+    "choices": [
+      "Whether each song ever reached number one, as `TRUE` or `FALSE`",
+      "The number of weeks each song spent at number one",
+      "The proportion of each song's chart weeks spent at number one",
+      "Each song's best chart position over its whole run"
+    ],
+    "answer": 1,
+    "explain": "`rank == 1` is TRUE in each week the song was number one, and summing a logical vector counts the TRUEs. `mean(rank == 1)` would give the proportion of its weeks, and `min(rank)` its peak position."
+  },
+  {
+    "id": "summ-006",
+    "section": "2.6",
+    "q": "This time `bb_long` was made **without** `values_drop_na = TRUE`, so the weeks after a song left the chart have `rank` equal to `NA`. The code below returns `NA` for `top` for nearly every song. Which replacement for `sum(rank == 1)` gives the number of weeks at number one?\n```r\nbb_long |>\n  group_by(artist, track) |>\n  summarize(top = sum(rank == 1))\n```",
+    "choices": [
+      "`sum(rank == 1) / n()`",
+      "`mean(rank == 1, na.rm = TRUE)`",
+      "`sum(is.na(rank == 1))`",
+      "`sum(rank == 1, na.rm = TRUE)`"
+    ],
+    "answer": 3,
+    "explain": "`rank == 1` is `NA` in the off-chart weeks, and `sum()` of anything containing `NA` is `NA`. Adding `na.rm = TRUE` skips those weeks and counts the TRUEs; the `mean()` version gives a proportion, not a count, and `sum(is.na(...))` counts the off-chart weeks."
+  },
+  {
+    "id": "summ-007",
+    "section": "2.6",
+    "q": "`diamonds` has 53,940 rows, and `cut` has 5 levels. What are the dimensions of the result?\n```r\ndiamonds |>\n  group_by(cut) |>\n  summarize(across(c(carat, price), mean))\n```",
+    "choices": [
+      "5 rows and 3 columns",
+      "5 rows and 2 columns",
+      "1 row and 2 columns",
+      "53,940 rows and 3 columns"
+    ],
+    "answer": 0,
+    "explain": "There is one row per cut. The columns are the grouping variable `cut` plus one column for each variable inside `across()`, which keep their names `carat` and `price`."
+  },
+  {
+    "id": "summ-008",
+    "section": "2.6",
+    "q": "What are the column names of the result?\n```r\nhawks |>\n  summarize(across(c(wing, weight), list(avg = mean, sd = sd)))\n```",
+    "choices": [
+      "`avg_wing`, `avg_weight`, `sd_wing`, `sd_weight`",
+      "`wing`, `weight`",
+      "`wing_avg`, `wing_sd`, `weight_avg`, `weight_sd`",
+      "`avg`, `sd`"
+    ],
+    "answer": 2,
+    "explain": "Given a named list of functions, `across()` makes one column per variable and function, named column first and function name second, separated by an underscore. With a single unnamed function the original names `wing` and `weight` would be kept."
+  },
+  {
+    "id": "summ-009",
+    "section": "2.6",
+    "q": "Fill in the blank so the code returns the mean of every numeric column, ignoring missing values.\n```r\nseda |>\n  summarize(across(where(is.numeric), ____))\n```",
+    "choices": [
+      "`mean(na.rm = TRUE)`",
+      "`\\(x) mean(is.na(x), na.rm = TRUE)`",
+      "`\\(x) mean(x, na.rm = TRUE)`",
+      "`mean(x, na.rm = TRUE)`"
+    ],
+    "answer": 2,
+    "explain": "`across()` needs a function to apply to each column, and the lambda `\\(x) mean(x, na.rm = TRUE)` is one. `mean(na.rm = TRUE)` and `mean(x, na.rm = TRUE)` are calls rather than functions, and `\\(x) mean(is.na(x), na.rm = TRUE)` would compute each column's proportion missing."
+  },
+  {
+    "id": "summ-010",
+    "section": "2.6",
+    "q": "What do `mean(c(4, NA, 8))` and `mean(c(4, NA, 8), na.rm = TRUE)` return?",
+    "choices": [
+      "`NA` and 6",
+      "4 and 6",
+      "`NA` and 4",
+      "6 and 6"
+    ],
+    "answer": 0,
+    "explain": "Without `na.rm`, any `NA` makes the mean `NA`. With `na.rm = TRUE` the `NA` is dropped first, so the mean is \\( (4 + 8)/2 = 6 \\); 4 is what you would get by treating the `NA` as a zero and dividing by 3."
+  },
+  {
+    "id": "summ-011",
+    "section": "2.6",
+    "q": "Given `df`:\n```\n# A tibble: 4 × 2\n  g         x\n  <chr> <dbl>\n1 a         1\n2 a        NA\n3 a         3\n4 b         5\n```\nwhat are `n` and `n_obs` in the output row for group `a`?\n```r\ndf |>\n  group_by(g) |>\n  summarize(n = n(), n_obs = sum(!is.na(x)))\n```",
+    "choices": [
+      "`n` is 2 and `n_obs` is 2",
+      "`n` is 3 and `n_obs` is 1",
+      "`n` is 3 and `n_obs` is `NA`",
+      "`n` is 3 and `n_obs` is 2"
+    ],
+    "answer": 3,
+    "explain": "`n()` counts the rows in the group, missing or not. `!is.na(x)` is TRUE for the two observed values and summing it counts them; `is.na()` never returns `NA`, so no `na.rm` is needed."
+  },
+  {
+    "id": "summ-012",
+    "section": "2.6",
+    "q": "In the BRFSS data, `ace` is `TRUE` if a respondent reported at least one adverse childhood experience and `FALSE` otherwise (assume no missing values). Which line returns a one-row tibble with the proportion who reported an ACE?",
+    "choices": [
+      "`brfss |> summarize(prop = sum(ace))`",
+      "`brfss |> summarize(prop = mean(ace))`",
+      "`brfss |> mutate(prop = mean(ace))`",
+      "`brfss |> summarize(prop = n() / sum(ace))`"
+    ],
+    "answer": 1,
+    "explain": "The mean of a logical vector is the proportion of TRUEs. `sum()` gives the count, `mutate()` keeps every row instead of collapsing to one, and `n() / sum(ace)` is the reciprocal of the proportion."
+  },
+  {
+    "id": "summ-013",
+    "section": "2.6",
+    "q": "A student runs the code below on the BRFSS data and notices that the five `prop_ace` values add up to 2.7. What does that indicate?\n```r\nbrfss |>\n  group_by(genhlth) |>\n  summarize(prop_ace = mean(ace))\n```",
+    "choices": [
+      "The code double-counts respondents who fall in more than one health group",
+      "Nothing: each is a proportion within a different health group",
+      "`mean()` should be replaced by `sum()` so that the values add up to 1",
+      "`na.rm = TRUE` is missing, and the missing values inflate each proportion"
+    ],
+    "answer": 1,
+    "explain": "Each `prop_ace` is the share of respondents **in that health category** who reported an ACE, so each has its own denominator. Proportions add to 1 across the categories of the variable being tallied, not across separate groups."
+  },
+  {
+    "id": "summ-014",
+    "section": "2.6",
+    "q": "Which pipeline compares the proportion of respondents reporting ACEs between smokers and non-smokers? (`ace` and `smoker` are both logical.)",
+    "choices": [
+      "`brfss |> group_by(ace) |> summarize(p = mean(smoker))`",
+      "`brfss |> group_by(smoker, ace) |> summarize(p = mean(ace))`",
+      "`brfss |> summarize(p = mean(ace & smoker))`",
+      "`brfss |> group_by(smoker) |> summarize(p = mean(ace))`"
+    ],
+    "answer": 3,
+    "explain": "Grouping by `smoker` and averaging `ace` gives the ACE proportion within each smoking group. Swapping the roles gives the proportion of smokers among people with and without ACEs, a different question, and `mean(ace & smoker)` is the share who are both."
+  },
+  {
+    "id": "summ-015",
+    "section": "2.6",
+    "q": "Suppose that in the output of the code below, the row with `genhlth` equal to `\"Poor\"` and `sex` equal to `\"Female\"` has `prop_ace = 0.71`. What does 0.71 mean?\n```r\nbrfss |>\n  group_by(genhlth, sex) |>\n  summarize(prop_ace = mean(ace))\n```",
+    "choices": [
+      "Among women in poor health, 71% reported at least one ACE",
+      "Among respondents who reported an ACE, 71% were women in poor health",
+      "71% of the women in the sample rated their general health as poor",
+      "Among respondents in poor health, 71% were women who reported an ACE"
+    ],
+    "answer": 0,
+    "explain": "Each group is one health-by-sex cell, so the denominator is the women in poor health and 0.71 is the share of them with `ace` TRUE. The other readings use a different denominator or a different outcome."
+  },
+  {
+    "id": "summ-016",
+    "section": "2.6",
+    "q": "Suppose grouping BRFSS respondents by depression status gives an ACE proportion of 0.78 among those who report depression and 0.55 among those who don't. What do these grouped proportions support?",
+    "choices": [
+      "Adverse childhood experiences cause depression in about 23% of adults",
+      "78% of the respondents who reported an ACE also report depression",
+      "ACEs are more common among respondents who report depression",
+      "Depression is reported by 78% of all respondents in the sample"
+    ],
+    "answer": 2,
+    "explain": "Each number is the share with ACEs within a depression group, so comparing them shows an association among these respondents. Observational survey data don't establish cause, and 0.78 is the ACE rate among the depressed, not the depression rate among those with ACEs."
+  },
+  {
+    "id": "summ-017",
+    "section": "2.6",
+    "q": "`seda` has one row per district per grade: 1,500 districts, each with grades 3 through 8, and columns `id`, `grade`, and `math_gap`. How many rows does this return?\n```r\nseda |>\n  group_by(id) |>\n  summarize(math_gap = mean(math_gap, na.rm = TRUE))\n```",
+    "choices": [
+      "9,000",
+      "6",
+      "1,500",
+      "1"
+    ],
+    "answer": 2,
+    "explain": "Grouping by district `id` and summarizing collapses each district's six grade rows into one, so the result is at the district level with 1,500 rows. 9,000 is the district-by-grade count, and 6 is what `group_by(grade)` would give."
+  },
+  {
+    "id": "summ-018",
+    "section": "2.6",
+    "q": "In HW2, why average each district's gap estimates across grades before comparing districts by income bracket?",
+    "choices": [
+      "So each district counts once, as a single unit of analysis",
+      "So that missing grades get filled in with values from other districts",
+      "Because gaps in SD units cannot be compared across different grades",
+      "Because `group_by()` cannot be used on data with one row per grade"
+    ],
+    "answer": 0,
+    "explain": "Before aggregating, a district with six reported grades contributes six rows and one with two grades contributes two, so the comparison is not really about districts. Averaging within each district gives one observation per district."
+  },
+  {
+    "id": "summ-019",
+    "section": "2.6",
+    "q": "`seda_district` has one row per district, with its grade-averaged `math_gap` (positive means boys ahead, in SD units) and its `income_bracket`. What does `prop` hold?\n```r\nseda_district |>\n  mutate(boys_ahead = math_gap > 0.1) |>\n  group_by(income_bracket) |>\n  summarize(prop = mean(boys_ahead))\n```",
+    "choices": [
+      "For each bracket, the average math gap among the districts in which boys are ahead",
+      "For each bracket, the number of its districts whose math gap is larger than 0.1 SD",
+      "The share of all districts that are both in a given bracket and have a gap above 0.1 SD",
+      "For each bracket, the share of its districts with a gap above 0.1 SD"
+    ],
+    "answer": 3,
+    "explain": "`boys_ahead` is TRUE or FALSE for each district, and its mean within a bracket is the fraction of that bracket's districts meeting the condition. `sum()` would give the count, and the last option wrongly uses all districts as the denominator."
+  },
+  {
+    "id": "summ-020",
+    "section": "2.6",
+    "q": "Given `gaps` (gap in SD units, positive means boys ahead):\n```\n# A tibble: 8 × 4\n     id grade income   gap\n  <dbl> <dbl> <chr>  <dbl>\n1     1     3 low      0.2\n2     1     4 low      0.1\n3     2     3 low     -0.1\n4     2     4 low      0.1\n5     3     3 high     0.3\n6     3     4 high     0.1\n7     4     3 high     0.1\n8     4     4 high     0.2\n```\nwhat does this return?\n```r\ngaps |>\n  group_by(id, income) |>\n  summarize(gap = mean(gap)) |>\n  group_by(income) |>\n  summarize(prop = mean(gap > 0.1))\n```",
+    "choices": [
+      "`high` 0.5 and `low` 0.25",
+      "`high` 1 and `low` 0.5",
+      "`high` 2 and `low` 1",
+      "`high` 0.175 and `low` 0.075"
+    ],
+    "answer": 1,
+    "explain": "The district means are 0.15 and 0 (low) and 0.2 and 0.15 (high), so 1 of 2 low districts and 2 of 2 high districts exceed 0.1. Skipping the district step gives the share of district-grade rows (0.25 and 0.5), and `sum()` would give counts."
+  },
+  {
+    "id": "summ-021",
+    "section": "2.6",
+    "q": "An income bracket contains 40 districts with no missing gaps, and `summarize(n_big = sum(gap > 0.1), prop_big = mean(gap > 0.1))` gives `n_big = 10` for it. What is `prop_big`?",
+    "choices": [
+      "0.75",
+      "0.25",
+      "10",
+      "0.1"
+    ],
+    "answer": 1,
+    "explain": "`sum()` of a logical condition counts the districts that meet it, and `mean()` divides that count by the number of districts in the group: \\( 10/40 = 0.25 \\). 0.75 is the share that do **not** meet it."
+  },
+  {
+    "id": "summ-022",
+    "section": "2.6",
+    "q": "What does `brfss |> group_by(sex)` return on its own?",
+    "choices": [
+      "One row for each sex, with the number of respondents in each",
+      "The rows of `brfss` reordered so each sex's rows are together",
+      "A list of separate tibbles, one for each value of `sex`",
+      "The same rows and columns as `brfss`, now grouped by `sex`"
+    ],
+    "answer": 3,
+    "explain": "`group_by()` doesn't change any values or reorder rows; it records the grouping so that later verbs like `summarize()` and `mutate()` work within each group. You see it only in the `# Groups:` line when the tibble prints."
+  },
+  {
+    "id": "summ-023",
+    "section": "2.6",
+    "q": "Will `overall` equal the proportion of all respondents who reported an ACE?\n```r\nbrfss |>\n  group_by(genhlth) |>\n  summarize(prop_ace = mean(ace)) |>\n  summarize(overall = mean(prop_ace))\n```",
+    "choices": [
+      "Not in general: it weights each health group equally, not each respondent",
+      "Yes: the mean of the group means always equals the overall mean",
+      "No: the second `summarize()` is still grouped by `genhlth`, giving five rows",
+      "No: it is always smaller than the proportion over all respondents"
+    ],
+    "answer": 0,
+    "explain": "Averaging the five group proportions gives every health category the same weight, while the overall proportion gives every respondent the same weight; they agree only in special cases such as equal group sizes. For the overall rate, use `mean(ace)` on the ungrouped data."
+  },
+  {
+    "id": "summ-024",
+    "section": "2.6",
+    "q": "Over which rows is `sum(prop)` computed in the last line?\n```r\nbrfss |>\n  group_by(genhlth, sex) |>\n  summarize(prop = mean(ace)) |>\n  mutate(share = prop / sum(prop))\n```",
+    "choices": [
+      "All rows of the summarized tibble",
+      "The rows with the same `sex` value",
+      "The rows with the same `genhlth` value",
+      "Each row alone, so `share` is always 1"
+    ],
+    "answer": 2,
+    "explain": "`summarize()` drops only the last grouping variable, so its output is still grouped by `genhlth` and `mutate()` sums within each health level. Add `.groups = \"drop\"` or `ungroup()` first to sum over all rows."
+  },
+  {
+    "id": "summ-025",
+    "section": "2.6",
+    "q": "Which pipeline gives the same counts as `brfss |> count(genhlth, sex)`?",
+    "choices": [
+      "`brfss |> group_by(genhlth, sex) |> mutate(n = n())`",
+      "`brfss |> group_by(genhlth) |> summarize(n = n_distinct(sex))`",
+      "`brfss |> group_by(genhlth, sex) |> summarize(n = n())`",
+      "`brfss |> group_by(genhlth, sex) |> summarize(n = sum(sex))`"
+    ],
+    "answer": 2,
+    "explain": "`count()` is shorthand for grouping, counting rows with `n()`, and ungrouping. The `mutate()` version attaches the count to every original row instead of collapsing, `n_distinct(sex)` counts sexes rather than respondents, and `sum(sex)` adds up values of `sex` instead of counting rows."
+  },
+  {
+    "id": "summ-026",
+    "section": "2.6",
+    "q": "Hot 100 ranks run from 1 (the top) to 100. In `bb_long` (one row per song per week on the chart), which summary, after `group_by(artist, track)`, gives each song's peak position?",
+    "choices": [
+      "`summarize(peak = min(rank))`",
+      "`summarize(peak = max(rank))`",
+      "`summarize(peak = sum(rank == 1))`",
+      "`summarize(peak = first(rank))`"
+    ],
+    "answer": 0,
+    "explain": "A smaller rank is a better position, so the peak is the minimum. `max()` gives the song's worst week, `sum(rank == 1)` counts weeks at number one, and `first()` is its debut position."
+  },
+  {
+    "id": "summ-027",
+    "section": "2.6",
+    "q": "In the raw BRFSS file, `smoke100` is coded 1 = yes, 2 = no, 7 = don't know, 9 = refused. A student reports `mean(smoke100)` = 1.9 as \"the proportion who have smoked.\" What's the problem?",
+    "choices": [
+      "The mean must be divided by 100, as the variable's name indicates",
+      "Nothing; the mean of any coded variable is a proportion",
+      "The student forgot `na.rm = TRUE`, which would rescale the mean to 0 to 1",
+      "Codes 1, 2, 7, 9 are labels, so their mean is not a proportion"
+    ],
+    "answer": 3,
+    "explain": "A mean is a proportion only for a 0/1 or logical variable; averaging arbitrary codes gives a meaningless number. Treat 7 and 9 as missing first, then average the indicator `smoke100 == 1` over the valid answers to get a proportion."
+  },
+  {
+    "id": "summ-028",
+    "section": "2.6",
+    "q": "You want to keep every district-grade row of `seda` but add a column holding that district's average gap across grades. Which code does that?",
+    "choices": [
+      "`seda |> group_by(id) |> summarize(dist_avg = mean(gap, na.rm = TRUE))`",
+      "`seda |> group_by(id) |> mutate(dist_avg = mean(gap, na.rm = TRUE))`",
+      "`seda |> group_by(grade) |> mutate(dist_avg = mean(gap, na.rm = TRUE))`",
+      "`seda |> mutate(dist_avg = mean(gap, na.rm = TRUE))`"
+    ],
+    "answer": 1,
+    "explain": "A grouped `mutate()` computes each district's mean and repeats it on all of that district's rows. `summarize()` collapses to one row per district, grouping by `grade` averages across districts, and the ungrouped `mutate()` puts the overall mean on every row."
+  },
+  {
+    "id": "summ-029",
+    "section": "2.6",
+    "q": "For `ace <- c(TRUE, FALSE, NA, TRUE, NA)`, what does `mean(ace, na.rm = TRUE)` return?",
+    "choices": [
+      "\\( 2/5 \\)",
+      "\\( 2/3 \\)",
+      "`NA`",
+      "\\( 3/5 \\)"
+    ],
+    "answer": 1,
+    "explain": "`na.rm = TRUE` drops the two `NA`s first, leaving 2 TRUEs out of 3 answers. The result is the proportion among respondents who answered, not among everyone (that would be \\( 2/5 \\))."
+  },
+  {
+    "id": "summ-030",
+    "section": "2.6",
+    "q": "This code returns `prop` equal to 1 for every income bracket. Why?\n```r\nseda_district |>\n  filter(math_gap > 0.1) |>\n  group_by(income_bracket) |>\n  summarize(prop = mean(math_gap > 0.1))\n```",
+    "choices": [
+      "`mean()` of a logical vector returns 1 whenever any of its values is `TRUE`",
+      "`group_by()` has to come before `filter()` when computing grouped proportions",
+      "The missing values in `math_gap` are counted as `TRUE` inside `mean()`",
+      "After `filter()`, every district left meets the condition"
+    ],
+    "answer": 3,
+    "explain": "`filter()` removed the districts that fail the condition, so they are gone from the denominator. Keep all districts and average the indicator, for example `summarize(prop = mean(math_gap > 0.1))` without the filter."
+  },
+  {
+    "id": "summ-031",
+    "section": "3",
+    "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 NA\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
+    "choices": [
+      "`id` 0, `x` 0.5, `y` 0.25: share missing per column",
+      "`id` 0, `x` 2, `y` 1: the number missing in each column",
+      "0.25: the share of all the cells in `df` that are missing",
+      "0, 0.33, 0.33, 0.33: the share missing in each row of `df`"
+    ],
+    "answer": 0,
+    "explain": "`is.na(df)` is a TRUE/FALSE matrix shaped like `df`, and `colMeans()` averages each column, giving a named vector of per-column missing proportions. `colSums()` would give counts, `mean()` one overall share, and `rowMeans()` per-row shares."
+  },
+  {
+    "id": "summ-032",
+    "section": "3",
+    "q": "Suppose `colMeans(is.na(brfss))` shows 0.62 for `ace`. What does that mean?",
+    "choices": [
+      "62% of respondents reported at least one ACE",
+      "62% of the columns in `brfss` have some missing values",
+      "62% of respondents have no recorded value for `ace`",
+      "62 respondents in the data are missing `ace`"
+    ],
+    "answer": 2,
+    "explain": "Each entry is the mean of a TRUE/FALSE missingness indicator over all rows, so 0.62 is the fraction of respondents with `ace` equal to `NA`. It says nothing about how many reported ACEs."
+  },
+  {
+    "id": "summ-033",
+    "section": "3",
+    "q": "Given `df`:\n```\n# A tibble: 5 × 3\n      a     b     c\n  <dbl> <dbl> <dbl>\n1     1    NA     3\n2     2     5    NA\n3    NA     6     1\n4     4     7     2\n5     5     8     4\n```\nwhat does `mean(rowSums(is.na(df)) > 0)` return?",
+    "choices": [
+      "0.2",
+      "3",
+      "0.6",
+      "0.8"
+    ],
+    "answer": 2,
+    "explain": "`rowSums(is.na(df))` counts the NAs in each row (1, 1, 1, 0, 0), `> 0` flags rows with any NA, and the mean of the flags is \\( 3/5 \\). Each column is only 20% missing, but the NAs fall in different rows, so 60% of rows are incomplete."
+  },
+  {
+    "id": "summ-034",
+    "section": "3",
+    "q": "In the SEDA data (one row per district per grade), the proportion of districts with any missing gap is much larger than the proportion of rows with a missing gap. Why?",
+    "choices": [
+      "One missing grade row makes the whole district count as missing",
+      "Districts with missing values have more rows than other districts",
+      "`colMeans(is.na())` undercounts the missing values in grouped data",
+      "Some districts are missing entirely and so have no rows to count"
+    ],
+    "answer": 0,
+    "explain": "One missing grade is a small share of a district's rows but flags the whole district. Measuring missingness at the coarser unit (the district) therefore gives a bigger number than measuring it by row."
+  },
+  {
+    "id": "summ-035",
+    "section": "3",
+    "q": "For this `seda` tibble, what are the proportion of rows with a missing `gap` and the proportion of districts with at least one missing `gap`?\n```\n# A tibble: 12 × 3\n      id grade   gap\n   <dbl> <int> <dbl>\n 1     1     3   0.1\n 2     1     4    NA\n 3     1     5   0.2\n 4     2     3  -0.1\n 5     2     4   0.1\n 6     2     5   0.3\n 7     3     3    NA\n 8     3     4    NA\n 9     3     5   0.1\n10     4     3   0.2\n11     4     4   0.1\n12     4     5  -0.2\n```",
+    "choices": [
+      "Rows 0.5, districts 0.25",
+      "Rows 0.25, districts 0.25",
+      "Rows 0.25, districts 0.75",
+      "Rows 0.25, districts 0.5"
+    ],
+    "answer": 3,
+    "explain": "3 of the 12 rows have a missing gap, so the row share is 0.25. Districts 1 and 3 each have at least one missing grade, so 2 of 4 districts, or 0.5, have missing data."
+  },
+  {
+    "id": "summ-036",
+    "section": "3",
+    "q": "Which pipeline returns the proportion of SEDA districts with at least one missing `gap`? (`seda` has one row per district `id` per grade.)",
+    "choices": [
+      "`seda |> group_by(id, grade) |> summarize(m = is.na(gap)) |> summarize(p = mean(m))`",
+      "`seda |> group_by(id) |> summarize(m = any(is.na(gap))) |> summarize(p = mean(m))`",
+      "`seda |> summarize(p = mean(is.na(gap)))`",
+      "`seda |> drop_na(gap) |> group_by(id) |> summarize(p = n()) |> summarize(p = mean(p))`"
+    ],
+    "answer": 1,
+    "explain": "First flag each district with `any(is.na(gap))`, then average the flags across districts. Grouping by `id` and `grade` ends with each district's share of missing grades (one row per district), the ungrouped version gives the share of rows, and the last option averages counts of observed grades."
+  },
+  {
+    "id": "summ-037",
+    "section": "3",
+    "q": "In HW1, most BRFSS respondents have `NA` for the ACE questions because many states did not include the ACE module that year. What kind of missingness is this?",
+    "choices": [
+      "Nonresponse: respondents with difficult childhoods chose not to answer the questions",
+      "Missing by design: whether the question was asked depended on the respondent's state",
+      "Random data-entry errors, spread evenly across respondents in every state",
+      "Suppression: ACE answers were withheld wherever a state's sample was too small"
+    ],
+    "answer": 1,
+    "explain": "The survey plan, not the respondents, decided who was asked, so the NAs fill whole states. It means the data contain no ACE information at all about people in those states."
+  },
+  {
+    "id": "summ-038",
+    "section": "3",
+    "q": "After filtering the BRFSS data to respondents with ACE answers (which come only from states that ran the ACE module), to what population do the ACE estimates apply?",
+    "choices": [
+      "All U.S. adults, since the filtered sample is still very large",
+      "All U.S. adults, since removing the NAs leaves unbiased data",
+      "Only the respondents themselves; no generalization is possible",
+      "Adults in the states that administered the ACE module"
+    ],
+    "answer": 3,
+    "explain": "The respondents who remain come only from module states, so the scope of inference shrinks to those states. A large sample can't make up for states that were never asked, but within the module states the sample still supports inference."
+  },
+  {
+    "id": "summ-039",
+    "section": "3",
+    "q": "A classmate proposes filling in ACE answers for respondents in states that skipped the module, using the ACE rate from states that ran it. What is the main problem?",
+    "choices": [
+      "It assumes, untestably, that those states match the module states",
+      "It makes the sample smaller than simply dropping those states would",
+      "A logical column like `ace` cannot hold filled-in values",
+      "Nothing; filling NAs with a rate from other states removes bias"
+    ],
+    "answer": 0,
+    "explain": "There is no ACE information at all for the skipped states, so the filled-in values just copy the module states and make the data look more complete than they are. Restricting the scope of inference is the honest choice."
+  },
+  {
+    "id": "summ-040",
+    "section": "3",
+    "q": "Suppose every respondent in the states that ran the ACE module answered the ACE questions. Does dropping the respondents from the other states bias the ACE estimate **for the module states**?",
+    "choices": [
+      "Yes; dropping missing values always biases every estimate you compute",
+      "Yes; the module states end up with fewer respondents than they had before",
+      "No; it narrows the scope but doesn't bias the module-state estimate",
+      "No; and the estimate then applies to the whole United States as well"
+    ],
+    "answer": 2,
+    "explain": "The missingness was set by state, so removing the other states removes nobody from the module states. The cost is scope: the estimate describes the module states, not the country."
+  },
+  {
+    "id": "summ-041",
+    "section": "3",
+    "q": "Why are many SEDA gender-gap estimates missing for small school districts?",
+    "choices": [
+      "Small districts are not required to give their students math tests",
+      "Gaps in small districts are always zero, and zeros were recorded as `NA`",
+      "Estimates based on too few tested students are suppressed as unreliable",
+      "The estimates were lost at random while the data were being processed"
+    ],
+    "answer": 2,
+    "explain": "With only a handful of tested boys and girls, a gap estimate would be too noisy to report, so it is left out. That ties the missingness to district size rather than to chance."
+  },
+  {
+    "id": "summ-042",
+    "section": "3",
+    "q": "A student drops every SEDA district that has any missing gap estimate, then compares gaps across income brackets. What is the main concern?",
+    "choices": [
+      "The districts left skew large; small, often rural ones are lost",
+      "The analysis will be left with too many districts to summarize clearly",
+      "None; dropping rows is safe because missing values are always random",
+      "Dropping some districts changes the gap values of the districts that remain"
+    ],
+    "answer": 0,
+    "explain": "Missingness depends on district size, so the complete districts are systematically larger and more often urban or suburban. If gaps differ by size or locale, results from the remaining districts are biased for districts overall."
+  },
+  {
+    "id": "summ-043",
+    "section": "3",
+    "q": "Which finding shows that SEDA gap estimates are **not** missing just by chance?",
+    "choices": [
+      "About 15% of the district-grade rows in the data have a missing gap estimate",
+      "Missing gap estimates show up in every grade from 3 through 8",
+      "`colMeans(is.na(seda))` is 0 for the district `id` column",
+      "Districts with missing gaps have much smaller enrollments than the rest"
+    ],
+    "answer": 3,
+    "explain": "If missingness were pure chance, missing and observed districts would look alike. A systematic difference in enrollment shows missingness is tied to district size; the overall missing rate or which columns are complete says nothing about why values are missing."
+  },
+  {
+    "id": "summ-044",
+    "section": "3",
+    "q": "Given `df`:\n```\n# A tibble: 5 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     2 a\n2     2    NA b\n3     3     5 NA\n4     4    NA NA\n5     5     7 e\n```\nhow many rows do `df |> drop_na()` and `df |> drop_na(x)` return?",
+    "choices": [
+      "3 and 2",
+      "2 and 3",
+      "2 and 2",
+      "3 and 3"
+    ],
+    "answer": 1,
+    "explain": "With no columns named, `drop_na()` removes any row with an NA in any column, keeping rows 1 and 5. `drop_na(x)` only checks `x`, so row 3, which is missing only `y`, survives as well."
+  },
+  {
+    "id": "summ-045",
+    "section": "3",
+    "q": "In the long Billboard data (NAs kept), this code gives `prop_missing` = 0 in week 1, rising to nearly 1 after week 60. What is the best interpretation?\n```r\nbb_long |>\n  group_by(week) |>\n  summarize(prop_missing = mean(is.na(rank)))\n```",
+    "choices": [
+      "Billboard stopped reporting ranks in later weeks, so those data are incomplete",
+      "An NA means the song had left the chart, so missingness tracks chart life",
+      "Ranks went missing at random, so they can be filled with each song's mean rank",
+      "`pivot_longer()` created the NAs by mismatching songs with the wrong weeks"
+    ],
+    "answer": 1,
+    "explain": "A song has a rank only while it is on the Hot 100, so the share missing in a week is the share of songs that have dropped off. Here the missingness is information about chart longevity, not lost data."
+  },
+  {
+    "id": "summ-046",
+    "section": "3",
+    "q": "In the 2000 Billboard data, the fraction of songs with a missing rank climbs steadily to about 0.54 in week 20, then jumps to about 0.80 in week 21. What best explains the jump?",
+    "choices": [
+      "Ranks recorded after week 20 were lost at random when the data were entered",
+      "Songs that make it to week 21 are usually climbing back up the chart",
+      "`pivot_longer()` drops the values stored after the twentieth week column",
+      "A chart rule drops songs that have charted 20 weeks and fall below a cutoff"
+    ],
+    "answer": 3,
+    "explain": "A sudden jump at a fixed week points to a rule, not chance: Billboard moves songs that have been on the Hot 100 for 20 weeks and rank below 50 off the chart. The missing values record how the chart works, which is why missingness is data."
+  },
+  {
+    "id": "summ-047",
+    "section": "3",
+    "q": "To get rid of the NAs in the long Billboard data, a student replaces each missing `rank` with that song's average rank. What's wrong with this?",
+    "choices": [
+      "It invents chart weeks: NA means off the chart, not an unknown rank",
+      "Nothing; replacing NAs with a song's mean rank leaves every summary unchanged",
+      "It is wrong only because the song's median rank should be used instead",
+      "It fails because `rank` becomes a character column after `pivot_longer()`"
+    ],
+    "answer": 0,
+    "explain": "The NA has a meaning, so filling it in turns \"not on the Hot 100\" into a made-up position and inflates every song's time on the chart. Keep the NAs, or drop them with `values_drop_na = TRUE`, depending on the question."
+  },
+  {
+    "id": "summ-048",
+    "section": "3",
+    "q": "A histogram of `price` in `diamonds` with `binwidth = 10` shows no diamonds at all priced between about $1,455 and $1,545. How should you treat this gap?",
+    "choices": [
+      "As evidence that the market does not allow diamonds to sell for around $1,500",
+      "As a sign that the bins are too wide to show the diamonds at those prices",
+      "As a likely data-collection artifact to check before drawing conclusions",
+      "As `NA` prices that `ggplot()` silently removed before drawing the histogram"
+    ],
+    "answer": 2,
+    "explain": "A sharp hole in an otherwise smooth price distribution is very unlikely to be real; it points to a gap in how the records were gathered or processed. A missing combination like this is missing data even though no cell is `NA`."
+  },
+  {
+    "id": "summ-049",
+    "section": "3",
+    "q": "`colMeans(is.na(diamonds))` is 0 for every column. Does that mean `diamonds` has no missing-data problems?",
+    "choices": [
+      "Yes; `is.na()` detects every form of missing data in a data frame",
+      "Yes; a data set with no `NA` values is a complete census of its population",
+      "No; absent combinations, like prices near $1,500, don't show up as `NA`",
+      "No; `colMeans()` skips over missing values in numeric columns"
+    ],
+    "answer": 2,
+    "explain": "`is.na()` only finds cells explicitly recorded as `NA`. Rows that were never collected leave no trace in the table, so you have to look for them, for example as holes in a distribution."
+  },
+  {
+    "id": "summ-050",
+    "section": "3",
+    "q": "Suppose a small district's gap estimate is reported with probability 0.5 and a large district's with probability 1. With inverse probability weighting on the reported districts, what weight does each reported small district get?",
+    "choices": [
+      "2",
+      "0.5",
+      "1",
+      "4"
+    ],
+    "answer": 0,
+    "explain": "The weight is \\( 1/P(\\text{reported}) = 1/0.5 = 2 \\), so each reported small district also stands in for a similar small district that went unreported. Large districts get weight 1."
+  },
+  {
+    "id": "summ-051",
+    "section": "3",
+    "q": "How does inverse probability weighting reduce bias from missing data?",
+    "choices": [
+      "It replaces each missing value with the mean of the values that were observed",
+      "It drops the units that had a low probability of being observed in the first place",
+      "It gives the most weight to the units that were the most likely to be observed",
+      "It gives more weight to observed units that had a low chance of being observed"
+    ],
+    "answer": 3,
+    "explain": "If small districts are often missing, the few observed small districts get weight \\( 1/P(\\text{observed}) \\), so the weighted data resemble the full set of districts. It is the same correction used for unequal inclusion probabilities in sampling."
+  },
+  {
+    "id": "summ-052",
+    "section": "3",
+    "q": "When can inverse probability weighting correct the bias from districts with missing gap estimates?",
+    "choices": [
+      "Only when fewer than 5% of all the gap estimates in the data are missing",
+      "When each district's chance of being reported can be estimated",
+      "Only when the gap estimates are missing completely at random",
+      "Whenever the observed districts outnumber the districts that are missing"
+    ],
+    "answer": 1,
+    "explain": "The weights are \\( 1/P(\\text{reported}) \\), so you need those probabilities, and here they can be modeled from district size, which is known for every district. Completely random missingness needs no correction, and the amount missing doesn't decide whether the method works."
+  },
+  {
+    "id": "summ-053",
+    "section": "3",
+    "q": "A student counts missing values with `sum(seda$gap == NA)` and gets `NA`. Why, and what's the fix?",
+    "choices": [
+      "`==` can't compare numbers; use `sum(seda$gap = NA)` instead",
+      "Comparing anything to `NA` gives `NA`; use `sum(is.na(seda$gap))`",
+      "`sum()` needs `na.rm = TRUE`; use `sum(seda$gap == NA, na.rm = TRUE)`",
+      "The column has no NAs; count its rows with `nrow(seda)` instead"
+    ],
+    "answer": 1,
+    "explain": "`x == NA` is `NA` for every element, since an unknown value can't be compared, so the sum is `NA`. `is.na()` returns TRUE or FALSE and summing it counts the missing values; adding `na.rm = TRUE` to the original would just return 0."
+  },
+  {
+    "id": "summ-054",
+    "section": "3",
+    "q": "`colMeans(is.na(brfss))` reports 0 for the raw `smoke100` column, which uses 7 for \"don't know\" and 9 for \"refused.\" What should you conclude?",
+    "choices": [
+      "Every respondent gave a usable answer to the smoking question",
+      "The codes 7 and 9 are valid answers that belong in averages of `smoke100`",
+      "`is.na()` already treats the codes 7 and 9 as missing values",
+      "Nonresponse is hidden in codes 7 and 9; recode them to `NA` first"
+    ],
+    "answer": 3,
+    "explain": "`is.na()` only finds values stored as `NA`. Survey files often store nonresponse as special codes, so convert them to `NA` first; otherwise the missingness is invisible and the codes distort summaries."
+  },
+  {
+    "id": "summ-055",
+    "section": "3",
+    "q": "Across all SEDA districts, `mean(math_gap, na.rm = TRUE)` is 0.05. Given that small districts' gaps are often suppressed, what does 0.05 describe?",
+    "choices": [
+      "The average over districts with reported gaps, which skew toward larger districts",
+      "The average over all districts, since `na.rm = TRUE` corrects for the missing values",
+      "The average over small districts, since they are the ones with the most missing values",
+      "Nothing; any mean computed with `na.rm = TRUE` is meaningless and should be discarded"
+    ],
+    "answer": 0,
+    "explain": "`na.rm = TRUE` just drops the NAs, so the mean is over the districts that were reported. Because those are disproportionately large, the result can differ from the average over all districts."
+  },
+  {
+    "id": "summ-056",
+    "section": "3",
+    "q": "For a data frame, `colMeans(is.na(df))` gives 0.30 for `x`, 0.20 for `y`, and 0 for every other column. Is the proportion of rows with at least one missing value 0.50?",
+    "choices": [
+      "Yes; adding up the column proportions always gives the row proportion",
+      "No; it must be exactly 0.30, the largest of the column proportions",
+      "Not necessarily; it can be anywhere from 0.30 to 0.50",
+      "No; it must be 0.25, the average of the two column proportions"
+    ],
+    "answer": 2,
+    "explain": "Adding the column shares counts rows missing both `x` and `y` twice, so the share of rows with any NA lies between 0.30 (every `y` gap in a row where `x` is also missing) and 0.50 (no overlap). Compute it directly, for example with `mean(!complete.cases(df))`."
+  },
+  {
+    "id": "summ-057",
+    "section": "3",
+    "q": "What pattern would you expect from this code on the full BRFSS data, and what does it reveal?\n```r\nbrfss |>\n  group_by(state) |>\n  summarize(prop_missing = mean(is.na(ace)))\n```",
+    "choices": [
+      "About the same value in every state, showing that the ACE NAs are random",
+      "Near 0 everywhere, because `is.na()` skips states with no ACE answers",
+      "Near 1 in some states and near 0 in others: missing by design",
+      "One overall value, because `mean()` collapses all of the groups together"
+    ],
+    "answer": 2,
+    "explain": "In states that skipped the ACE module nobody was asked, so their missing share is about 1, while states that ran it have little missingness. That state-by-state split is the signature of missingness set by the survey design."
+  },
+  {
+    "id": "summ-058",
+    "section": "3",
+    "q": "Which code checks whether missing SEDA gaps are related to district size (`enrollment`)?",
+    "choices": [
+      "`seda |> group_by(miss = is.na(gap)) |> summarize(med = median(enrollment))`",
+      "`seda |> drop_na(gap) |> group_by(grade) |> summarize(med = median(enrollment))`",
+      "`seda |> group_by(grade) |> summarize(prop = mean(is.na(gap)))`",
+      "`seda |> filter(is.na(gap)) |> summarize(avg = mean(gap, na.rm = TRUE))`"
+    ],
+    "answer": 0,
+    "explain": "Grouping by `is.na(gap)` compares enrollment between rows with and without a reported gap; a big difference means missingness depends on size. The other options look only at observed districts, give missing rates by grade without size, or average a column that is entirely `NA`."
+  },
+  {
+    "id": "summ-059",
+    "section": "3",
+    "q": "Given `gaps`:\n```\n# A tibble: 6 × 3\n     id income   gap\n  <dbl> <chr>  <dbl>\n1     1 low      0.2\n2     1 low      0.3\n3     2 low       NA\n4     2 low      0.1\n5     3 high     0.4\n6     3 high     0.2\n```\nwhat does this return?\n```r\ngaps |>\n  group_by(id, income) |>\n  summarize(gap = mean(gap)) |>\n  group_by(income) |>\n  summarize(prop = mean(gap > 0.1))\n```",
+    "choices": [
+      "`high` 1 and `low` 1",
+      "`high` 1 and `low` 0.5",
+      "`NA` for both of the brackets",
+      "`high` 1 and `low` `NA`"
+    ],
+    "answer": 3,
+    "explain": "District 2's mean is `NA` because one of its rows is `NA`, so its `gap > 0.1` is `NA` and the low bracket's mean is `NA`; the high bracket has no NAs and gives 1. Adding `na.rm = TRUE` in the second step would drop district 2 (low = 1), and in the first step would average its one observed grade (low = 0.5)."
+  },
+  {
+    "id": "summ-060",
+    "section": "3",
+    "q": "Before computing ACE proportions by smoking status, a student runs `brfss |> drop_na()` on the full BRFSS data, which has dozens of columns. What's the problem?",
+    "choices": [
+      "It keeps the rows with a missing `ace`, so the proportions come out as `NA`",
+      "It also drops anyone missing an unrelated variable, changing the sample",
+      "It removes the columns that contain missing values, not the rows",
+      "Nothing; dropping rows with NAs never changes who ends up being analyzed"
+    ],
+    "answer": 1,
+    "explain": "With no columns named, `drop_na()` removes a row if any column is `NA`, so respondents can be lost over a question unrelated to ACEs or smoking. Drop NAs only in the variables you use, for example `drop_na(ace, smoker)`."
+  }
+]

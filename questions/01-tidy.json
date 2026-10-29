@@ -1,0 +1,782 @@
+[
+  {
+    "id": "tidy-001",
+    "section": "1.1",
+    "q": "Your project's second script cleans the raw SEDA achievement-gap file. Which file name best follows the naming conventions from class?",
+    "choices": [
+      "`Clean SEDA Gaps.R`",
+      "`2cleanSEDAgaps.R`",
+      "`analysis_script2_final.R`",
+      "`02-clean-seda-gaps.R`"
+    ],
+    "answer": 3,
+    "explain": "`02-clean-seda-gaps.R` is lowercase, uses hyphens instead of spaces, says what the script does, and its zero-padded prefix records that it runs second. `Clean SEDA Gaps.R` is descriptive but has spaces and capitals, and `analysis_script2_final.R` tells you nothing about its contents."
+  },
+  {
+    "id": "tidy-002",
+    "section": "1.1",
+    "q": "A project's scripts are named `1-import.R`, `2-clean.R`, …, `9-plot.R`, `10-report.R`. Sorted alphabetically, the listing puts `10-report.R` ahead of `2-clean.R`. Which renaming makes the alphabetical listing match the order the scripts run?",
+    "choices": [
+      "Use underscores instead: `1_import.R`, `2_clean.R`, …, `10_report.R`",
+      "Put the number last: `import-1.R`, `clean-2.R`, …, `report-10.R`",
+      "Zero-pad the prefixes: `01-import.R`, `02-clean.R`, …, `10-report.R`",
+      "Spell out the numbers: `one-import.R`, `two-clean.R`, …, `ten-report.R`"
+    ],
+    "answer": 2,
+    "explain": "Alphabetical sorting compares names character by character, so `10` lands before `2` because the character `1` comes before `2`. Padding every prefix to two digits makes text order agree with numeric order; changing the delimiter doesn't change that comparison, and moving or spelling out the number makes the files sort by word instead."
+  },
+  {
+    "id": "tidy-003",
+    "section": "1.1",
+    "q": "The script `03-plot-gaps.R` saves one figure. Under the convention that output files are named to match the scripts that generate them, what should the figure be called?",
+    "choices": [
+      "`figure-01.png`",
+      "`03-plot-gaps.png`",
+      "`gaps-final-v2.png`",
+      "`Gap Plot.png`"
+    ],
+    "answer": 1,
+    "explain": "Sharing the script's name means anyone who finds `03-plot-gaps.png` knows which script made it and can rerun that script to regenerate it. The other names give no link back to the code, and `Gap Plot.png` also has a space and capitals."
+  },
+  {
+    "id": "tidy-004",
+    "section": "1.1",
+    "q": "Which of these column names can you type in a dplyr verb **without** wrapping it in backticks?",
+    "choices": [
+      "`gap_2019`",
+      "`2019_gap`",
+      "`_gap`",
+      "`gap 2019`"
+    ],
+    "answer": 0,
+    "explain": "A syntactic R name can't start with a digit or an underscore and can't contain a space, so `2019_gap`, `_gap`, and `gap 2019` only work inside backticks, as in `` `gap 2019` ``. `gap_2019` starts with a letter and has only letters, digits, and underscores, which is the kind of name we rename awkward columns to."
+  },
+  {
+    "id": "tidy-005",
+    "section": "1.1",
+    "q": "After `seda <- read_csv(\"seda.csv\")`, the tibble has a column named `Grade Level` (with a space). Which line keeps only the grade 3 rows?",
+    "choices": [
+      "`seda |> filter(Grade Level == 3)`",
+      "`seda |> filter(\"Grade Level\" == 3)`",
+      "`seda |> filter(Grade_Level == 3)`",
+      "`` seda |> filter(`Grade Level` == 3) ``"
+    ],
+    "answer": 3,
+    "explain": "Backticks tell R that `Grade Level` is a single name. Without them the space is a syntax error, `Grade_Level` is a different (nonexistent) column, and `\"Grade Level\"` is just a text string, so `\"Grade Level\" == 3` is `FALSE` and `filter()` silently returns zero rows."
+  },
+  {
+    "id": "tidy-006",
+    "section": "1.1",
+    "q": "The wide GDP table `gdp` has columns `country`, `2018`, and `2019`, holding each country's GDP growth in percent. What does this produce?\n```r\ngdp |> mutate(change = 2019 - 2018)\n```",
+    "choices": [
+      "A `change` column with each country's 2019 growth minus its 2018 growth",
+      "An error, because `2019` and `2018` are not valid column names",
+      "A `change` column equal to 1 in every row",
+      "A `change` column equal to the 2019th column minus the 2018th column"
+    ],
+    "answer": 2,
+    "explain": "Unquoted, `2019` and `2018` are just the numbers 2019 and 2018, so `change` is \\(2019 - 2018 = 1\\) in every row, with no error to warn you. Referring to the columns takes backticks, `` mutate(change = `2019` - `2018`) ``, which is one reason to rename or reshape such columns."
+  },
+  {
+    "id": "tidy-007",
+    "section": "1.1",
+    "q": "The SEDA file has a column named `District ID`. Which call renames it to `district_id`?",
+    "choices": [
+      "`` rename(seda, `District ID` = district_id) ``",
+      "`` rename(seda, district_id = `District ID`) ``",
+      "`` rename(seda, district_id == `District ID`) ``",
+      "`rename(seda, district_id = District ID)`"
+    ],
+    "answer": 1,
+    "explain": "`rename()` takes `new_name = old_name`, and the old name needs backticks because of its space. Swapping the sides asks for an existing column called `district_id`, which isn't there; `==` is a comparison, not a renaming, and without backticks the space is a syntax error."
+  },
+  {
+    "id": "tidy-008",
+    "section": "1.1",
+    "q": "A teammate saves the cleaned SEDA data as `data.csv`. The name has no spaces and is all lowercase. Which naming principle does it fail?",
+    "choices": [
+      "It isn't descriptive: you can't tell what the file holds from its name",
+      "It isn't machine-readable, because the dot before `csv` confuses R",
+      "It should have spaces between words to be human-readable",
+      "It needs a hyphen or an underscore to be a valid file name"
+    ],
+    "answer": 0,
+    "explain": "`data.csv` is machine-readable but not human-readable: a name like `seda-gaps-clean.csv` tells you what's inside without opening it. The dot before the extension is standard, and spaces are exactly what the conventions avoid."
+  },
+  {
+    "id": "tidy-009",
+    "section": "1.1",
+    "q": "Which file name is written in kebab-case?",
+    "choices": [
+      "`clean_seda_data.R`",
+      "`CleanSedaData.R`",
+      "`cleanSedaData.R`",
+      "`clean-seda-data.R`"
+    ],
+    "answer": 3,
+    "explain": "Kebab-case joins lowercase words with hyphens; snake_case uses underscores instead, as in `clean_seda_data.R`. The other two are camel case, whose capital letters break the all-lowercase convention."
+  },
+  {
+    "id": "tidy-010",
+    "section": "1.1",
+    "q": "Your script calls `read_csv(\"data/seda_gaps.csv\")`, but the file on disk is named `Seda_Gaps.csv`. The code runs on your laptop but fails with a 'file does not exist' error on a collaborator's Linux machine. What is the best fix?",
+    "choices": [
+      "Rename the file `Seda Gaps.csv` so each word stands out clearly",
+      "Switch to `read.csv()`, which ignores capitalization in file names",
+      "Rename the file `seda_gaps.csv` and keep all file names lowercase",
+      "Wrap the file name in backticks instead of quotation marks"
+    ],
+    "answer": 2,
+    "explain": "Linux file systems are case-sensitive, so `Seda_Gaps.csv` and `seda_gaps.csv` are different files there, while many laptops ignore case. Using only lowercase names removes that mismatch; the reading function and the quoting style don't change how the file system matches names."
+  },
+  {
+    "id": "tidy-011",
+    "section": "1.1",
+    "q": "Why do we usually rename columns like `Grade Level` or `2019` right after reading the data, rather than using backticks every time?",
+    "choices": [
+      "Because `dplyr` and `ggplot2` can't use a column whose name contains a space",
+      "So every later line can use plain names, which are easier to type and harder to get wrong",
+      "Because `read_csv()` drops columns with nonstandard names unless they're renamed",
+      "Because renaming a column also converts its values to numbers"
+    ],
+    "answer": 1,
+    "explain": "Nonsyntactic names do work, but only inside backticks, and each forgotten backtick is an error or a silent bug (like `2019 - 2018` evaluating to 1). Renaming once to names like `grade_level` or `gap_2019` keeps the rest of the code simple."
+  },
+  {
+    "id": "tidy-012",
+    "section": "1.2",
+    "q": "What does `seda <- read_csv(\"data/seda.csv\")` store in `seda`?",
+    "choices": [
+      "A tibble, a data frame with one column per field in the file's header",
+      "A character vector with one element for each line of the file",
+      "A base R `data.frame` whose text columns are converted to factors",
+      "A numeric matrix, with any non-numeric fields converted to `NA`"
+    ],
+    "answer": 0,
+    "explain": "`read_csv()` comes from readr (part of the tidyverse) and returns a tibble, the tidyverse's version of a data frame, guessing a type for each column. Text columns stay character; converting them to factors was the old behavior of base R's `read.csv()`."
+  },
+  {
+    "id": "tidy-013",
+    "section": "1.2",
+    "q": "Which expression is equivalent to `x |> f(y)`?",
+    "choices": [
+      "`f(y, x)`",
+      "`x(f(y))`",
+      "`f(y)(x)`",
+      "`f(x, y)`"
+    ],
+    "answer": 3,
+    "explain": "The pipe passes its left side as the **first** argument of the function on its right, so `x |> f(y)` is `f(x, y)`. Arguments written inside the parentheses come after it."
+  },
+  {
+    "id": "tidy-014",
+    "section": "1.2",
+    "q": "Which expression is equivalent to `x |> f(a) |> g(b)`?",
+    "choices": [
+      "`f(g(x, b), a)`",
+      "`g(b, f(x, a))`",
+      "`g(f(x, a), b)`",
+      "`f(x, g(a, b))`"
+    ],
+    "answer": 2,
+    "explain": "Pipes run left to right: `x |> f(a)` is `f(x, a)`, and that result becomes the first argument of `g()`. Nested code reads inside out, which is why long pipelines are easier to follow than the nested version."
+  },
+  {
+    "id": "tidy-015",
+    "section": "1.2",
+    "q": "Which pipeline is equivalent to this nested call?\n```r\nsummarize(group_by(filter(seda, year == 2019), state), avg_gap = mean(gap))\n```",
+    "choices": [
+      "`seda |> summarize(avg_gap = mean(gap)) |> group_by(state) |> filter(year == 2019)`",
+      "`seda |> filter(year == 2019) |> group_by(state) |> summarize(avg_gap = mean(gap))`",
+      "`seda |> group_by(state) |> summarize(avg_gap = mean(gap)) |> filter(year == 2019)`",
+      "`summarize(avg_gap = mean(gap)) |> group_by(state) |> filter(seda, year == 2019)`"
+    ],
+    "answer": 1,
+    "explain": "The innermost call runs first, so the pipeline starts from `seda`, filters, groups, and then summarizes, in the order you read it. Reordering the steps changes the result: summarizing before filtering collapses the data and drops the `year` column the filter needs."
+  },
+  {
+    "id": "tidy-016",
+    "section": "1.2",
+    "q": "What does this return?\n```r\nc(1, 4, 9) |> sqrt() |> sum()\n```",
+    "choices": [
+      "6",
+      "14",
+      "\\(\\sqrt{14}\\), about 3.74",
+      "The vector `c(1, 2, 3)`"
+    ],
+    "answer": 0,
+    "explain": "`sqrt()` runs first, turning the vector into `c(1, 2, 3)`, and `sum()` adds those to get 6. \\(\\sqrt{14}\\) would come from summing first, which is the reverse pipeline `c(1, 4, 9) |> sum() |> sqrt()`."
+  },
+  {
+    "id": "tidy-017",
+    "section": "1.2",
+    "q": "A student writes the line below. What's the mistake?\n```r\nseda |> filter(seda, grade == 3)\n```",
+    "choices": [
+      "`filter()` can't follow a pipe; it has to be the first function in a pipeline",
+      "The condition must use `=` instead of `==` inside `filter()`",
+      "The pipe passes `seda` as the last argument, so `grade == 3` must come first",
+      "`seda` is passed twice, because the pipe already supplies it as the first argument"
+    ],
+    "answer": 3,
+    "explain": "`seda |> filter(seda, grade == 3)` means `filter(seda, seda, grade == 3)`, so the second `seda` is treated as an extra filtering condition. Inside a pipeline, leave out the data argument: `seda |> filter(grade == 3)`."
+  },
+  {
+    "id": "tidy-018",
+    "section": "1.2",
+    "q": "A tibble prints with this header:\n```\n# A tibble: 1,203 × 6\n  district   state grade  year   gap gap_se\n  <chr>      <chr> <dbl> <dbl> <dbl>  <dbl>\n```\nWhat does it tell you?",
+    "choices": [
+      "1,203 columns and 6 rows; `district` and `state` are text, the rest numeric",
+      "1,203 districts, each measured in 6 different grades",
+      "1,203 rows and 6 columns; `district` and `state` are text, the rest numeric",
+      "1,203 rows and 6 columns; `<chr>` marks the columns with missing values"
+    ],
+    "answer": 2,
+    "explain": "A tibble's header gives rows × columns, and the line under the column names gives each column's type: `<chr>` is character, `<dbl>` is numeric (double). How many districts or grades there are depends on the values, not on the dimensions."
+  },
+  {
+    "id": "tidy-019",
+    "section": "1.2",
+    "q": "A CSV's header row is `District ID,Grade Level,Mean Gap`. After `seda <- read_csv(\"seda.csv\")`, what is the first column called?",
+    "choices": [
+      "`District.ID`, because `read_csv()` replaces spaces with dots",
+      "`District ID`, exactly as in the file, so code must use backticks",
+      "`district_id`, because `read_csv()` converts names to snake_case",
+      "`DistrictID`, because `read_csv()` removes spaces from names"
+    ],
+    "answer": 1,
+    "explain": "`read_csv()` keeps header names as they are; replacing spaces with dots is what base R's `read.csv()` does. That's why columns like `District ID` arrive needing backticks, and why we rename them ourselves."
+  },
+  {
+    "id": "tidy-020",
+    "section": "1.2",
+    "q": "`seda` has 1,203 rows, 200 of them for grade 3. You run this line in the console:\n```r\nseda |> filter(grade == 3)\n```\nHow many rows does `seda` have afterward?",
+    "choices": [
+      "1,203, since the result was printed but never assigned",
+      "200, since `filter()` modifies `seda` in place",
+      "1,003, since the grade 3 rows were removed from `seda`",
+      "0, since piping `seda` into a function uses it up"
+    ],
+    "answer": 0,
+    "explain": "dplyr functions return a new tibble and never change their input. To keep the filtered rows you have to assign the result, e.g. `seda_g3 <- seda |> filter(grade == 3)`."
+  },
+  {
+    "id": "tidy-021",
+    "section": "1.3",
+    "q": "Here are two tibbles:\n```\n# A tibble: 2 × 3\n  country `1999` `2000`\n  <chr>    <dbl>  <dbl>\n1 Brazil   37737  80488\n2 China   212258 213766\n\n# A tibble: 4 × 3\n  country  year  cases\n  <chr>   <dbl>  <dbl>\n1 Brazil   1999  37737\n2 Brazil   2000  80488\n3 China    1999 212258\n4 China    2000 213766\n```\nWhich statement is correct?",
+    "choices": [
+      "The long one holds more information, because it has more rows",
+      "The wide one holds more information, because each year has a column",
+      "They hold different data, since only the long one has a `year` column",
+      "They hold the same information in two layouts, wide and long"
+    ],
+    "answer": 3,
+    "explain": "Every country, year, and case count appears in both: the wide table stores the year in its column names, the long table in a `year` column. Reshaping changes the arrangement, not the information."
+  },
+  {
+    "id": "tidy-022",
+    "section": "1.3",
+    "q": "One version of a weather table stores the date in a single `date` column; another splits it into `year`, `month`, and `day` columns. Both have one row per day. What kind of choice separates them?",
+    "choices": [
+      "Layout: splitting the date turns a long table into a wide table",
+      "Tidiness: only the version with three date columns can be tidy",
+      "Representation: the same values are encoded differently, and the layout is the same",
+      "Information: the three-column version can no longer be sorted by date"
+    ],
+    "answer": 2,
+    "explain": "How a value is encoded (one date variable or three parts) is representation; how values are arranged into rows, columns, and tables is layout. Both versions still have one row per day, so the layout hasn't changed, and the date can be rebuilt from its parts."
+  },
+  {
+    "id": "tidy-023",
+    "section": "1.3",
+    "q": "Which of these is a choice about **layout** rather than representation?",
+    "choices": [
+      "Recording education as `1`, `2`, `3` instead of `\"high school\"`, `\"college\"`, `\"graduate\"`",
+      "Giving each year's GDP growth its own column instead of using `year` and `growth` columns",
+      "Storing a date as one `date` column instead of separate `year`, `month`, `day` columns",
+      "Recording GDP growth as a proportion (0.031) instead of a percentage (3.1)"
+    ],
+    "answer": 1,
+    "explain": "Layout is how values are arranged: years across columns (wide) or down rows (long). Codes versus labels, one date variable versus three, and proportions versus percentages are all ways of encoding values, which is representation."
+  },
+  {
+    "id": "tidy-024",
+    "section": "1.3",
+    "q": "A survey file records education as `1`, `2`, `3`, and the codebook says these mean high school, college, and graduate degree. You replace the codes with those labels. What changed?",
+    "choices": [
+      "The representation of the variable; the table's layout is unchanged",
+      "The layout of the table; the variable's representation is unchanged",
+      "Both, because there is now one column per education level",
+      "The observational unit, because rows are now education levels"
+    ],
+    "answer": 0,
+    "explain": "Codes versus labels is a decision about how to encode the same values, which is representation. Each respondent is still one row with one education column, so the layout and the unit are the same as before."
+  },
+  {
+    "id": "tidy-025",
+    "section": "1.3",
+    "q": "A table has columns `country`, `1999`, `2000`, `2001`, with one row per country. Compared with a version of the same data that has columns `country`, `year`, `cases`, this table has:",
+    "choices": [
+      "more rows and fewer columns, and it is in wide format",
+      "fewer rows and more columns, and it is in long format",
+      "the same number of rows, with only the column names changed",
+      "fewer rows and more columns, and it is in wide format"
+    ],
+    "answer": 3,
+    "explain": "Spreading the years across columns gives one row per country, which is the wide format. The long version has one row per country-year, three times as many rows, but only 3 columns."
+  },
+  {
+    "id": "tidy-026",
+    "section": "1.3",
+    "q": "`pop` has 50 rows (one per state) and 5 columns: `state`, `2018`, `2019`, `2020`, `2021`. What are the dimensions of the result?\n```r\npop |>\n  pivot_longer(cols = -state, names_to = \"year\", values_to = \"population\")\n```",
+    "choices": [
+      "250 rows and 3 columns",
+      "200 rows and 5 columns",
+      "200 rows and 3 columns",
+      "4 rows and 51 columns"
+    ],
+    "answer": 2,
+    "explain": "Each of the 50 rows becomes 4 rows, one per pivoted year column: \\(50 \\times 4 = 200\\). The result keeps `state` and adds `year` and `population`; 250 would mean `state` had been pivoted too."
+  },
+  {
+    "id": "tidy-027",
+    "section": "1.3",
+    "q": "The Billboard data `billboard` has 317 rows (one per song) and 79 columns: `artist`, `track`, `date.entered`, and `wk1` through `wk76`. What are the dimensions after this (keeping missing ranks)?\n```r\nbillboard |>\n  pivot_longer(cols = wk1:wk76, names_to = \"week\", values_to = \"rank\")\n```",
+    "choices": [
+      "\\(317 \\times 79\\) rows and 5 columns",
+      "\\(317 \\times 76\\) rows and 5 columns",
+      "\\(317 \\times 76\\) rows and 79 columns",
+      "317 rows and 5 columns"
+    ],
+    "answer": 1,
+    "explain": "Each song's row becomes 76 rows, one per week column, for \\(317 \\times 76 = 24{,}092\\) rows. The columns are the 3 that weren't pivoted plus `week` and `rank`; adding `values_drop_na = TRUE` would drop the weeks a song was off the chart and give fewer rows."
+  },
+  {
+    "id": "tidy-028",
+    "section": "1.3",
+    "q": "`gaps` has 300 rows and 4 columns: `district`, `grade`, `subject`, `gap`. Each district-grade pair appears exactly twice, once with `subject` equal to `\"math\"` and once with `\"reading\"`. What are the dimensions of the result?\n```r\ngaps |>\n  pivot_wider(names_from = subject, values_from = gap)\n```",
+    "choices": [
+      "150 rows and 4 columns",
+      "300 rows and 4 columns",
+      "150 rows and 5 columns",
+      "600 rows and 3 columns"
+    ],
+    "answer": 0,
+    "explain": "`pivot_wider()` makes one row per combination of the remaining columns, `district` and `grade`: \\(300 / 2 = 150\\). `subject` and `gap` are replaced by one column per subject, so the columns are `district`, `grade`, `math`, `reading`."
+  },
+  {
+    "id": "tidy-029",
+    "section": "1.3",
+    "q": "What are the dimensions of `long`?\n```r\nwide <- tibble(id = 1:4, a = c(5, 2, 8, 1), b = c(3, 3, 6, 0), c = c(9, 4, 7, 2))\nlong <- wide |> pivot_longer(cols = -id)\n```",
+    "choices": [
+      "4 rows and 3 columns",
+      "16 rows and 3 columns",
+      "12 rows and 4 columns",
+      "12 rows and 3 columns"
+    ],
+    "answer": 3,
+    "explain": "`cols = -id` pivots the three columns `a`, `b`, `c`, so each of the 4 rows becomes 3: \\(4 \\times 3 = 12\\). The result has `id` plus the default `name` and `value` columns; 16 rows would mean `id` was pivoted as well."
+  },
+  {
+    "id": "tidy-030",
+    "section": "1.3",
+    "q": "A table of 20 songs, one row per song, has weekly rank columns `wk1`, `wk2`, and so on. After pivoting all the week columns longer (keeping missing values), the result has 1,040 rows. How many week columns were there?",
+    "choices": [
+      "26",
+      "50",
+      "52",
+      "1,020"
+    ],
+    "answer": 2,
+    "explain": "Rows after pivoting equal the original rows times the number of pivoted columns, so there were \\(1040 / 20 = 52\\) week columns. Subtracting (1,020) would treat pivoting as adding rows rather than multiplying them."
+  },
+  {
+    "id": "tidy-031",
+    "section": "1.3",
+    "q": "A weather table for one station and one year has 24 rows (each month has a `tmax` row and a `tmin` row) and 35 columns: `id`, `year`, `month`, `element`, and `d1` through `d31`. What are the dimensions after this pipeline (keeping missing values)?\n```r\nweather |>\n  pivot_longer(d1:d31, names_to = \"day\", values_to = \"temp\") |>\n  pivot_wider(names_from = element, values_from = temp)\n```",
+    "choices": [
+      "744 rows and 6 columns",
+      "372 rows and 6 columns",
+      "744 rows and 7 columns",
+      "372 rows and 7 columns"
+    ],
+    "answer": 1,
+    "explain": "Pivoting the 31 day columns gives \\(24 \\times 31 = 744\\) rows with columns `id`, `year`, `month`, `element`, `day`, `temp`. Widening `element` merges each `tmax`/`tmin` pair into one row, halving the rows to 372 and replacing `element` and `temp` with `tmax` and `tmin`, so there are still 6 columns."
+  },
+  {
+    "id": "tidy-032",
+    "section": "1.3",
+    "q": "A SEDA table has one row per district-grade pair for 100 districts, each with grades 3 through 8, and repeats each district's median income on all of its rows. You split it into a district table (`district`, `median_income`) and a gap table (`district`, `grade`, `gap`). How many rows does each new table have?",
+    "choices": [
+      "District table 100, gap table 600",
+      "District table 600, gap table 600",
+      "District table 100, gap table 100",
+      "District table 6, gap table 600"
+    ],
+    "answer": 0,
+    "explain": "Median income describes a district, so the district table needs one row per district: 100. The gaps are per district-grade pair, \\(100 \\times 6 = 600\\); the split just removes the five redundant copies of each district's income."
+  },
+  {
+    "id": "tidy-033",
+    "section": "1.3",
+    "q": "What does this return?\n```r\ngdp <- tibble(\n  country = c(\"A\", \"A\", \"B\", \"B\", \"C\"),\n  year    = c(2000, 2001, 2000, 2001, 2000),\n  growth  = c(2.1, 1.8, 3.0, 2.6, 0.9)\n)\ngdp |> pivot_wider(names_from = year, values_from = growth)\n```",
+    "choices": [
+      "2 rows and 3 columns, since country C is incomplete and dropped",
+      "3 rows and 4 columns: `country`, `year`, `2000`, `2001`",
+      "5 rows and 3 columns, with three `NA`s",
+      "3 rows and 3 columns, with one `NA`"
+    ],
+    "answer": 3,
+    "explain": "The result has one row per country (A, B, C) and the columns `country`, `2000`, `2001`. Country C has no 2001 value, so `pivot_wider()` fills that cell with `NA` instead of dropping the row."
+  },
+  {
+    "id": "tidy-034",
+    "section": "1.4",
+    "q": "Which of these is **not** one of the three rules of the tidy standard?",
+    "choices": [
+      "Each variable is a column",
+      "Each observation is a row",
+      "Each table is sorted by its identifier columns",
+      "Each type of observational unit forms its own table"
+    ],
+    "answer": 2,
+    "explain": "The tidy standard is: each variable is a column, each observation is a row, and each type of observational unit forms its own table. Row order has nothing to do with tidiness; sorting is just presentation."
+  },
+  {
+    "id": "tidy-035",
+    "section": "1.4",
+    "q": "The Billboard data look like this (columns `wk4` through `wk76` not shown):\n```\n# A tibble: 317 × 79\n  artist       track                   date.entered   wk1   wk2   wk3\n  <chr>        <chr>                   <date>       <dbl> <dbl> <dbl>\n1 2 Pac        Baby Don't Cry (Keep... 2000-02-26      87    82    72\n2 2Ge+her      The Hardest Part Of ... 2000-09-02      91    87    92\n3 3 Doors Down Kryptonite              2000-04-08      81    70    68\n```\nWhy is this layout not tidy?",
+    "choices": [
+      "Each week's ranks should be stored in a separate table, one table per week",
+      "Week is a variable stored in the column names, so one row holds many song-week observations",
+      "`artist` and `track` both identify the song, so they should be one column",
+      "Songs that left the chart have `NA` ranks, and tidy data can't contain `NA`"
+    ],
+    "answer": 1,
+    "explain": "`wk1` through `wk76` all hold ranks, and the week number is hidden in the header, which breaks 'each variable is a column'; each row also bundles up to 76 song-week observations, which breaks 'each observation is a row'. Missing values are allowed in tidy data."
+  },
+  {
+    "id": "tidy-036",
+    "section": "1.4",
+    "q": "After pivoting the Billboard week columns longer, the table has columns `artist`, `track`, `date.entered`, `week`, `rank`. What is the observational unit of a row?",
+    "choices": [
+      "A song in a particular week",
+      "A song",
+      "A week of the chart",
+      "An artist"
+    ],
+    "answer": 0,
+    "explain": "Each row now records one song's rank in one week, so the unit is the song-week. 'A song' was the unit of a row in the wide table, where one row bundled all of that song's weeks."
+  },
+  {
+    "id": "tidy-037",
+    "section": "1.4",
+    "q": "In the long Billboard table (`artist`, `track`, `date.entered`, `week`, `rank`), a song's `artist` and `date.entered` repeat on every one of its week rows. The tidy fix stores songs in one table and weekly ranks in another. Which rule motivates the split?",
+    "choices": [
+      "Each variable is a column",
+      "Each observation is a row",
+      "Each table has the same number of rows",
+      "Each type of observational unit forms its own table"
+    ],
+    "answer": 3,
+    "explain": "`artist` and `date.entered` describe a song, while `rank` describes a song in a given week, so the table mixes two observational units. Giving each unit its own table, linked by a song identifier, removes the repetition."
+  },
+  {
+    "id": "tidy-038",
+    "section": "1.4",
+    "q": "Here are a few rows of a weather table (columns `d4` through `d31` not shown):\n```\n  id       year month element    d1    d2    d3\n  <chr>   <int> <int> <chr>   <dbl> <dbl> <dbl>\n1 MX17004  2010     1 tmax       NA  NA    NA\n2 MX17004  2010     1 tmin       NA  NA    NA\n3 MX17004  2010     2 tmax       NA  27.3  24.1\n4 MX17004  2010     2 tmin       NA  14.4  14.4\n```\nWhich description of its problems is correct?",
+    "choices": [
+      "Day is stored in the column names, but `element` is a proper variable and should stay as it is",
+      "`year` and `month` must be merged into one column, and `id` belongs in a separate table",
+      "Day is stored in the column names, and `tmax` and `tmin` are variables stored as values of `element`",
+      "It is tidy apart from the `NA`s, which must be removed before the table counts as tidy"
+    ],
+    "answer": 2,
+    "explain": "Two variables are misplaced: the day is spread across `d1` through `d31` (fixed with `pivot_longer()`), and the two measurements are stacked in rows under `element` (fixed with `pivot_wider()`). The tidy table has one row per station-day, with `tmax` and `tmin` columns."
+  },
+  {
+    "id": "tidy-039",
+    "section": "1.4",
+    "q": "Once the weather table is tidy, with columns `id`, `date`, `tmax`, `tmin`, what is its observational unit?",
+    "choices": [
+      "A weather station",
+      "A day at a weather station",
+      "A month at a weather station",
+      "A single reading, either `tmax` or `tmin`"
+    ],
+    "answer": 1,
+    "explain": "Each row holds both temperatures for one station on one day, so the unit is the station-day. A single reading is a value, not an observation; `tmax` and `tmin` are two variables measured on the same station-day."
+  },
+  {
+    "id": "tidy-040",
+    "section": "1.4",
+    "q": "A World Bank GDP table has one row per country and columns `country`, `1961`, `1962`, …, `2019`, each holding that year's GDP growth. Why is it not tidy?",
+    "choices": [
+      "Year is a variable, but its values are spread across the column names",
+      "Countries should be the columns and years should be the rows",
+      "A tidy table can't have more than a few dozen columns",
+      "Each country's growth should be stored in its own table"
+    ],
+    "answer": 0,
+    "explain": "The headers `1961` through `2019` are values of a year variable, and every cell holds the same variable, growth. The tidy version has columns `country`, `year`, `growth` with one row per country-year; transposing the table just moves the years from the columns into the rows' labels."
+  },
+  {
+    "id": "tidy-041",
+    "section": "1.4",
+    "q": "The wide GDP table covers 200 countries over the 59 years from 1961 to 2019. What is the observational unit, and how many rows does the tidy version have?",
+    "choices": [
+      "Country; 200 rows",
+      "Year; 59 rows",
+      "Country-year; \\(200 + 59\\) rows",
+      "Country-year; \\(200 \\times 59\\) rows"
+    ],
+    "answer": 3,
+    "explain": "A growth value is measured on a country in a given year, so the tidy table needs one row for each of the \\(200 \\times 59 = 11{,}800\\) country-year combinations. A country is what a row of the wide table describes, which is exactly why that table isn't tidy."
+  },
+  {
+    "id": "tidy-042",
+    "section": "1.4",
+    "q": "You want a line plot of GDP growth over time, one line per country. With the wide table `gdp` (columns `country`, `1961`, …, `2019`), why does this fail?\n```r\nggplot(gdp, aes(x = year, y = growth, color = country)) +\n  geom_line()\n```",
+    "choices": [
+      "`geom_line()` can only draw one line per plot, so it can't show several countries",
+      "`color` can only be mapped to a numeric variable, and `country` is text",
+      "`gdp` has no `year` or `growth` column; they only exist after pivoting the year columns longer",
+      "`ggplot()` needs its data piped in with `|>` instead of passed as an argument"
+    ],
+    "answer": 2,
+    "explain": "ggplot2 maps aesthetics to columns, so every variable you want on an axis or as a color must be a column. Pivoting the year columns into `year` and `growth` columns makes the call work, which is one payoff of tidy data: it's what tools like ggplot2 expect."
+  },
+  {
+    "id": "tidy-043",
+    "section": "1.4",
+    "q": "Which tidy rule does this table break?\n```\n# A tibble: 4 × 3\n  country  year rate\n  <chr>   <dbl> <chr>\n1 Brazil   1999 37737/172006362\n2 Brazil   2000 80488/174504898\n3 China    1999 212258/1272915272\n4 China    2000 213766/1280428583\n```",
+    "choices": [
+      "Each observation is a row: a country's two years should share a single row",
+      "Each variable is a column: `rate` holds two variables, cases and population",
+      "Each observational unit forms its own table: `year` belongs in a separate table",
+      "It breaks no rule, since each cell holds one string and each row is a country-year"
+    ],
+    "answer": 1,
+    "explain": "Each `rate` value packs two numbers, the case count and the population, into one string, so two variables share a column. Splitting it into `cases` and `population` columns makes the table tidy and lets you compute with the numbers."
+  },
+  {
+    "id": "tidy-044",
+    "section": "1.4",
+    "q": "Is this table tidy?\n```\n# A tibble: 4 × 4\n  country  year type           count\n  <chr>   <dbl> <chr>          <dbl>\n1 Brazil   1999 cases          37737\n2 Brazil   1999 population 172006362\n3 Brazil   2000 cases          80488\n4 Brazil   2000 population 174504898\n```",
+    "choices": [
+      "No: `cases` and `population` are variables stored as values of `type`, so each country-year takes two rows",
+      "Yes: every column has a single type and no two rows are identical",
+      "No: `year` should be spread out into a separate column for each year",
+      "Yes: it is in long format, and a long table is always a tidy table"
+    ],
+    "answer": 0,
+    "explain": "The tell is that you can't say what `count` measures without reading `type`. Pivoting wider with `names_from = type, values_from = count` gives one row per country-year with separate `cases` and `population` columns."
+  },
+  {
+    "id": "tidy-045",
+    "section": "1.4",
+    "q": "What is the observational unit of this table, and is it tidy?\n```\n# A tibble: 3 × 4\n  species          body_wt_kg brain_wt_g sleep_hrs\n  <chr>                 <dbl>      <dbl>     <dbl>\n1 African elephant    6654       5712          3.3\n2 Cat                    3.3       25.6       12.5\n3 Little brown bat       0.01       0.25      19.9\n```",
+    "choices": [
+      "A mammal species; not tidy, because the columns use different units",
+      "A measurement; not tidy, because the three measurements belong in one column",
+      "An individual animal; tidy, because each row describes one animal",
+      "A mammal species; tidy, with one row per species and one column per variable"
+    ],
+    "answer": 3,
+    "explain": "Each row describes one species and each column is a different variable measured on it, so the table is tidy. Stacking the three measurements into one `value` column would make it untidy, since different variables would then share a column."
+  },
+  {
+    "id": "tidy-046",
+    "section": "1.4",
+    "q": "UN development data come in two tables. `hdi` has one row per country, with columns `country`, `hdi_rank`, `life_expectancy`, `mean_school_yrs`. `pop` has columns `country`, `year`, `population`, with one row per country for each year from 2000 to 2020. Which statement is correct?",
+    "choices": [
+      "Both tables have a country as their unit, so they must be merged into one table to be tidy",
+      "`pop` is not tidy, because each country appears in many rows of the table",
+      "The units are a country in `hdi` and a country-year in `pop`, so separate tables follow the tidy standard",
+      "`hdi` is not tidy, because it has no `year` column to identify its rows"
+    ],
+    "answer": 2,
+    "explain": "Different observational units belong in different tables. A country showing up in 21 rows of `pop` is expected, since each row is a different country-year, and you can join the tables on `country` when an analysis needs both."
+  },
+  {
+    "id": "tidy-047",
+    "section": "1.4",
+    "q": "Each row of this SEDA table gives the estimated achievement gap for one school district in one grade, computed from many students' test scores:\n```\n# A tibble: 4 × 5\n  district  state grade   gap gap_se\n  <chr>     <chr> <dbl> <dbl>  <dbl>\n1 Alder USD CA        3 0.412  0.091\n2 Alder USD CA        4 0.385  0.088\n3 Birch USD CA        3 0.297  0.12\n4 Birch USD CA        4 0.351  0.117\n```\nWhat is the observational unit?",
+    "choices": [
+      "A student",
+      "A school district in a particular grade",
+      "A school district",
+      "A grade level"
+    ],
+    "answer": 1,
+    "explain": "The estimates are aggregated: many student scores were summarized into one number per district-grade pair, so that pair is what a row describes. Students are the source of the data, but no row is a single student, and each district appears in several rows."
+  },
+  {
+    "id": "tidy-048",
+    "section": "1.4",
+    "q": "Two SEDA tables: `gaps` has columns `district`, `grade`, `year`, `gap`, and `covariates` has `district`, `year`, `median_income`, `pct_lunch`, with one row per district per year. Which statement about their observational units is correct?",
+    "choices": [
+      "`gaps` is district-grade-year and `covariates` is district-year, so one `covariates` row matches a `gaps` row per grade",
+      "Both have a district as their unit, since every row of both tables names a district",
+      "`gaps` has students as its unit and `covariates` has districts, since gaps come from student scores",
+      "Both have district-year as their unit, so they can be stacked into one table with `bind_rows()`"
+    ],
+    "answer": 0,
+    "explain": "A table's unit is the combination of identifiers that picks out one row: district, grade, and year for `gaps`, but only district and year for `covariates`, whose values don't vary by grade. Different units go in different tables, joined on `district` and `year` when an analysis needs both."
+  },
+  {
+    "id": "tidy-049",
+    "section": "1.4",
+    "q": "Which set of column names most strongly suggests that a table is **not** tidy?",
+    "choices": [
+      "`state`, `year`, `population`",
+      "`species`, `body_wt_kg`, `brain_wt_g`",
+      "`district`, `grade`, `gap`, `gap_se`",
+      "`state`, `variable`, `value`"
+    ],
+    "answer": 3,
+    "explain": "From `state`, `variable`, `value` you can't tell what a number in `value` means without reading `variable`, a sign that several variables are stacked in one column. If you can't tell what the values are from the column names, the data probably isn't tidy."
+  },
+  {
+    "id": "tidy-050",
+    "section": "1.4",
+    "q": "`tb` is tidy:\n```\n# A tibble: 4 × 4\n  country  year  cases population\n  <chr>   <dbl>  <dbl>      <dbl>\n1 Brazil   1999  37737  172006362\n2 Brazil   2000  80488  174504898\n3 China    1999 212258 1272915272\n4 China    2000 213766 1280428583\n```\nWhich line adds each country-year's cases per 10,000 people?",
+    "choices": [
+      "`mutate(tb, rate = sum(cases) / sum(population) * 10000)`",
+      "`mutate(tb, rate = cases[1] / population[1] * 10000)`",
+      "`mutate(tb, rate = cases / population * 10000)`",
+      "`mutate(tb, rate = \"cases\" / \"population\" * 10000)`"
+    ],
+    "answer": 2,
+    "explain": "Because `cases` and `population` are columns lined up row by row, the arithmetic is vectorized: R divides element by element and gives every country-year its own rate at once. `sum()` would compute one overall rate and repeat it on every row, and quoted names are strings that can't be divided."
+  },
+  {
+    "id": "tidy-051",
+    "section": "1.4",
+    "q": "Which of these is an advantage of storing data in tidy form?",
+    "choices": [
+      "Tidy tables take less storage than wide ones, since identifiers are never repeated",
+      "Datasets share one organization, so the same `dplyr` and `ggplot2` code works across them",
+      "Tidy tables are the easiest layout to read by eye in a printed report",
+      "Tidy tables can't contain missing values, so they never need cleaning"
+    ],
+    "answer": 1,
+    "explain": "The payoff of a standard is consistency: once data are tidy, the same verbs and plotting code apply without custom reshaping. In fact tidy data repeat identifiers (more storage), are often harder to read by eye than a wide table, and can contain `NA`s."
+  },
+  {
+    "id": "tidy-052",
+    "section": "1.4",
+    "q": "A wide table has one row for each of 50 states and a column for each of 10 years. In the tidy (long) version, how many times is each state's name stored, and what does that illustrate?",
+    "choices": [
+      "10 times per state, 500 in all; tidy data can be storage-inefficient",
+      "Once per state, 50 in all; tidy data are more compact than wide data",
+      "10 times per state, 500 in all; tidy data can't be used with `ggplot2`",
+      "50 times per state, 2,500 in all; tidy data can be storage-inefficient"
+    ],
+    "answer": 0,
+    "explain": "In long form each state needs a row for every year, so its name appears 10 times (\\(50 \\times 10 = 500\\) rows) instead of once. Repeating identifiers like this is the storage cost of tidy data."
+  },
+  {
+    "id": "tidy-053",
+    "section": "1.4",
+    "q": "You're making a table for a report so readers can compare five districts' gaps across grades 3 through 8 at a glance. Which layout should you use?",
+    "choices": [
+      "The tidy table with one row per district-grade, since tidy is best for every purpose",
+      "Six separate tables, one per grade, each listing the five districts' gaps",
+      "A single row with one column for every district-grade combination",
+      "A wide table with one row per district and one column per grade, even though it isn't tidy"
+    ],
+    "answer": 3,
+    "explain": "Tidy data are built for analysis, not reading: 30 rows of district-grade pairs are hard to scan. A grid of 5 district rows by 6 grade columns puts the comparisons side by side, which is why tidy is usually not the best format for a presentation table."
+  },
+  {
+    "id": "tidy-054",
+    "section": "1.4",
+    "q": "A lab has daily readings from 1,000 sensors over 365 days. The tidy version has 365,000 rows (`sensor_id`, `date`, `reading`); the wide version has 1,000 rows and 366 columns. Which statement is accurate?",
+    "choices": [
+      "The wide version is tidy, because each sensor is one row and tidiness only requires distinct rows",
+      "The tidy version loses information, because it has only 3 columns instead of 366",
+      "The tidy version repeats each `sensor_id` 365 times, but per-sensor summaries are one `group_by()` and `summarize()`",
+      "The wide version is easier to plot with `ggplot2`, because each day already has its own column"
+    ],
+    "answer": 2,
+    "explain": "Tidy data cost storage (each identifier is repeated) but make grouped summaries and plots straightforward. Both versions hold the same 365,000 readings, and ggplot2 needs `date` and `reading` as columns, which only the tidy version has."
+  },
+  {
+    "id": "tidy-055",
+    "section": "1.4",
+    "q": "A clinical trial table:\n```\n# A tibble: 3 × 3\n  person       treatment_a treatment_b\n  <chr>              <dbl>       <dbl>\n1 John Smith            NA           2\n2 Jane Doe              16          11\n3 Mary Johnson           3           1\n```\nHow many observations does it contain, and is it tidy?",
+    "choices": [
+      "3 person observations; tidy, because each person is exactly one row",
+      "6 person-treatment observations; not tidy, because treatment is stored in the column names",
+      "6 person-treatment observations; tidy, because each cell holds one result",
+      "5 observations, since `NA` doesn't count; not tidy, because it contains an `NA`"
+    ],
+    "answer": 1,
+    "explain": "The variables are person, treatment, and result, and each result belongs to a person-treatment pair, so there are \\(3 \\times 2 = 6\\) observations, one of them missing. The tidy version has columns `person`, `treatment`, `result` and 6 rows."
+  },
+  {
+    "id": "tidy-056",
+    "section": "1.4",
+    "q": "Each tibble below records the same mammal measurements. Which one is tidy?\n```\nt1\n  species measure    value\n  <chr>   <chr>      <dbl>\n1 Cat     body_wt_kg  3.3\n2 Cat     brain_wt_g 25.6\n3 Mouse   body_wt_kg  0.02\n4 Mouse   brain_wt_g  0.4\n\nt2\n  measure      Cat Mouse\n  <chr>      <dbl> <dbl>\n1 body_wt_kg   3.3  0.02\n2 brain_wt_g  25.6  0.4\n\nt3\n  species body_wt_kg brain_wt_g\n  <chr>        <dbl>      <dbl>\n1 Cat           3.3        25.6\n2 Mouse         0.02        0.4\n\nt4\n  species wt\n  <chr>   <chr>\n1 Cat     3.3/25.6\n2 Mouse   0.02/0.4\n```",
+    "choices": [
+      "`t3`",
+      "`t1`",
+      "`t2`",
+      "`t4`"
+    ],
+    "answer": 0,
+    "explain": "`t3` has one row per species and one column per variable. `t1` stacks two variables in `value`, `t2` puts the values of `species` in its column names, and `t4` crams two variables into one string."
+  },
+  {
+    "id": "tidy-057",
+    "section": "1.4",
+    "q": "How many observations, in the tidy sense, does this GDP growth table contain?\n```\n# A tibble: 3 × 5\n  country `2016` `2017` `2018` `2019`\n  <chr>    <dbl>  <dbl>  <dbl>  <dbl>\n1 Chile      1.8    1.4    3.9    0.8\n2 Peru       4.1    2.5    3.9    2.2\n3 Uruguay    1.7    1.6    0.5    0.4\n```",
+    "choices": [
+      "3",
+      "4",
+      "15",
+      "12"
+    ],
+    "answer": 3,
+    "explain": "Each growth value is an observation of one country in one year: \\(3 \\times 4 = 12\\). The table has only 3 rows because each row packs four country-year observations, which is why it isn't tidy; 15 wrongly counts the `country` column as observations too."
+  },
+  {
+    "id": "tidy-058",
+    "section": "1.4",
+    "q": "This SEDA-style table has 600 rows covering 300 district-grade pairs:\n```\n# A tibble: 600 × 4\n  district  grade stat    value\n  <chr>     <dbl> <chr>   <dbl>\n1 Alder USD     3 gap_est  0.41\n2 Alder USD     3 gap_se   0.09\n3 Alder USD     4 gap_est  0.38\n4 Alder USD     4 gap_se   0.09\n# ℹ 596 more rows\n```\nWhat are the dimensions of its tidy version?",
+    "choices": [
+      "600 rows and 4 columns",
+      "1,200 rows and 3 columns",
+      "300 rows and 4 columns",
+      "300 rows and 5 columns"
+    ],
+    "answer": 2,
+    "explain": "`gap_est` and `gap_se` are two variables measured on the same district-grade pair, so they get their own columns: one row per pair (300) with columns `district`, `grade`, `gap_est`, `gap_se`. Keeping 600 rows would leave two variables stacked in `value`."
+  },
+  {
+    "id": "tidy-059",
+    "section": "1.4",
+    "q": "A table has one row per country and columns `country`, `cases_1999`, `cases_2000`, `pop_1999`, `pop_2000`. What columns does its tidy version have?",
+    "choices": [
+      "3: `country`, `name`, `value`",
+      "4: `country`, `year`, `cases`, `pop`",
+      "4: `country`, `measure`, `year`, `value`",
+      "5: the same columns, since each already holds a single variable"
+    ],
+    "answer": 1,
+    "explain": "Each column name encodes two things, a variable (cases or population) and a year. The tidy version makes `year` a column and gives `cases` and `pop` their own columns, one row per country-year; stacking both into one `value` column would mix two variables in one column."
+  },
+  {
+    "id": "tidy-060",
+    "section": "1.4",
+    "q": "Which pair lists two genuine disadvantages of tidy data?",
+    "choices": [
+      "A learning curve, and storage inefficiency from repeated values",
+      "Incompatibility with `ggplot2`, and no way to store dates",
+      "Loss of information, and slower vectorized transformations",
+      "A ban on missing values, and a rule that every column be numeric"
+    ],
+    "answer": 0,
+    "explain": "The costs of tidy data are a learning curve, storage inefficiency (identifiers repeated on many rows), and tables that are hard to read by eye. It loses no information, and it's exactly the format ggplot2 and vectorized dplyr operations expect."
+  }
+]

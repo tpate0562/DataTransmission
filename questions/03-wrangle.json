@@ -1,0 +1,782 @@
+[
+  {
+    "id": "wrangle-001",
+    "section": "2.1",
+    "q": "Applied to a numeric vector `x` with 50 values, which of these is an **aggregation**?",
+    "choices": [
+      "`median(x)`",
+      "`rank(x)`",
+      "`x - mean(x)`",
+      "`log(x)`"
+    ],
+    "answer": 0,
+    "explain": "An aggregation maps many values to fewer: `median(x)` returns a single number. The other three return 50 values, one per element; `x - mean(x)` uses an aggregation inside, but the result still has one value per element, so it is a transformation."
+  },
+  {
+    "id": "wrangle-002",
+    "section": "2.1",
+    "q": "The expression `x / sum(x)` contains `sum()`, an aggregation. If `x` has 10 values, how should the whole expression be classified?",
+    "choices": [
+      "An aggregation, because the 10 results always add up to 1",
+      "Neither, because it mixes an aggregation with arithmetic",
+      "A transformation, because it returns 10 values, one per element",
+      "An aggregation, because any expression containing `sum()` is one"
+    ],
+    "answer": 2,
+    "explain": "What matters is the shape of the output: `sum(x)` collapses to one number, but dividing each element by it gives back 10 values. Using an aggregation as an ingredient doesn't make the result an aggregation."
+  },
+  {
+    "id": "wrangle-003",
+    "section": "2.1",
+    "q": "Applied to a numeric vector `x` with 100 values, which of these is **not** an aggregation?",
+    "choices": [
+      "`quantile(x, c(0.1, 0.9))`",
+      "`cumsum(x)`",
+      "`range(x)`",
+      "`var(x)`"
+    ],
+    "answer": 1,
+    "explain": "`cumsum(x)` returns 100 running totals, one per element, so the number of values is unchanged. `range(x)` (the min and max) and the two quantiles return 2 values and `var(x)` returns 1: each maps many values to fewer, even when the result has more than one number."
+  },
+  {
+    "id": "wrangle-004",
+    "section": "2.1",
+    "q": "`x` holds 200 test scores. How many values does `quantile(x, probs = c(0.25, 0.5, 0.75))` return, and is it an aggregation?",
+    "choices": [
+      "1 value; yes, it returns only the median",
+      "200 values; no, each score is replaced by its quantile",
+      "3 values; yes, it maps 200 values to 3",
+      "3 values; no, an aggregation must return a single value"
+    ],
+    "answer": 2,
+    "explain": "One quantile is returned per requested probability, so 3 numbers summarize 200. An aggregation need not return exactly one value: anything that maps many values to fewer, such as min/max or several quantiles, counts."
+  },
+  {
+    "id": "wrangle-005",
+    "section": "2.1",
+    "q": "What does this return?\n```r\ndf <- tibble(x = c(2, 4, 9))\ndf |> mutate(m = mean(x))\n```",
+    "choices": [
+      "1 row with a single column `m` equal to 5",
+      "1 row with `x` equal to 9 and `m` equal to 5",
+      "3 rows; `m` is 5 in every row",
+      "3 rows; `m` is 2, 3, 5 (a running mean)"
+    ],
+    "answer": 2,
+    "explain": "`mean(x)` is an aggregation that returns the single value \\((2 + 4 + 9)/3 = 5\\), and `mutate()` recycles it to every row, so the data frame keeps its 3 rows. `mutate()` never collapses rows; a running mean would need `cummean(x)`."
+  },
+  {
+    "id": "wrangle-006",
+    "section": "2.1",
+    "q": "Filtering a 500-row data frame down to 40 rows leaves far fewer values. Why is `filter()` still classed as a transformation rather than an aggregation?",
+    "choices": [
+      "Filtering keeps every column, while an aggregation must drop columns",
+      "Every kept value is an original value; nothing is combined into a summary",
+      "An aggregation must return exactly one value, and a filter can return many",
+      "Aggregations apply only to numeric columns, and a filter can use any column"
+    ],
+    "answer": 1,
+    "explain": "An aggregation computes new values (a sum, mean, quantile) from many inputs. A filter only chooses which rows to keep and leaves their values untouched, just like slicing. Aggregations can return several values (three quartiles, say), so 'exactly one value' is not the test."
+  },
+  {
+    "id": "wrangle-007",
+    "section": "2.1",
+    "q": "In a version of the SEDA data with one row per district, you replace each district's achievement gap by its z-score, `(gap - mean(gap)) / sd(gap)`. With 1,000 districts, what kind of operation is this, and how many rows result?",
+    "choices": [
+      "An aggregation; 1,000 rows",
+      "A transformation; 1,000 rows",
+      "A transformation; 2 rows, one for the mean and one for the SD",
+      "An aggregation; 1 row"
+    ],
+    "answer": 1,
+    "explain": "Each district gets its own standardized value, so the number of values is unchanged: a transformation. `mean()` and `sd()` are aggregations used inside it, but their single values are recycled across all 1,000 rows."
+  },
+  {
+    "id": "wrangle-008",
+    "section": "2.1",
+    "q": "Which statement correctly contrasts aggregations with other transformations?",
+    "choices": [
+      "An aggregation changes the values; a transformation only renames or reorders columns",
+      "Aggregations act on whole data frames; transformations act only on single vectors",
+      "An aggregation maps many values to fewer; `log()` gives one output per input",
+      "A transformation never changes the number of rows; an aggregation always returns one row"
+    ],
+    "answer": 2,
+    "explain": "Sums, means, min/max, medians, variances and quantiles collapse many values into fewer. Functions such as `log()` or `rank()` keep one value per input, while filtering and slicing are transformations that change the shape by dropping rows, which is why 'never changes the number of rows' is false."
+  },
+  {
+    "id": "wrangle-009",
+    "section": "2.1",
+    "q": "You've added a logical column `any_ace` to the BRFSS data, with one value per respondent. Which next step is an **aggregation**?",
+    "choices": [
+      "`as.numeric(brfss$any_ace)`, turning each TRUE/FALSE into a 1 or 0",
+      "`!brfss$any_ace`, flipping each respondent's indicator",
+      "`filter(brfss, any_ace)`, keeping the respondents with any ACE",
+      "`mean(brfss$any_ace)`, the proportion of respondents with any ACE"
+    ],
+    "answer": 3,
+    "explain": "`mean()` collapses one value per respondent into a single proportion. Negating or converting still gives one value per respondent, and the filter only keeps a subset of the original rows, so those are transformations."
+  },
+  {
+    "id": "wrangle-010",
+    "section": "2.2",
+    "q": "What does the last line return?\n```r\ndf <- tibble(id = 1:8, score = c(71, 85, 62, 90, 77, 58, 94, 66))\ndf |> slice(-(1:3))\n```",
+    "choices": [
+      "5 rows: `id` 4 through 8",
+      "An error, because row positions can't be negative",
+      "5 rows: `id` 1 through 5",
+      "3 rows: `id` 1 through 3"
+    ],
+    "answer": 0,
+    "explain": "Negative positions in `slice()` drop those rows, so rows 1–3 are removed and rows 4–8 remain. Keeping the first three rows would be `slice(1:3)`."
+  },
+  {
+    "id": "wrangle-011",
+    "section": "2.2",
+    "q": "`df` has 1,000 rows. How many rows do `head(df)` and `tail(df, 2)` return?",
+    "choices": [
+      "10 and 2",
+      "6 and 2",
+      "5 and 2",
+      "6 and 998"
+    ],
+    "answer": 1,
+    "explain": "`head()` defaults to `n = 6`, and `tail(df, 2)` gives the last 2 rows. The 10 rows you see when you just print a large tibble come from the print method, and 998 rows would be `tail(df, -2)`, which drops the first 2."
+  },
+  {
+    "id": "wrangle-012",
+    "section": "2.2",
+    "q": "What does `glimpse(brfss)` show?",
+    "choices": [
+      "The first 6 rows, printed as a table with one line per row",
+      "One line per column: its name, type, and first few values",
+      "Summary statistics (min, mean, max) for every numeric column",
+      "A random sample of rows, so that the preview is representative"
+    ],
+    "answer": 1,
+    "explain": "`glimpse()` turns the preview sideways so every column fits on screen, listing the dimensions and each column's name, type (such as `<dbl>` or `<chr>`) and leading values. The first 6 rows is `head()`; summary statistics come from `summary()`."
+  },
+  {
+    "id": "wrangle-013",
+    "section": "2.2",
+    "q": "`df` has 3 rows, with `id` values 1, 2, 3. Which of these could be the `id` column of `slice_sample(df, n = 5, replace = TRUE)`?",
+    "choices": [
+      "1, 2, 3",
+      "An error, because `n` is larger than the number of rows",
+      "3, 1, 2, 3, 4",
+      "2, 2, 3, 1, 2"
+    ],
+    "answer": 3,
+    "explain": "Sampling with replacement makes 5 draws from the same 3 rows, so the result has 5 rows and must repeat at least one of them. An `id` of 4 is impossible because only existing rows are drawn, and `n` may exceed the row count when `replace = TRUE`."
+  },
+  {
+    "id": "wrangle-014",
+    "section": "2.2",
+    "q": "`df` has 100 rows. What does `slice_sample(df, n = nrow(df), replace = TRUE)` return?",
+    "choices": [
+      "200 rows: the original 100 plus 100 newly sampled rows",
+      "The same 100 rows, each appearing exactly once, in a shuffled order",
+      "100 rows, typically with some rows repeated and others left out",
+      "Fewer than 100 rows, because repeated draws are dropped"
+    ],
+    "answer": 2,
+    "explain": "With replacement, each of the 100 draws can pick any row, so duplicates are almost certain and some rows never appear (a bootstrap sample). Each row exactly once in shuffled order is what you get with the default `replace = FALSE`."
+  },
+  {
+    "id": "wrangle-015",
+    "section": "2.2",
+    "q": "What is the probability that this returns the row with `id == 3`?\n```r\ndf <- tibble(id = 1:3, w = c(1, 1, 2))\nslice_sample(df, n = 1, weight_by = w)\n```",
+    "choices": [
+      "\\(1/3\\)",
+      "\\(2/3\\)",
+      "\\(1/4\\)",
+      "\\(1/2\\)"
+    ],
+    "answer": 3,
+    "explain": "With `weight_by`, a row's chance of being drawn is proportional to its weight: \\(2 / (1 + 1 + 2) = 1/2\\). Ignoring the weights would give \\(1/3\\)."
+  },
+  {
+    "id": "wrangle-016",
+    "section": "2.2",
+    "q": "Which description of the `weight_by` argument of `slice_sample()` is correct?",
+    "choices": [
+      "Each row's chance of being drawn is proportional to its weight",
+      "The sampled rows come back sorted from largest weight to smallest",
+      "Each sampled row's values are multiplied by its weight",
+      "Rows with a weight above 1 are always included in the sample"
+    ],
+    "answer": 0,
+    "explain": "`weight_by` changes only how likely each row is to be drawn: heavier rows are more likely. It never alters values, guarantees inclusion, or sorts the output."
+  },
+  {
+    "id": "wrangle-017",
+    "section": "2.2",
+    "q": "A data file is sorted by date, and you want a quick look at what typical rows look like across the whole file. Why might `slice_sample(df, n = 10)` be more useful than `head(df, 10)`?",
+    "choices": [
+      "`head()` can't show more than 6 rows at a time",
+      "`slice_sample()` keeps the file's order, while `head()` reorders rows",
+      "`head()` shows only the earliest rows, which may not be typical",
+      "`slice_sample()` also reports each column's type and a summary"
+    ],
+    "answer": 2,
+    "explain": "`head()` always returns the first rows, which in a sorted file all come from one end, here the earliest dates. A random sample spreads across the whole file. Six is only `head()`'s default, which `n` overrides."
+  },
+  {
+    "id": "wrangle-018",
+    "section": "2.2",
+    "q": "Which call returns the same rows as `head(df, 3)`?",
+    "choices": [
+      "`slice(df, 3)`",
+      "`tail(df, -3)`",
+      "`slice(df, 1:3)`",
+      "`slice_sample(df, n = 3)`"
+    ],
+    "answer": 2,
+    "explain": "`slice(df, 1:3)` keeps positions 1, 2 and 3, the first three rows. `slice(df, 3)` keeps only row 3, `tail(df, -3)` drops the first three rows, and `slice_sample()` picks three rows at random."
+  },
+  {
+    "id": "wrangle-019",
+    "section": "2.2",
+    "q": "What is the key difference between `slice()` and `filter()`?",
+    "choices": [
+      "`slice()` keeps rows where a condition is TRUE; `filter()` keeps rows by position",
+      "`slice()` returns a vector of rows; `filter()` returns a tibble of rows",
+      "`slice()` keeps columns by position; `filter()` keeps rows where a condition is TRUE",
+      "`slice()` keeps rows by position; `filter()` keeps rows where a condition is TRUE"
+    ],
+    "answer": 3,
+    "explain": "`slice(df, 2:4)` picks rows 2–4 whatever they contain, while `filter(df, score > 80)` checks a logical condition on each row. Both return a tibble; choosing columns is the job of `select()`."
+  },
+  {
+    "id": "wrangle-020",
+    "section": "2.2",
+    "q": "You run `slice_sample(seda, n = 5)` twice and get different districts each time. What makes the result the same every time the script runs?",
+    "choices": [
+      "Giving every row the same value in `weight_by`",
+      "Adding `replace = FALSE` to the `slice_sample()` call each time",
+      "Piping the sample into `glimpse()` so it is saved",
+      "Calling `set.seed()` with a fixed number just before sampling"
+    ],
+    "answer": 3,
+    "explain": "`slice_sample()` uses R's random number generator, and fixing the seed with `set.seed()` makes the same draws happen on every run. `replace = FALSE` is already the default and equal weights are the same as no weights, so neither removes the randomness."
+  },
+  {
+    "id": "wrangle-021",
+    "section": "2.3",
+    "q": "`seda` is a tibble with a numeric column `gap`. What do `select(seda, gap)` and `pull(seda, gap)` return?",
+    "choices": [
+      "A one-column tibble; a numeric vector",
+      "Both return a one-column tibble",
+      "A numeric vector; a one-column tibble",
+      "Both return a numeric vector"
+    ],
+    "answer": 0,
+    "explain": "`select()` always returns a data frame, here with one column, while `pull()` extracts a single column as a plain vector, like `seda$gap`. Use `pull()` when the next step needs a vector, such as `mean()`."
+  },
+  {
+    "id": "wrangle-022",
+    "section": "2.3",
+    "q": "`gap` has no missing values. What happens when you run this?\n```r\nseda |> select(gap) |> mean()\n```",
+    "choices": [
+      "A one-row tibble holding the mean of `gap`",
+      "`NA` with a warning, because `select()` returns a tibble, not a vector",
+      "An error, because `gap` must be written in quotes inside `select()`",
+      "The mean of `gap`, because a one-column tibble acts like a vector"
+    ],
+    "answer": 1,
+    "explain": "`mean()` expects a numeric vector; given a data frame, it warns that the argument is not numeric or logical and returns `NA`. `seda |> pull(gap) |> mean()` gives the actual mean."
+  },
+  {
+    "id": "wrangle-023",
+    "section": "2.3",
+    "q": "Why can you write `select(billboard, artist, track)` without putting `artist` and `track` in quotes?",
+    "choices": [
+      "Quotes are only needed when the data frame has a single column",
+      "Tidyverse verbs look up bare names as columns of the data frame",
+      "R turns any undefined word into a character string automatically",
+      "`artist` and `track` must already exist as objects in the environment"
+    ],
+    "answer": 1,
+    "explain": "dplyr verbs evaluate their arguments in the context of the data, so a bare name refers to a column of `billboard`. Outside such a verb, a bare `artist` would only work if an object with that name existed."
+  },
+  {
+    "id": "wrangle-024",
+    "section": "2.3",
+    "q": "Which columns does `select(brfss, starts_with(\"ace\"), -ace_3)` return?\n```\n# A tibble: 3 × 6\n     id ace_1 ace_2 ace_3   age race\n  <int> <dbl> <dbl> <dbl> <dbl> <chr>\n1     1     1     0     0    34 white\n2     2     0     0     1    51 black\n3     3     0     1     1    27 asian\n```",
+    "choices": [
+      "`ace_1`, `ace_2`, `race`",
+      "`ace_1`, `ace_2`, `ace_3`",
+      "`id`, `ace_1`, `ace_2`, `age`, `race`",
+      "`ace_1`, `ace_2`"
+    ],
+    "answer": 3,
+    "explain": "The first selection picks `ace_1`, `ace_2`, `ace_3`, and the `-ace_3` after it removes one column from that selection. Starting from every column happens only when the first selection is negative, as in `select(brfss, -ace_3)`. `race` contains 'ace' but doesn't start with it."
+  },
+  {
+    "id": "wrangle-025",
+    "section": "2.3",
+    "q": "`brfss` has columns `id`, `ace_1`, `ace_2`, `ace_3`, `age`, `race`. Which columns does `select(brfss, contains(\"ace\"))` return?",
+    "choices": [
+      "`ace_1`, `ace_2`, `ace_3`, `race`",
+      "`id`, `age`",
+      "`race`",
+      "`ace_1`, `ace_2`, `ace_3`"
+    ],
+    "answer": 0,
+    "explain": "`contains()` matches the text anywhere in a name, and 'race' contains the letters 'ace'. To get only the ACE items, use `starts_with(\"ace\")` or a more specific pattern."
+  },
+  {
+    "id": "wrangle-026",
+    "section": "2.3",
+    "q": "`brfss` has columns `id`, `ace_1`, …, `ace_9`, `ace_total`, `race`. Which call keeps exactly `ace_1` through `ace_9`?",
+    "choices": [
+      "`select(brfss, starts_with(\"ace_\"))`",
+      "`select(brfss, contains(\"ace\"))`",
+      "`select(brfss, ends_with(\"[0-9]\"))`",
+      "`select(brfss, matches(\"^ace_[0-9]$\"))`"
+    ],
+    "answer": 3,
+    "explain": "`matches()` takes a regular expression: `^ace_[0-9]$` means 'ace_' followed by exactly one digit and nothing else. `starts_with(\"ace_\")` also catches `ace_total`, `contains(\"ace\")` adds `race` as well, and `ends_with()` matches literal text, so it looks for names ending in the characters `[0-9]` and finds none."
+  },
+  {
+    "id": "wrangle-027",
+    "section": "2.3",
+    "q": "`seda` has columns `district`, `state`, `grade`, `gap`, in that order. What are the columns of `select(seda, gap, everything())`?",
+    "choices": [
+      "`gap`, `district`, `state`, `grade`, `gap`",
+      "`gap`, `district`, `state`, `grade`",
+      "`district`, `state`, `grade`, `gap`",
+      "`gap` only"
+    ],
+    "answer": 1,
+    "explain": "`select()` returns columns in the order you name them, and `everything()` then adds every column not yet selected, so `gap` moves to the front without being duplicated. This is the standard idiom for moving a column first."
+  },
+  {
+    "id": "wrangle-028",
+    "section": "2.3",
+    "q": "What does `where()` do in `select(seda, where(is.numeric))`?",
+    "choices": [
+      "Applies `is.numeric()` to each column and keeps those where it is TRUE",
+      "Keeps the columns whose names contain the text \"numeric\"",
+      "Converts every column of `seda` to a numeric type",
+      "Keeps the rows in which every value is numeric"
+    ],
+    "answer": 0,
+    "explain": "`where()` turns a function that returns TRUE or FALSE into a column selector: the function is applied to each whole column, and the columns that return TRUE are kept. `select()` never drops rows and never converts values."
+  },
+  {
+    "id": "wrangle-029",
+    "section": "2.3",
+    "q": "`seda` has columns `district`, `grade`, `gap_ela`, but no `gap_math`. What do the two `select()` calls do?\n```r\nvars <- c(\"district\", \"grade\", \"gap_math\")\nselect(seda, all_of(vars))\nselect(seda, any_of(vars))\n```",
+    "choices": [
+      "`all_of()` returns `district` and `grade`; `any_of()` gives an error",
+      "`all_of()` gives an error; `any_of()` returns `district` and `grade`",
+      "Both return `district` and `grade`, skipping `gap_math`",
+      "Both give an error, because `gap_math` is not a column"
+    ],
+    "answer": 1,
+    "explain": "`all_of()` is strict: every name in the vector must exist, or the selection fails with an error. `any_of()` silently skips names that aren't there, so it keeps the two that exist."
+  },
+  {
+    "id": "wrangle-030",
+    "section": "2.3",
+    "q": "Your cleaning script runs on several years of BRFSS files. You keep a vector `ace_vars` of ACE question names, but some years omit a few of those questions. Which call keeps whichever of those columns are present, without stopping?",
+    "choices": [
+      "`select(brfss, all_of(ace_vars))`",
+      "`select(brfss, contains(\"ace\"))`",
+      "`select(brfss, everything())`",
+      "`select(brfss, any_of(ace_vars))`"
+    ],
+    "answer": 3,
+    "explain": "`any_of()` keeps the listed columns that exist and skips the rest, which suits a list you expect to be incomplete. `all_of()` would stop with an error in any year missing a question; `everything()` keeps all columns, and `contains(\"ace\")` ignores your list and also catches names like `race`."
+  },
+  {
+    "id": "wrangle-031",
+    "section": "2.3",
+    "q": "What does `pull(df)` return when no column is named?",
+    "choices": [
+      "All columns, joined into one long vector",
+      "An error, because `pull()` needs a column",
+      "The first column, as a vector",
+      "The last column, as a vector"
+    ],
+    "answer": 3,
+    "explain": "`pull()`'s `var` argument defaults to `-1`, meaning the last column; positive numbers count from the left and negative ones from the right. It always returns one column, as a vector."
+  },
+  {
+    "id": "wrangle-032",
+    "section": "2.3",
+    "q": "Inside `select()`, what do `&`, `|` and `!` do when used with selections such as `starts_with(\"ace\")`?",
+    "choices": [
+      "They paste column names together, as `paste()` would",
+      "Intersection, union and complement of sets of columns",
+      "Elementwise AND, OR and NOT applied to the column values",
+      "They pick rows: keep rows matching both, either, or neither"
+    ],
+    "answer": 1,
+    "explain": "In tidyselect, each selection is a set of columns: `a & b` keeps the columns in both, `a | b` the columns in either, and `!a` every column not in `a`. They never look at the data values or the rows."
+  },
+  {
+    "id": "wrangle-033",
+    "section": "2.3",
+    "q": "`brfss` has columns `id`, `ace_1`, `ace_2`, `ace_3`, `age`, `race`, in that order. Which columns does `select(brfss, !c(id, ace_2:ace_3))` return?",
+    "choices": [
+      "`age`, `race`",
+      "`id`, `ace_2`, `ace_3`",
+      "`ace_1`, `ace_2`, `age`, `race`",
+      "`ace_1`, `age`, `race`"
+    ],
+    "answer": 3,
+    "explain": "`ace_2:ace_3` is the run of consecutive columns from `ace_2` to `ace_3`, `c()` combines it with `id`, and `!` keeps every column not in that set. Without the `!`, you would get `id`, `ace_2`, `ace_3`."
+  },
+  {
+    "id": "wrangle-034",
+    "section": "2.3",
+    "q": "A classmate wants only the BRFSS respondents older than 65 and writes `select(brfss, age > 65)`. What is the problem?",
+    "choices": [
+      "`select()` only keeps rows when combined with `everything()`",
+      "`age` has to be quoted, as in `select(brfss, \"age\" > 65)`",
+      "`select()` chooses columns; keeping rows that meet a condition needs `filter()`",
+      "The comparison needs `==`, as in `select(brfss, age == 65)`"
+    ],
+    "answer": 2,
+    "explain": "`select()` picks and orders columns and never drops rows. `filter(brfss, age > 65)` keeps the rows where the condition is TRUE."
+  },
+  {
+    "id": "wrangle-035",
+    "section": "2.4",
+    "q": "Which rows does the last line return?\n```r\ndf <- tibble(id = 1:5, x = c(3, NA, 7, 1, NA))\ndf |> filter(x > 2)\n```",
+    "choices": [
+      "4 rows: `id` 1, 2, 3 and 5",
+      "2 rows: `id` 1 and 3",
+      "4 rows: `id` 1 and 3, plus two rows filled with `NA`",
+      "An error, because `x > 2` is `NA` for some rows"
+    ],
+    "answer": 1,
+    "explain": "`filter()` keeps only the rows where the condition is TRUE. For rows 2 and 5, `NA > 2` is `NA`, not TRUE, so they are dropped: no error, and no padded rows."
+  },
+  {
+    "id": "wrangle-036",
+    "section": "2.4",
+    "q": "`df` has 5 rows, and its column `x` is `c(3, NA, 7, 1, NA)`. How many rows do `filter(df, x > 2)` and `filter(df, !(x > 2))` return **in total**?",
+    "choices": [
+      "5",
+      "4",
+      "3",
+      "2"
+    ],
+    "answer": 2,
+    "explain": "The first keeps 2 rows (`x` = 3 and 7) and the second keeps 1 row (`x` = 1). The two `NA` rows are dropped by both, because `!NA` is still `NA`, so a condition and its negation together need not return every row."
+  },
+  {
+    "id": "wrangle-037",
+    "section": "2.4",
+    "q": "Which expression is TRUE exactly for the elements of `x` that are missing, and FALSE for the rest?",
+    "choices": [
+      "`is.na(x)`",
+      "`x == NA`",
+      "`x == \"NA\"`",
+      "`is.null(x)`"
+    ],
+    "answer": 0,
+    "explain": "Any comparison with `NA` gives `NA`, so `x == NA` is `NA` for every element and `filter(df, x == NA)` keeps zero rows. `is.na()` returns a plain TRUE or FALSE, which is why `filter(df, is.na(x))` is how you keep the missing rows."
+  },
+  {
+    "id": "wrangle-038",
+    "section": "2.4",
+    "q": "What does the last line return?\n```r\ndf <- tibble(state = c(\"CA\", \"CA\", \"OR\", \"OR\"), n = 1:4)\ndf |> filter(state == c(\"CA\", \"OR\"))\n```",
+    "choices": [
+      "2 rows: `n` = 1 and 2",
+      "All 4 rows",
+      "2 rows: `n` = 1 and 4",
+      "An error, because `==` needs a single value on its right"
+    ],
+    "answer": 2,
+    "explain": "`==` compares elementwise and recycles `c(\"CA\", \"OR\")` to length 4, checking row 1 against CA, row 2 against OR, row 3 against CA and row 4 against OR. Only rows 1 and 4 match. To keep the rows in either state, use `state %in% c(\"CA\", \"OR\")`."
+  },
+  {
+    "id": "wrangle-039",
+    "section": "2.4",
+    "q": "Which rows does the last line keep?\n```r\ndf <- tibble(id = 1:4, x = c(3, NA, 7, 1))\ndf |> filter(!x %in% c(3, 7))\n```",
+    "choices": [
+      "`id` 2 and 4",
+      "An error, because `!` can't be placed before `%in%`",
+      "`id` 1 and 3",
+      "`id` 4 only"
+    ],
+    "answer": 0,
+    "explain": "`%in%` binds more tightly than `!`, so this is `!(x %in% c(3, 7))`. Unlike `==`, `%in%` never returns `NA`: `NA %in% c(3, 7)` is FALSE, so its negation is TRUE and the missing row is kept along with the row where `x` is 1."
+  },
+  {
+    "id": "wrangle-040",
+    "section": "2.4",
+    "q": "How many rows does the last line return?\n```r\ndf <- tibble(score = c(59, 60, 75, 80, 81))\ndf |> filter(between(score, 60, 80))\n```",
+    "choices": [
+      "3 rows: 60, 75, 80",
+      "2 rows: 59, 81",
+      "1 row: 75",
+      "2 rows: 60, 75"
+    ],
+    "answer": 0,
+    "explain": "`between(x, left, right)` is shorthand for `x >= left & x <= right`, so both endpoints are included. Only 59 and 81 fall outside."
+  },
+  {
+    "id": "wrangle-041",
+    "section": "2.4",
+    "q": "In R, `sqrt(2)^2 == 2` returns FALSE. Why, and what should a filter on computed decimal numbers use instead?",
+    "choices": [
+      "`sqrt()` returns an integer, so the types differ; use `as.integer()`",
+      "Floating-point rounding leaves `sqrt(2)^2` a hair off 2; use `near()`",
+      "`^` is applied before `sqrt()`; put parentheses around `sqrt(2)`",
+      "`==` can't compare a computed value with a constant; use `=`"
+    ],
+    "answer": 1,
+    "explain": "Doubles are stored in binary with limited precision, so `sqrt(2)^2` is 2.0000000000000004. `near(x, y)` compares with a small tolerance, making it the safe equality test for computed doubles."
+  },
+  {
+    "id": "wrangle-042",
+    "section": "2.4",
+    "q": "`brfss` has 1,000 rows. Which statement about the number of rows this returns is correct?\n```r\nbrfss |> filter(rbinom(n(), size = 1, prob = 0.1) == 1)\n```",
+    "choices": [
+      "It is exactly 1 on every run, because `size = 1`",
+      "It varies from run to run, with expected value 10",
+      "It varies from run to run, with expected value 100",
+      "It is exactly 100 on every run"
+    ],
+    "answer": 2,
+    "explain": "`rbinom(n(), 1, 0.1)` gives each row its own coin flip with a 0.1 chance of a 1, so the number kept is Binomial(1000, 0.1), with mean \\(np = 1000 \\times 0.1 = 100\\). To get exactly 100 rows, use `slice_sample(brfss, n = 100)`."
+  },
+  {
+    "id": "wrangle-043",
+    "section": "2.4",
+    "q": "A filter keeps each of 1,000 rows independently with probability 0.1, as `filter(rbinom(n(), 1, 0.1) == 1)` does. Roughly what is the standard deviation of the number of rows kept?",
+    "choices": [
+      "About 100",
+      "About 90",
+      "About 0.3",
+      "About 9.5"
+    ],
+    "answer": 3,
+    "explain": "The count is Binomial with \\(n = 1000\\) and \\(p = 0.1\\), so its variance is \\(np(1-p) = 90\\) and its standard deviation is \\(\\sqrt{90} \\approx 9.5\\). 90 is the variance, and 0.3 is the SD of a single row's 0/1 flip."
+  },
+  {
+    "id": "wrangle-044",
+    "section": "2.4",
+    "q": "Your analysis uses every U.S. district in the SEDA achievement-gap data. Why is it still worth running `filter(seda, district == \"Santa Barbara Unified\")` after cleaning?",
+    "choices": [
+      "It must be run before R allows any district-level analysis",
+      "It gives a representative sample of districts for the rest of the analysis",
+      "It removes the districts with missing gap estimates from the data",
+      "It's a sanity check: on a familiar case, implausible values stand out"
+    ],
+    "answer": 3,
+    "explain": "Looking at a familiar case lets you check that cleaning produced sensible output: the expected grades are there, the values are believable, nothing is duplicated. One district is not a representative sample, and the filter doesn't change `seda` itself."
+  },
+  {
+    "id": "wrangle-045",
+    "section": "2.4",
+    "q": "`filter(seda, district == \"Santa Barbara Unified\")` returns 0 rows, but you're sure the district is in the data. What is the most likely cause?",
+    "choices": [
+      "The column name `district` needs to be written in quotes inside `filter()`",
+      "`==` matches strings exactly, so the stored name is spelled differently",
+      "`filter()` drops any row with an `NA` in some other column",
+      "`filter()` can't compare a character column with a string using `==`"
+    ],
+    "answer": 1,
+    "explain": "String comparison is exact and case-sensitive, so a name stored as \"SANTA BARBARA UNIFIED\" won't match. Quoting the column name would make it worse: `\"district\" == \"Santa Barbara Unified\"` compares two fixed strings and keeps no rows. `filter()` only looks at the condition, not at other columns."
+  },
+  {
+    "id": "wrangle-046",
+    "section": "2.4",
+    "q": "What happens when you run `filter(seda, grade = 3)`?",
+    "choices": [
+      "It keeps the grade 3 rows, since `=` and `==` mean the same here",
+      "It runs without an error but returns zero rows",
+      "It sets `grade` to 3 in every row and returns all rows",
+      "An error: dplyr spots a named argument and suggests `grade == 3`"
+    ],
+    "answer": 3,
+    "explain": "Inside a function call, `=` names an argument rather than testing equality. `filter()` doesn't accept named conditions, so dplyr stops with an error asking whether you meant `==`. Changing values is the job of `mutate()`."
+  },
+  {
+    "id": "wrangle-047",
+    "section": "2.4",
+    "q": "Which rows does the last line keep?\n```r\ndf <- tibble(\n  id = 1:4,\n  smoker = c(TRUE, TRUE, FALSE, FALSE),\n  drinker = c(TRUE, FALSE, TRUE, FALSE)\n)\ndf |> filter(xor(smoker, drinker))\n```",
+    "choices": [
+      "`id` 1 only",
+      "`id` 4 only",
+      "`id` 1, 2 and 3",
+      "`id` 2 and 3"
+    ],
+    "answer": 3,
+    "explain": "`xor(a, b)` is TRUE when exactly one of `a` and `b` is TRUE. Row 1 alone is `smoker & drinker`, and rows 1–3 together are `smoker | drinker`."
+  },
+  {
+    "id": "wrangle-048",
+    "section": "2.4",
+    "q": "How does `filter(seda, grade == 3, gap > 0)` decide which rows to keep?",
+    "choices": [
+      "It keeps the grade 3 rows, then adds every row with `gap > 0`",
+      "It keeps rows where both are TRUE, like `grade == 3 & gap > 0`",
+      "It returns two data frames, one for each condition",
+      "It keeps rows where either is TRUE, like `grade == 3 | gap > 0`"
+    ],
+    "answer": 1,
+    "explain": "Conditions separated by commas in `filter()` are combined with AND. For OR, write `|` yourself inside a single condition."
+  },
+  {
+    "id": "wrangle-049",
+    "section": "2.5",
+    "q": "What is the `z` column of the result?\n```r\ndf <- tibble(x = c(1, 2, 3))\ndf |> mutate(y = x * 2, z = y + 1)\n```",
+    "choices": [
+      "2, 3, 4",
+      "3, 5, 7",
+      "An error, because `y` doesn't exist yet",
+      "2, 4, 6"
+    ],
+    "answer": 1,
+    "explain": "Inside one `mutate()`, later expressions can use columns created earlier in the same call, so `y` is 2, 4, 6 and `z = y + 1` is 3, 5, 7. The values 2, 3, 4 would be `x + 1`."
+  },
+  {
+    "id": "wrangle-050",
+    "section": "2.5",
+    "q": "In `mutate(across(c(math, ela), \\(x) x + 3))`, what is `\\(x) x + 3`?",
+    "choices": [
+      "A math expression that R skips over when the code runs",
+      "An anonymous function, short for `function(x) x + 3`, run on each column",
+      "A formula that adds 3 to a column of the data that is literally named `x`",
+      "A pattern that `across()` matches against the column names"
+    ],
+    "answer": 1,
+    "explain": "Since R 4.1, `\\(x)` is shorthand for `function(x)`. `across()` calls this unnamed function once per selected column, with `x` standing for that column's values, so `math` and `ela` each get 3 added."
+  },
+  {
+    "id": "wrangle-051",
+    "section": "2.5",
+    "q": "`counts` has columns `state`, `yes`, `no`, `total`. Fill in the blank so the result keeps `yes` and `no` and adds `yes_pct` and `no_pct`.\n```r\ncounts |>\n  mutate(across(c(yes, no), \\(x) 100 * x / total, .names = ____))\n```",
+    "choices": [
+      "`\"{.fn}_pct\"`",
+      "`\"{.col}_pct\"`",
+      "`\"pct_{.col}\"`",
+      "`\"_pct\"`"
+    ],
+    "answer": 1,
+    "explain": "`.names` is a glue template in which `{.col}` is replaced by each input column's name, giving `yes_pct` and `no_pct`. `\"pct_{.col}\"` would give `pct_yes` and `pct_no`, and `{.fn}` stands for the function's name, not the column's."
+  },
+  {
+    "id": "wrangle-052",
+    "section": "2.5",
+    "q": "In `counts |> mutate(across(c(yes, no), \\(x) 100 * x / total))`, with no `.names` argument, what happens to `yes` and `no`?",
+    "choices": [
+      "They are kept, and new columns `yes_1` and `no_1` are added",
+      "Nothing: `across()` throws an error unless `.names` is given",
+      "They are overwritten with percentages; no new columns are added",
+      "They are kept, and a single new column named `pct` is added at the end"
+    ],
+    "answer": 2,
+    "explain": "With one function, the default `.names` is `\"{.col}\"`, so each result gets the same name as its input column and replaces it. Supply `.names = \"{.col}_pct\"` to keep the originals."
+  },
+  {
+    "id": "wrangle-053",
+    "section": "2.5",
+    "q": "What is the `yes_pct` column of the result?\n```r\ncounts <- tibble(\n  state = c(\"CA\", \"OR\"),\n  yes = c(30, 10), no = c(70, 30), total = c(100, 40)\n)\ncounts |>\n  mutate(across(c(yes, no), \\(x) 100 * x / total, .names = \"{.col}_pct\"))\n```",
+    "choices": [
+      "0.3, 0.25",
+      "30, 25",
+      "70, 75",
+      "30, 10"
+    ],
+    "answer": 1,
+    "explain": "Row by row, the lambda computes `100 * yes / total`: \\(100 \\times 30/100 = 30\\) for CA and \\(100 \\times 10/40 = 25\\) for OR. The values 70 and 75 are `no_pct`."
+  },
+  {
+    "id": "wrangle-054",
+    "section": "2.5",
+    "q": "Each ACE column is coded 1 = yes, 0 = no, with no missing values. Which call adds `any_ace`, TRUE when a respondent answered yes to at least one ACE question?",
+    "choices": [
+      "`mutate(brfss, any_ace = if_all(starts_with(\"ace\"), \\(x) x == 1))`",
+      "`mutate(brfss, any_ace = across(starts_with(\"ace\"), \\(x) x == 1))`",
+      "`mutate(brfss, any_ace = if_any(starts_with(\"ace\"), \\(x) x == 1))`",
+      "`mutate(brfss, any_ace = starts_with(\"ace\") == 1)`"
+    ],
+    "answer": 2,
+    "explain": "`if_any()` applies the test to each selected column and returns one TRUE/FALSE per row, TRUE if any column passes. `if_all()` requires a yes on every item, `across()` returns one result per column rather than a single indicator, and `starts_with()` only works where columns are being selected."
+  },
+  {
+    "id": "wrangle-055",
+    "section": "2.5",
+    "q": "Fill in the blank so `missing_any` is TRUE when a respondent skipped at least one ACE question.\n```r\nbrfss |> mutate(missing_any = ____(starts_with(\"ace\"), is.na))\n```",
+    "choices": [
+      "`if_any`",
+      "`where`",
+      "`if_all`",
+      "`across`"
+    ],
+    "answer": 0,
+    "explain": "`if_any(cols, is.na)` is TRUE for a row when at least one selected column is missing. `if_all()` would flag only respondents who skipped every ACE question, and `where()` chooses columns by their type rather than testing rows."
+  },
+  {
+    "id": "wrangle-056",
+    "section": "2.5",
+    "q": "ACE items are coded 1 = yes, 0 = no. What is the `any_ace` column?\n```r\nace <- tibble(\n  id = 1:3,\n  ace_1 = c(0, 1, 0),\n  ace_2 = c(0, NA, NA),\n  ace_3 = c(1, 0, 0)\n)\nace |> mutate(any_ace = rowSums(across(ace_1:ace_3)) > 0)\n```",
+    "choices": [
+      "TRUE, TRUE, NA",
+      "TRUE, TRUE, FALSE",
+      "TRUE, FALSE, FALSE",
+      "TRUE, NA, NA"
+    ],
+    "answer": 3,
+    "explain": "`rowSums()` returns `NA` for any row with a missing value, so respondent 2 gets `NA` even though they said yes to `ace_1`. Adding `na.rm = TRUE` gives TRUE, TRUE, FALSE, which treats respondent 3's skipped item as a no, so decide deliberately how missing answers should count."
+  },
+  {
+    "id": "wrangle-057",
+    "section": "2.5",
+    "q": "In BRFSS, `addepev3` (ever told you had a depressive disorder) is coded 1 = yes, 2 = no, 7 = don't know, 9 = refused. Which call makes `depressed` TRUE for exactly the respondents who said yes?",
+    "choices": [
+      "`mutate(brfss, depressed = addepev3 == 1)`",
+      "`mutate(brfss, depressed = addepev3 %in% c(1, 2))`",
+      "`mutate(brfss, depressed = addepev3 != 2)`",
+      "`mutate(brfss, depressed = addepev3 %in% c(1, 7))`"
+    ],
+    "answer": 0,
+    "explain": "Only code 1 means yes. `!= 2` also flags 'don't know' and 'refused', `%in% c(1, 7)` adds 'don't know', and `%in% c(1, 2)` flags everyone who answered yes or no. Always check survey codes against the codebook before building an indicator."
+  },
+  {
+    "id": "wrangle-058",
+    "section": "2.5",
+    "q": "ACE items `ace_1` to `ace_3` are coded 1 = yes, 2 = no. A student counts each respondent's yes answers with `n_yes = rowSums(across(ace_1:ace_3))`. Which replacement actually counts the yes answers?",
+    "choices": [
+      "`n_yes = rowSums(across(ace_1:ace_3)) - 1`",
+      "`n_yes = if_any(ace_1:ace_3, \\(x) x == 1)`",
+      "`n_yes = sum(across(ace_1:ace_3, \\(x) x == 1))`",
+      "`n_yes = rowSums(across(ace_1:ace_3, \\(x) x == 1))`"
+    ],
+    "answer": 3,
+    "explain": "Summing the raw codes adds 1s and 2s, so a respondent who said no to all three gets 6. Turning each item into TRUE/FALSE with the lambda and then using `rowSums()` counts the TRUEs in each row. `sum()` adds over all rows and gives one grand total, and `if_any()` gives TRUE/FALSE, not a count."
+  },
+  {
+    "id": "wrangle-059",
+    "section": "2.5",
+    "q": "`brfss` has 400 rows and 12 columns, none named `any_ace` or `missing_any`. What are the dimensions of the result?\n```r\nbrfss |>\n  mutate(\n    any_ace = if_any(starts_with(\"ace\"), \\(x) x == 1),\n    missing_any = if_any(starts_with(\"ace\"), is.na)\n  )\n```",
+    "choices": [
+      "402 rows, 12 columns",
+      "400 rows, 2 columns",
+      "400 rows, 14 columns",
+      "1 row, 14 columns"
+    ],
+    "answer": 2,
+    "explain": "`mutate()` adds new columns (or replaces existing ones) and never changes the number of rows, so the result has 400 rows and \\(12 + 2 = 14\\) columns. Keeping only the new columns would take a `select()` step."
+  },
+  {
+    "id": "wrangle-060",
+    "section": "2.5",
+    "q": "Why is it convenient to store an indicator such as \"diagnosed with depression\" as TRUE/FALSE (or 1/0)?",
+    "choices": [
+      "A logical column cannot contain missing values, so no cleaning is needed",
+      "`filter()` only accepts columns made of 1s and 0s",
+      "Only logical columns can be created inside `mutate()`",
+      "Its mean is the proportion of TRUEs, and its sum is the count"
+    ],
+    "answer": 3,
+    "explain": "In arithmetic R treats TRUE as 1 and FALSE as 0, so `mean(depressed)` is the share diagnosed and `sum(depressed)` the number diagnosed (add `na.rm = TRUE` if needed). Logical columns can still hold `NA`."
+  }
+]

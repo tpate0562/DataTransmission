@@ -1,0 +1,781 @@
+[
+  {
+    "id": "bias-001",
+    "section": "4.4",
+    "q": "A simulation study of the sample mean:\n```r\nreps <- 1000\nest <- numeric(reps)\nfor (i in 1:reps) {\n  s <- sample(pop, 50)\n  est[i] <- mean(s)\n}\n```\nWhat does the `for` loop accomplish?",
+    "choices": [
+      "It draws one sample of size 1000 and stores each value drawn, so `est` approximates the distribution of the population",
+      "It averages 1000 values from a single sample of size 50, so `est` ends up holding one very precise estimate of \\( \\mu \\)",
+      "It reruns the sampling 1000 times and saves each sample mean, approximating the sampling distribution of \\( \\hat{\\mu} \\)",
+      "It resamples the same 50 units over and over, so `est` approximates the distribution of the values within one sample"
+    ],
+    "answer": 2,
+    "explain": "Each pass through the loop is a fresh run of the sampling procedure (draw 50 units, take the mean), and `est[i]` records that run's estimate. The 1000 stored values are draws from the sampling distribution of \\( \\hat{\\mu} \\), not observations from the population."
+  },
+  {
+    "id": "bias-002",
+    "section": "4.4",
+    "q": "Fill in the blank so that `sim_var()` returns the simulated variance of the sample mean for samples of size `n` from the population vector `pop`:\n```r\nsim_var <- function(n, reps = 2000) {\n  est <- numeric(reps)\n  for (i in 1:reps) {\n    ________\n  }\n  var(est)\n}\n```",
+    "choices": [
+      "`est <- mean(sample(pop, n))`",
+      "`est[i] <- mean(sample(pop, n))`",
+      "`est[i] <- var(sample(pop, n))`",
+      "`est[i] <- mean(sample(pop, reps))`"
+    ],
+    "answer": 1,
+    "explain": "Each repetition must draw a new sample of size `n` and store its mean in slot `i`. Writing `est <- ...` replaces the whole vector with one number, `var(sample(pop, n))` stores the spread within one sample instead of the estimate, and `sample(pop, reps)` uses the wrong sample size."
+  },
+  {
+    "id": "bias-003",
+    "section": "4.4",
+    "q": "This simulation runs without an error but prints `NA`:\n```r\nest <- numeric(500)\nfor (i in 1:500) {\n  est <- mean(sample(pop, 25))\n}\nvar(est)\n```\nWhat went wrong?",
+    "choices": [
+      "Each pass overwrites `est` with a single number, so `var()` ends up computed from one value",
+      "`numeric(500)` fills `est` with `NA` values, and the loop never replaces any of them",
+      "`sample()` returns `NA` inside a loop unless `replace = TRUE` is given",
+      "`var()` cannot be applied to a vector that was modified inside a `for` loop"
+    ],
+    "answer": 0,
+    "explain": "Assigning to `est` instead of `est[i]` throws away the vector each time, so after the loop `est` is just the last sample mean, and R's variance of a single number is `NA`. (`numeric(500)` starts as 500 zeros, not `NA`s.)"
+  },
+  {
+    "id": "bias-004",
+    "section": "4.4",
+    "q": "In a simulation study of the sample mean, you increase the number of repetitions `reps` but keep the sample size `n` the same. What changes?",
+    "choices": [
+      "The true \\( \\operatorname{Var}[\\hat{\\mu}] \\) gets smaller, since more simulated samples go into \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\)",
+      "\\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) drifts away from \\( \\operatorname{Var}[\\hat{\\mu}] \\), since more extreme samples get included",
+      "Each individual estimate stored in `est` becomes a more accurate estimate of \\( \\mu \\)",
+      "\\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) tends to get closer to \\( \\operatorname{Var}[\\hat{\\mu}] \\), which stays the same"
+    ],
+    "answer": 3,
+    "explain": "More repetitions only make the simulation's picture of the sampling distribution sharper. The sampling distribution itself, and so \\( \\operatorname{Var}[\\hat{\\mu}] \\), depends on `n` and the design, not on how many times you simulate it."
+  },
+  {
+    "id": "bias-005",
+    "section": "4.4",
+    "q": "You run `sim_var(10)` and `sim_var(100)`, each with `reps = 5000`. The second result is much smaller. Why?",
+    "choices": [
+      "Larger samples give the simulation more repetitions, so its approximation is more precise",
+      "Larger samples remove the bias in \\( \\hat{\\mu} \\), and that bias was inflating the variance",
+      "Larger samples make each \\( \\hat{\\mu} \\) less variable, so the true \\( \\operatorname{Var}[\\hat{\\mu}] \\) is smaller",
+      "Larger samples make the population less spread out, so \\( \\sigma^2 \\) itself is smaller"
+    ],
+    "answer": 2,
+    "explain": "Increasing `n` changes the estimator's actual sampling distribution: for SRS, \\( \\operatorname{Var}[\\hat{\\mu}] \\) is roughly \\( \\sigma^2/n \\). Both runs used the same number of repetitions, which affects how well the simulation approximates the variance, not the variance itself."
+  },
+  {
+    "id": "bias-006",
+    "section": "4.4",
+    "q": "From a population of \\( N = 100{,}000 \\) values, a simulation gives \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\approx 4.0 \\) for SRS of size \\( n = 25 \\). Roughly what should it give for \\( n = 100 \\)?",
+    "choices": [
+      "About 2.0",
+      "About 1.0",
+      "About 0.25",
+      "About 4.0"
+    ],
+    "answer": 1,
+    "explain": "When \\( n \\) is tiny compared with \\( N \\), \\( \\operatorname{Var}[\\hat{\\mu}] \\approx \\sigma^2/n \\), so multiplying \\( n \\) by 4 divides the variance by 4: \\( 4.0/4 = 1.0 \\). Halving is what happens to the standard error, not the variance."
+  },
+  {
+    "id": "bias-007",
+    "section": "4.4",
+    "q": "A student creates a population with `pop <- rnorm(10000, mean = 50, sd = 10)`, simulates 1000 SRS sample means, and writes: \"The simulated sample means averaged 49.8, so the population mean is about 49.8.\" What is the main problem with this conclusion?",
+    "choices": [
+      "The truth is already known from `pop`; the point of the simulation is to learn how close the estimator tends to come to it",
+      "1000 repetitions is too few; with 100,000 repetitions the conclusion about the population would be justified",
+      "The student should report the median of the simulated sample means, since it is less sensitive to outliers",
+      "The simulated samples need to be drawn with replacement before anything can be said about the population"
+    ],
+    "answer": 0,
+    "explain": "In a simulation study you create the truth, so `mean(pop)` is known exactly and estimating it is pointless. What the simulation tells you is how the method performs: compare \\( \\widetilde{E}[\\hat{\\mu}] \\) with `mean(pop)` to check for bias, and look at \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) to judge precision."
+  },
+  {
+    "id": "bias-008",
+    "section": "4.4",
+    "q": "A simulation stores 5000 values of an estimator \\( \\hat{\\mu} \\) in `est`, and `pop` is the whole population. What does `mean(est) - mean(pop)` approximate?",
+    "choices": [
+      "The error \\( \\hat{\\mu} - \\mu \\) of the one sample you would actually collect",
+      "The mean squared error \\( E[(\\hat{\\mu} - \\mu)^2] \\) of the estimator",
+      "The spread of the population values around \\( \\mu \\)",
+      "The bias \\( E[\\hat{\\mu}] - \\mu \\) of the estimator under this design"
+    ],
+    "answer": 3,
+    "explain": "`mean(est)` is \\( \\widetilde{E}[\\hat{\\mu}] \\) and `mean(pop)` is the true \\( \\mu \\), so their difference approximates the bias: the average error over many samples, not the error of any single one. The MSE would be `mean((est - mean(pop))^2)`."
+  },
+  {
+    "id": "bias-009",
+    "section": "4.4",
+    "q": "Each of 2000 repetitions draws `sample(pop, 30)` from a population vector `pop` of 10,000 values and stores the sample mean in `est`. Then:\n```r\nggplot(tibble(est = est), aes(x = est)) +\n  geom_histogram()\n```\nWhich distribution does this histogram approximate?",
+    "choices": [
+      "The distribution of the 10,000 values in the population",
+      "The distribution of the 30 values in a typical sample",
+      "The sampling distribution of the sample mean for samples of size 30",
+      "The distribution of the population mean \\( \\mu \\) across repetitions"
+    ],
+    "answer": 2,
+    "explain": "Every value in `est` is one sample mean, so the histogram shows how \\( \\hat{\\mu} \\) varies from sample to sample, and it is much narrower than a histogram of `pop`. The population mean \\( \\mu \\) is a fixed number, so it has no distribution."
+  },
+  {
+    "id": "bias-010",
+    "section": "4.4",
+    "q": "`sim_var(n)` returns the simulated variance of \\( \\hat{\\mu} \\) for samples of size `n`. A student runs:\n```r\nns <- c(10, 20, 40, 80)\nvars <- numeric(length(ns))\nfor (j in seq_along(ns)) {\n  vars[j] <- sim_var(ns[j])\n}\n```\nWhat does `vars` contain?",
+    "choices": [
+      "Four simulated variances, one per sample size, that grow as `n` grows",
+      "Four simulated variances, one per sample size, that shrink as `n` grows",
+      "The `reps` sample means from the largest sample size, \\( n = 80 \\)",
+      "One simulated variance pooled across all four sample sizes"
+    ],
+    "answer": 1,
+    "explain": "`seq_along(ns)` is `1:4`, so `sim_var()` is called once per sample size and each returned variance goes into `vars[j]`. Since \\( \\operatorname{Var}[\\hat{\\mu}] \\) is roughly \\( \\sigma^2/n \\), the values should roughly halve each time `n` doubles."
+  },
+  {
+    "id": "bias-011",
+    "section": "4.4",
+    "q": "Two students run identical simulation code with `reps = 200` and no seed set. One gets \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] = 2.31 \\) and the other \\( 2.47 \\). What is the best explanation?",
+    "choices": [
+      "Simulation error: the runs used different random samples, and more `reps` would tend to shrink the gap",
+      "One student made a coding mistake, since running the same code twice always gives the same output",
+      "The estimator is biased, and bias shows up as disagreement between simulation runs",
+      "The true variance of \\( \\hat{\\mu} \\) changed between the two runs of the simulation"
+    ],
+    "answer": 0,
+    "explain": "A simulation approximation is itself random when no seed is fixed. With only 200 repetitions, two approximations of the same \\( \\operatorname{Var}[\\hat{\\mu}] \\) can differ noticeably; more repetitions bring both closer to the truth, and `set.seed()` would make a run reproducible."
+  },
+  {
+    "id": "bias-012",
+    "section": "4.4",
+    "q": "A simulation with \\( R \\) repetitions produces estimates \\( \\hat{\\mu}_1, \\dots, \\hat{\\mu}_R \\) and computes \\[ \\widetilde{E}[\\hat{\\mu}] = \\frac{1}{R} \\sum_{r=1}^{R} \\hat{\\mu}_r . \\] What is this quantity used for?",
+    "choices": [
+      "Producing a more accurate estimate of \\( \\mu \\) to report from the one real sample you collected",
+      "Approximating the population variance \\( \\sigma^2 \\) from the simulated estimates",
+      "Approximating the mean squared error of the estimator without needing \\( \\mu \\)",
+      "Approximating the expected value of the estimator, to compare with \\( \\mu \\) and check for bias"
+    ],
+    "answer": 3,
+    "explain": "\\( \\widetilde{E}[\\hat{\\mu}] \\) averages the estimator over many simulated samples, approximating \\( E[\\hat{\\mu}] \\); comparing it with the known \\( \\mu \\) reveals bias. It isn't something you could compute in a real study, where you only have one sample."
+  },
+  {
+    "id": "bias-013",
+    "section": "4.5",
+    "q": "From a population of \\( N = 5 \\) units you draw \\( n = 2 \\) without replacement. Given that unit 3 was the first draw, what is the probability that unit 3 is also the second draw, and what does that say about the draws?",
+    "choices": [
+      "1/5, so the draws are independent: every draw is uniform over the whole population",
+      "1/4, so the draws are independent: each remaining unit is equally likely to come next",
+      "0, so the draws are dependent: the first draw changes the probabilities for the second",
+      "0, so the draws are independent: no unit is allowed to appear twice in the sample"
+    ],
+    "answer": 2,
+    "explain": "Without replacement, unit 3 is removed after the first draw, so the second draw is uniform over the other 4 units and unit 3 has probability 0. Because the first outcome changes the second draw's distribution, the draws are dependent; with replacement each draw would be uniform over all 5 units, independent of the others."
+  },
+  {
+    "id": "bias-014",
+    "section": "4.5",
+    "q": "Which call draws 20 values from the vector `pop` so that the draws are i.i.d., each one uniform over the whole population?",
+    "choices": [
+      "`sample(pop, 20, replace = FALSE)`",
+      "`sample(pop, 20, replace = TRUE)`",
+      "`head(sample(pop), 20)`",
+      "`rep(sample(pop, 1), 20)`"
+    ],
+    "answer": 1,
+    "explain": "With `replace = FALSE` (also the default), and with the first 20 values of a shuffled `pop`, the sample is drawn without replacement, so the draws are dependent. `rep(sample(pop, 1), 20)` repeats a single draw. Only `replace = TRUE` puts each unit back so every draw is an independent pick from all of `pop`."
+  },
+  {
+    "id": "bias-015",
+    "section": "4.5",
+    "q": "For the same population and the same \\( n \\), how does the sample mean under SRS with replacement compare with SRS without replacement?",
+    "choices": [
+      "Both are unbiased for \\( \\mu \\); without replacement has slightly smaller variance",
+      "Both are unbiased for \\( \\mu \\); with replacement has slightly smaller variance",
+      "Only with replacement is unbiased, because only its draws are i.i.d.",
+      "Only without replacement is unbiased, because no unit is counted twice"
+    ],
+    "answer": 0,
+    "explain": "Every unit is equally likely to be drawn under either scheme, so \\( E[\\hat{\\mu}] = \\mu \\) in both. Without replacement never wastes a draw on a repeat, so its variance is smaller by the factor \\( (N-n)/(N-1) \\)."
+  },
+  {
+    "id": "bias-016",
+    "section": "4.5",
+    "q": "A population has \\( N = 11 \\) units and variance \\( \\sigma^2 = 12 \\). For an SRS of \\( n = 6 \\) drawn without replacement, what is \\( \\operatorname{Var}[\\hat{\\mu}] \\)? Use \\[ \\operatorname{Var}[\\hat{\\mu}] = \\frac{\\sigma^2}{n} \\cdot \\frac{N-n}{N-1} . \\]",
+    "choices": [
+      "2",
+      "0.5",
+      "1.2",
+      "1"
+    ],
+    "answer": 3,
+    "explain": "\\( \\sigma^2/n = 12/6 = 2 \\) is the variance with replacement, and the finite population correction \\( (11-6)/(11-1) = 0.5 \\) cuts it to 1. The correction matters here because more than half the population is in the sample."
+  },
+  {
+    "id": "bias-017",
+    "section": "4.5",
+    "q": "`pop` is a numeric vector holding an entire population. Which expression always gives the population mean \\( \\mu \\), whatever the random draw?",
+    "choices": [
+      "`mean(sample(pop, length(pop), replace = TRUE))`",
+      "`mean(sample(pop, length(pop) - 1))`",
+      "`mean(sample(pop, length(pop)))`",
+      "`mean(sample(pop, 2 * length(pop), replace = TRUE))`"
+    ],
+    "answer": 2,
+    "explain": "Drawing all \\( N \\) units without replacement just reorders `pop`, a census, so its mean is always \\( \\mu \\); the correction \\( (N-n)/(N-1) \\) is 0. With replacement some units repeat and others are missed, so even \\( 2N \\) draws give a random mean with variance \\( \\sigma^2/(2N) \\)."
+  },
+  {
+    "id": "bias-018",
+    "section": "4.5",
+    "q": "A poll draws \\( n = 1{,}000 \\) adults from a state with \\( N = 30 \\) million adults. How much does it matter whether the poll samples with or without replacement?",
+    "choices": [
+      "A lot: sampling without replacement roughly halves the variance of \\( \\hat{\\mu} \\)",
+      "Very little: \\( (N-n)/(N-1) \\) is essentially 1, so the two variances are nearly equal",
+      "A lot: sampling with replacement makes \\( \\hat{\\mu} \\) biased upward",
+      "Very little for the variance, but with replacement makes \\( \\hat{\\mu} \\) biased"
+    ],
+    "answer": 1,
+    "explain": "\\( (30{,}000{,}000 - 1000)/(30{,}000{,}000 - 1) \\approx 0.99997 \\), so the variance without replacement is almost exactly \\( \\sigma^2/n \\). Neither scheme is biased; the efficiency gain from not replacing only matters when \\( n \\) is a sizable fraction of \\( N \\)."
+  },
+  {
+    "id": "bias-019",
+    "section": "4.5",
+    "q": "A simulation plots \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) against \\( n \\) for a population of \\( N = 200 \\), once using `sample(pop, n)` and once using `sample(pop, n, replace = TRUE)`, for \\( n \\) from 10 to 200. What pattern should appear?",
+    "choices": [
+      "The without-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
+      "The with-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
+      "The two curves lie on top of each other, because both sample means are unbiased for \\( \\mu \\)",
+      "The without-replacement curve is lower for small \\( n \\), but the curves cross near \\( n = 100 \\)"
+    ],
+    "answer": 0,
+    "explain": "The variance without replacement equals the with-replacement variance \\( \\sigma^2/n \\) times \\( (N-n)/(N-1) \\), a factor below 1 that shrinks as \\( n \\) grows and reaches 0 at \\( n = N \\) (a census). Being equally unbiased says nothing about having equal variance."
+  },
+  {
+    "id": "bias-020",
+    "section": "4.5",
+    "q": "Why does sampling without replacement give a slightly more precise sample mean than sampling with replacement?",
+    "choices": [
+      "Its draws are i.i.d., and i.i.d. draws always give the estimator with the smallest possible variance",
+      "It removes the bias that repeated units create in the sample mean, and less bias means less variance",
+      "It shrinks the population variance \\( \\sigma^2 \\) by the factor \\( (N-n)/(N-1) \\) before sampling begins",
+      "Every draw is a new unit, while with replacement some draws repeat units already sampled and add no new information"
+    ],
+    "answer": 3,
+    "explain": "With replacement, a repeated unit takes up a draw without telling you anything new, so the sample effectively covers fewer distinct units. Without replacement the draws are dependent, not i.i.d., and neither scheme is biased; \\( \\sigma^2 \\) is a fixed population quantity that the correction factor does not change."
+  },
+  {
+    "id": "bias-021",
+    "section": "4.6",
+    "q": "Under a given sampling design, the statistical bias of an estimator \\( \\hat{\\mu} \\) is",
+    "choices": [
+      "\\( \\hat{\\mu} - \\mu \\), the error of the estimate computed from the sample you actually collected",
+      "\\( E[(\\hat{\\mu} - \\mu)^2] \\), the average squared error over all possible samples from the design",
+      "\\( E[\\hat{\\mu}] - \\mu \\), the average error of \\( \\hat{\\mu} \\) over all possible samples from the design",
+      "\\( \\operatorname{Var}[\\hat{\\mu}] \\), how much \\( \\hat{\\mu} \\) changes from one possible sample to another"
+    ],
+    "answer": 2,
+    "explain": "Bias is a property of the estimator and the design together: it averages the error over every sample the design could produce. The error in your one sample, \\( \\hat{\\mu} - \\mu \\), also includes chance variation, and the average squared error is the MSE."
+  },
+  {
+    "id": "bias-022",
+    "section": "4.6",
+    "q": "A researcher takes a genuine SRS of 40 students, and the sample mean GPA turns out to be 0.3 above the true campus mean reported by the registrar. A colleague says the design must be biased. What's the best response?",
+    "choices": [
+      "Yes: any estimate that differs from \\( \\mu \\) shows that the sampling design is biased",
+      "Not necessarily: the SRS mean is unbiased, but any one sample can miss \\( \\mu \\) by chance",
+      "Yes: the error is positive, so this design overestimates the mean GPA on average",
+      "Not necessarily: the design is biased only if the error exceeds the population SD"
+    ],
+    "answer": 1,
+    "explain": "Bias is about the average over all possible samples, \\( E[\\hat{\\mu}] - \\mu \\), and under SRS that is 0. One sample being off by 0.3 is sampling variability, or bad luck; the sign or size of a single error can't reveal bias."
+  },
+  {
+    "id": "bias-023",
+    "section": "4.6",
+    "q": "From an SRS \\( x_1, \\dots, x_n \\), you estimate the population variance with \\[ \\frac{1}{n} \\sum_{i=1}^{n} (x_i - \\bar{x})^2 . \\] How does this estimator behave?",
+    "choices": [
+      "It underestimates \\( \\sigma^2 \\) on average, since deviations are measured from \\( \\bar{x} \\), not \\( \\mu \\)",
+      "It overestimates \\( \\sigma^2 \\) on average, since \\( \\bar{x} \\) is itself random and so adds extra variability",
+      "It is unbiased, since the sample is an SRS and each \\( x_i \\) has variance \\( \\sigma^2 \\)",
+      "It is unbiased for large \\( n \\), but overestimates \\( \\sigma^2 \\) when \\( n \\) is small"
+    ],
+    "answer": 0,
+    "explain": "\\( \\bar{x} \\) is the value that minimizes \\( \\sum (x_i - c)^2 \\), so squared deviations from \\( \\bar{x} \\) are never larger than those from \\( \\mu \\), and the \\( 1/n \\) formula comes out too small by the factor \\( (n-1)/n \\) on average. This bias comes from the estimator, even with a perfect SRS; dividing by \\( n - 1 \\) fixes it."
+  },
+  {
+    "id": "bias-024",
+    "section": "4.6",
+    "q": "Each repetition of a simulation draws 5 values with replacement from a large population whose variance is \\( \\sigma^2 = 20 \\), and stores two estimates:\n```r\nfor (i in 1:10000) {\n  x <- sample(pop, 5, replace = TRUE)\n  v1[i] <- mean((x - mean(x))^2)\n  v2[i] <- var(x)\n}\n```\nAbout what should `mean(v1)` and `mean(v2)` be?",
+    "choices": [
+      "`mean(v1)` near 20 and `mean(v2)` near 16",
+      "Both near 20, since each is averaged over 10,000 samples",
+      "`mean(v1)` near 20 and `mean(v2)` near 25",
+      "`mean(v1)` near 16 and `mean(v2)` near 20"
+    ],
+    "answer": 3,
+    "explain": "R's `var()` divides by \\( n - 1 \\) and is unbiased, so `v2` averages about 20. `v1` divides by \\( n \\), so its expected value is \\( \\frac{n-1}{n}\\sigma^2 = \\frac{4}{5}(20) = 16 \\); averaging over many repetitions reveals that bias but doesn't remove it."
+  },
+  {
+    "id": "bias-025",
+    "section": "4.6",
+    "q": "To estimate the average age of adults in a city, a team surveys people walking across a college campus. What bias should they expect, and where does it come from?",
+    "choices": [
+      "Downward bias from the estimator, because the sample mean tends to underestimate the population mean",
+      "Upward bias from the sampling design, because older adults are more willing to answer surveys",
+      "Downward bias from the sampling design, because young adults are far more likely to be included",
+      "No bias, as long as the people stopped on campus are chosen at random"
+    ],
+    "answer": 2,
+    "explain": "Young adults have much higher inclusion probabilities on a campus, so the sample over-represents them and the mean age comes out too low on average. The sample mean itself is fine; the problem is the design, and choosing randomly among people on campus doesn't change who is on campus."
+  },
+  {
+    "id": "bias-026",
+    "section": "4.6",
+    "q": "Which situation has bias that comes from the **estimator** rather than from the sampling design?",
+    "choices": [
+      "Estimating average commute time from a survey emailed only to employees who drive to work",
+      "Estimating a population variance from an SRS by dividing the sum of squared deviations by \\( n \\)",
+      "Estimating mean hawk wingspan from a sample in which females are 9 times as likely to be caught",
+      "Estimating average daily screen time from volunteers who respond to an online poll"
+    ],
+    "answer": 1,
+    "explain": "An SRS is an unbiased design, so the bias in the \\( 1/n \\) variance formula comes from the formula itself. The other three use a reasonable estimator on samples whose inclusion probabilities favor certain kinds of units, which is design bias."
+  },
+  {
+    "id": "bias-027",
+    "section": "4.6",
+    "q": "In a sampling design, the inclusion probability \\( p_i \\) of unit \\( i \\) is",
+    "choices": [
+      "The probability that unit \\( i \\) ends up in the sample",
+      "The probability that unit \\( i \\) is selected on the first draw",
+      "The share of the sample made up of units like unit \\( i \\)",
+      "The share of the population that unit \\( i \\) stands in for"
+    ],
+    "answer": 0,
+    "explain": "\\( p_i = P(\\text{unit } i \\text{ is in the sample}) \\), taken over every sample the design could produce. For SRS of \\( n \\) from \\( N \\) it is \\( n/N \\) for every unit, which is larger than the \\( 1/N \\) chance of being picked on any one draw."
+  },
+  {
+    "id": "bias-028",
+    "section": "4.6",
+    "q": "A researcher takes an SRS of 50 trees from a forest plot containing 2,000 trees. What is the inclusion probability of any particular tree?",
+    "choices": [
+      "\\( 0.0005 \\)",
+      "\\( 0.05 \\)",
+      "\\( 0.25 \\)",
+      "\\( 0.025 \\)"
+    ],
+    "answer": 3,
+    "explain": "Under SRS every unit has the same inclusion probability \\( p_i = n/N = 50/2000 = 0.025 \\). The value \\( 1/2000 = 0.0005 \\) is the chance of being picked on one particular draw, not of ending up in the sample."
+  },
+  {
+    "id": "bias-029",
+    "section": "4.6",
+    "q": "Which pairing of a design with its inclusion probabilities is correct?",
+    "choices": [
+      "SRS: \\( p_i \\) differs across units, but each one is known",
+      "Probability sample: the \\( p_i \\) are unknown and can't be computed",
+      "Census: \\( p_i = 1 \\) for every unit",
+      "Nonrandom sample: \\( p_i = n/N \\) for every unit"
+    ],
+    "answer": 2,
+    "explain": "A census includes everyone, so \\( p_i = 1 \\). SRS gives every unit the same \\( p_i = n/N \\), a probability sample has known (possibly unequal) \\( p_i \\), and a nonrandom sample such as a convenience or volunteer sample has no known inclusion probabilities."
+  },
+  {
+    "id": "bias-030",
+    "section": "4.6",
+    "q": "A university survey randomly selects 10% of undergraduates and 40% of graduate students, so that grad students are well represented. How is this design best classified?",
+    "choices": [
+      "A simple random sample, since selection is random within each group",
+      "A probability sample with unequal inclusion probabilities",
+      "A nonrandom sample, since the two groups are treated differently",
+      "A census of graduate students plus an SRS of undergraduates"
+    ],
+    "answer": 1,
+    "explain": "Every student has a known, nonzero chance of selection, 0.1 or 0.4, so it's a probability sample, but not an SRS because the chances differ. The raw sample mean over-represents grad students unless each student is weighted by \\( 1/p_i \\): 10 for undergrads and 2.5 for grad students."
+  },
+  {
+    "id": "bias-031",
+    "section": "4.6",
+    "q": "A news site posts an online poll asking readers whether they support a new stadium. Why can't inverse probability weighting easily fix the bias in this sample?",
+    "choices": [
+      "It's a nonrandom sample, so the respondents' inclusion probabilities are unknown and hard to estimate",
+      "The inclusion probabilities are all equal, so every weight would be the same and nothing would change",
+      "Weighting only works for samples drawn with replacement, and online polls draw without replacement",
+      "Weighting can only correct bias from the estimator, not bias from who chooses to respond"
+    ],
+    "answer": 0,
+    "explain": "IPW needs each respondent's (relative) \\( p_i \\). In a volunteer poll no known random mechanism chose the sample: who responds depends on things like interest in the topic, so the probabilities are unknown, which is a common practical limit of IPW."
+  },
+  {
+    "id": "bias-032",
+    "section": "4.6",
+    "q": "To mimic the biased hawk design, a simulation draws\n```r\nhawks |> slice_sample(n = 30, weight_by = if_else(Sex == \"F\", 9, 1))\n```\nFemale hawks are larger than males. Across many such samples, how does the plain sample mean of `Wing` compare with the population mean?",
+    "choices": [
+      "It is too small on average, because the selection weights favor the smaller birds",
+      "It matches on average, because `slice_sample()` always draws a random sample",
+      "It matches on average, because `mean()` corrects for the weights that were used",
+      "It is too large on average, because the larger females are over-represented"
+    ],
+    "answer": 3,
+    "explain": "`weight_by` makes a female 9 times as likely as a male to be picked at each draw, so the samples contain too many of the larger birds and the mean wing length is biased upward. A random mechanism alone doesn't make a design unbiased: unequal inclusion probabilities related to the variable cause bias unless they're corrected with weights."
+  },
+  {
+    "id": "bias-033",
+    "section": "4.6",
+    "q": "Female hawks are 9 times as likely to be sampled as male hawks. With \\( w_i = 1/p_i \\), how does the IPW weight of a sampled male compare with that of a sampled female?",
+    "choices": [
+      "A female's weight is 9 times a male's",
+      "They're equal, since sampling is random within each sex",
+      "A male's weight is 9 times a female's",
+      "They can't be compared without the actual values of \\( p_i \\)"
+    ],
+    "answer": 2,
+    "explain": "If \\( p_F = 9p_M \\), then \\( w_M = 1/p_M \\) and \\( w_F = 1/(9p_M) = w_M/9 \\). So weights of 1 for females and 9 for males (or any multiple of these) work; only the ratio of the probabilities is needed."
+  },
+  {
+    "id": "bias-034",
+    "section": "4.6",
+    "q": "Under the hawk design (females 9 times as likely to be sampled), a tiny sample has one female with wing length 40 cm and one male with wing length 30 cm. What is \\( \\hat{\\mu}_{\\text{IPW}} = \\sum_i w_i Y_i / \\sum_i w_i \\)?",
+    "choices": [
+      "35 cm",
+      "31 cm",
+      "39 cm",
+      "30 cm"
+    ],
+    "answer": 1,
+    "explain": "The relative weights are 1 for the female and 9 for the male, so \\( \\hat{\\mu}_{\\text{IPW}} = (1 \\cdot 40 + 9 \\cdot 30)/(1 + 9) = 310/10 = 31 \\). The naive mean of 35 is pulled up by the over-sampled female, and giving the female weight 9 instead (39) would make the bias worse."
+  },
+  {
+    "id": "bias-035",
+    "section": "4.6",
+    "q": "In a survey, women were 3 times as likely to be sampled as men. The sample has two women with \\( Y = 4 \\) and \\( Y = 6 \\) and one man with \\( Y = 2 \\). What is the IPW estimate of the population mean?",
+    "choices": [
+      "\\( 3.2 \\)",
+      "\\( 4.0 \\)",
+      "\\( 4.6 \\)",
+      "\\( 5.3 \\)"
+    ],
+    "answer": 0,
+    "explain": "Women get weight 1 and the man weight 3: \\( (1 \\cdot 4 + 1 \\cdot 6 + 3 \\cdot 2)/(1 + 1 + 3) = 16/5 = 3.2 \\). The naive mean 4.0 over-counts women, and dividing by \\( n = 3 \\) instead of \\( \\sum_i w_i = 5 \\) would give about 5.3."
+  },
+  {
+    "id": "bias-036",
+    "section": "4.6",
+    "q": "What does this code return?\n```r\nd <- tibble(y = c(10, 20, 30), w = c(1, 1, 2))\nd |> summarize(est = sum(w * y) / sum(w))\n```",
+    "choices": [
+      "A 1 × 1 tibble with `est` equal to 20",
+      "A 1 × 1 tibble with `est` equal to 30",
+      "A 3 × 3 tibble with `est` added as a new column",
+      "A 1 × 1 tibble with `est` equal to 22.5"
+    ],
+    "answer": 3,
+    "explain": "`summarize()` collapses the data to one row. The numerator is \\( 1(10) + 1(20) + 2(30) = 90 \\) and the denominator is \\( 1 + 1 + 2 = 4 \\), so `est` is 22.5; dividing by the 3 rows instead of `sum(w)` would give 30, and 20 is the unweighted mean."
+  },
+  {
+    "id": "bias-037",
+    "section": "4.6",
+    "q": "`hawks_s` is a sample from the design in which female hawks (`Sex == \"F\"`) are 9 times as likely to be sampled as males. Which expression fills the blank to compute the IPW estimate of mean `Wing`?\n```r\nhawks_s |>\n  mutate(w = ________) |>\n  summarize(ipw = sum(w * Wing) / sum(w))\n```",
+    "choices": [
+      "`if_else(Sex == \"F\", 9, 1)`",
+      "`if_else(Sex == \"F\", 0.9, 0.1)`",
+      "`if_else(Sex == \"F\", 1, 9)`",
+      "`1 / n()`"
+    ],
+    "answer": 2,
+    "explain": "Weights are \\( 1/p_i \\), so the over-sampled females get the smaller weight. `if_else(Sex == \"F\", 9, 1)` and the 0.9/0.1 version weight by \\( p_i \\) instead and make the upward bias worse, and `1 / n()` gives every hawk the same weight, which just reproduces the naive mean."
+  },
+  {
+    "id": "bias-038",
+    "section": "4.6",
+    "q": "Two analysts compute \\( \\hat{\\mu}_{\\text{IPW}} = \\sum_i w_i Y_i / \\sum_i w_i \\) on the same hawk sample. One uses \\( w = 1 \\) for females and \\( w = 9 \\) for males; the other uses \\( w = 20 \\) for females and \\( w = 180 \\) for males. How do their estimates compare?",
+    "choices": [
+      "The second is 20 times larger, since every one of its weights is 20 times larger",
+      "They are identical, since the factor of 20 cancels between numerator and denominator",
+      "The second is less biased, since its weights are closer to the true values of \\( 1/p_i \\)",
+      "They differ slightly, since the larger weights give each male more influence"
+    ],
+    "answer": 1,
+    "explain": "Scaling every weight by a constant \\( c \\) gives \\( \\sum_i c w_i Y_i / \\sum_i c w_i = \\sum_i w_i Y_i / \\sum_i w_i \\). That's why IPW only needs the inclusion probabilities up to a constant, that is, their ratios."
+  },
+  {
+    "id": "bias-039",
+    "section": "4.6",
+    "q": "If every unit in a sample has the same inclusion probability \\( p \\), as in an SRS, what does \\( \\hat{\\mu}_{\\text{IPW}} \\) reduce to?",
+    "choices": [
+      "The ordinary sample mean \\( \\bar{Y} \\)",
+      "The sample mean \\( \\bar{Y} \\) multiplied by \\( p \\)",
+      "The sample mean \\( \\bar{Y} \\) divided by \\( p \\)",
+      "The sum of the \\( Y_i \\) divided by \\( N \\)"
+    ],
+    "answer": 0,
+    "explain": "With \\( w_i = 1/p \\) for everyone, \\( \\sum_i w_i Y_i / \\sum_i w_i = \\frac{(1/p)\\sum_i Y_i}{n/p} = \\bar{Y} \\). Equal weights cancel, which is why the plain sample mean is already unbiased under SRS."
+  },
+  {
+    "id": "bias-040",
+    "section": "4.6",
+    "q": "Why does \\( \\hat{\\mu}_{\\text{IPW}} \\) usually have a larger variance than the naive sample mean?",
+    "choices": [
+      "Weighting changes the population itself, so \\( \\sigma^2 \\) is larger for the weighted estimator",
+      "Removing bias always adds exactly that amount to the variance, by the MSE decomposition",
+      "The weights are computed from the \\( Y_i \\) values, which counts their variability twice",
+      "Rarely sampled units get large weights, so the few of them that land in a sample can swing the estimate"
+    ],
+    "answer": 3,
+    "explain": "In the hawk example each male carries weight 9, so the estimate depends heavily on the handful of males that happen to be caught, and one unusual male moves it a lot. IPW trades extra variance for removing bias; the more unequal the weights, the higher the price."
+  },
+  {
+    "id": "bias-041",
+    "section": "4.6",
+    "q": "A simulation repeats the hawk design (females 9 times as likely to be sampled, and larger) 5000 times and plots histograms of the naive mean and of \\( \\hat{\\mu}_{\\text{IPW}} \\), with a vertical line at the true \\( \\mu \\). What should they look like?",
+    "choices": [
+      "Naive: wider, and centered to the right of \\( \\mu \\). IPW: centered at \\( \\mu \\), and narrower",
+      "Naive: narrower, but centered to the left of \\( \\mu \\). IPW: centered at \\( \\mu \\), but wider",
+      "Naive: narrower, but centered to the right of \\( \\mu \\). IPW: centered at \\( \\mu \\), but wider",
+      "Both centered at \\( \\mu \\), with the IPW histogram narrower than the naive one"
+    ],
+    "answer": 2,
+    "explain": "Over-sampling the larger females shifts the naive estimates up, but since every bird counts equally they vary less. IPW removes the design bias, so its histogram is centered at \\( \\mu \\), while the heavily weighted males make it more spread out."
+  },
+  {
+    "id": "bias-042",
+    "section": "4.6",
+    "q": "Hawks in a region are known to be half female and half male. A field sample of 200 hawks has 180 females and 20 males. Assuming every bird of the same sex was equally likely to be caught, how much more likely was a female to be sampled than a male?",
+    "choices": [
+      "1.8 times as likely",
+      "9 times as likely",
+      "4.5 times as likely",
+      "Can't tell without knowing the population size"
+    ],
+    "answer": 1,
+    "explain": "A female's inclusion probability is proportional to \\( 180/(N/2) \\) and a male's to \\( 20/(N/2) \\), so the ratio is \\( 180/20 = 9 \\) and \\( N \\) cancels. This is one way relative inclusion probabilities can be estimated from the sample, given a known population breakdown; 1.8 compares the female share of the sample (0.9) with the female share of the population (0.5), not females with males."
+  },
+  {
+    "id": "bias-043",
+    "section": "4.6",
+    "q": "A bird survey sets traps only in open grassland, so hawks that live deep in the forest can never be caught. Can inverse probability weighting correct the resulting bias?",
+    "choices": [
+      "No: forest hawks have \\( p_i = 0 \\), so none appear in the sample and no weight can stand in for them",
+      "Yes: weight the grassland hawks by \\( 1/p_i \\), and the forest hawks are then represented automatically",
+      "Yes: give the forest hawks a very large weight to make up for their absence from the sample",
+      "No: IPW only works when every unit in the population has the same inclusion probability"
+    ],
+    "answer": 0,
+    "explain": "Weights \\( 1/p_i \\) can only re-balance units that are able to appear in the sample; with \\( p_i = 0 \\) the weight is undefined and those birds are never observed. If forest hawks differ in size, the bias stays, and the fix has to come from changing the design."
+  },
+  {
+    "id": "bias-044",
+    "section": "4.6",
+    "q": "In BRFSS, the survey weight `_LLCPWT` is inversely proportional to each respondent's estimated inclusion probability. Kim has weight 2,000 and Lee has weight 500. What does this imply?",
+    "choices": [
+      "Kim was about 4 times as likely as Lee to be sampled, so Kim stands in for about 4 times as many people",
+      "Kim was about 4 times as likely as Lee to be sampled, so Kim stands in for about 1/4 as many people",
+      "Kim and Lee were equally likely to be sampled, but Kim's answers are about 4 times as reliable",
+      "Kim was about 1/4 as likely as Lee to be sampled, so Kim stands in for about 4 times as many people"
+    ],
+    "answer": 3,
+    "explain": "Since the weight is \\( \\propto 1/p_i \\), \\( p_{\\text{Kim}}/p_{\\text{Lee}} = 500/2000 = 1/4 \\). People like Kim are under-sampled, so each one who is sampled has to represent more of the population, and the larger weight does exactly that."
+  },
+  {
+    "id": "bias-045",
+    "section": "4.6",
+    "q": "A student wants a 5,000-row weighted subsample of the BRFSS data and writes\n```r\nbrfss |> slice_sample(n = 5000, weight_by = _LLCPWT)\n```\nR reports an error. What is the fix?",
+    "choices": [
+      "Write `weight_by = \"_LLCPWT\"`, since `weight_by` expects the name of the column as a string",
+      "Add `replace = TRUE`, since weighted sampling with `slice_sample()` only works with replacement",
+      "Write `` weight_by = `_LLCPWT` ``: a name starting with an underscore needs backticks",
+      "Write `weight_by = 1 / _LLCPWT`, since the survey weights have to be inverted before sampling"
+    ],
+    "answer": 2,
+    "explain": "A name starting with an underscore isn't a syntactic R name, so inside tidyverse verbs the column must be written as `` `_LLCPWT` ``. `weight_by` takes the weight column itself, and since the weights are already proportional to \\( 1/p_i \\) they should not be inverted again."
+  },
+  {
+    "id": "bias-046",
+    "section": "4.6",
+    "q": "Why draw a BRFSS subsample with `` slice_sample(n = 5000, weight_by = `_LLCPWT`) `` instead of plain `slice_sample(n = 5000)`?",
+    "choices": [
+      "The weighted draw turns the subsample into a simple random sample of all the respondents in the BRFSS data",
+      "Under-sampled kinds of people have larger weights, so the weighted draw makes the subsample more representative",
+      "The weighted draw drops respondents with missing answers, since they have survey weights of zero",
+      "The weighted draw favors the respondents who were most likely to be sampled, since their answers are most reliable"
+    ],
+    "answer": 1,
+    "explain": "A plain `slice_sample()` is an SRS of respondents, so it inherits BRFSS's unequal inclusion probabilities. Drawing in proportion to `_LLCPWT`, which is \\( \\propto 1/p_i \\), favors respondents from under-sampled groups and roughly evens out the inclusion probabilities, so the subsample better mirrors the adult population."
+  },
+  {
+    "id": "bias-047",
+    "section": "4.7",
+    "q": "Which expression is the mean squared error of \\( \\hat{\\mu} \\)?",
+    "choices": [
+      "\\( E[(\\hat{\\mu} - \\mu)^2] \\), which equals \\( \\operatorname{Bias}(\\hat{\\mu})^2 + \\operatorname{Var}(\\hat{\\mu}) \\)",
+      "\\( E[(\\hat{\\mu} - E[\\hat{\\mu}])^2] \\), which equals \\( \\operatorname{Var}(\\hat{\\mu}) \\) alone",
+      "\\( (E[\\hat{\\mu}] - \\mu)^2 \\), which equals \\( \\operatorname{Bias}(\\hat{\\mu})^2 \\) alone",
+      "\\( E[(\\hat{\\mu} - \\mu)^2] \\), which equals \\( \\operatorname{Bias}(\\hat{\\mu}) + \\operatorname{Var}(\\hat{\\mu}) \\)"
+    ],
+    "answer": 0,
+    "explain": "MSE averages the squared distance from the truth \\( \\mu \\), so it counts both systematic error and spread: \\( \\operatorname{MSE}(\\hat{\\mu}) = \\operatorname{Bias}(\\hat{\\mu})^2 + \\operatorname{Var}(\\hat{\\mu}) \\). The bias is squared, so a negative bias still adds to the error."
+  },
+  {
+    "id": "bias-048",
+    "section": "4.7",
+    "q": "An estimator has bias \\( -2 \\) and variance \\( 5 \\). What is its MSE?",
+    "choices": [
+      "3",
+      "1",
+      "7",
+      "9"
+    ],
+    "answer": 3,
+    "explain": "\\( \\operatorname{MSE} = \\operatorname{Bias}^2 + \\operatorname{Var} = (-2)^2 + 5 = 9 \\). Squaring removes the sign, so a negative bias can't cancel any of the variance; adding the unsquared size of the bias would give 7."
+  },
+  {
+    "id": "bias-049",
+    "section": "4.7",
+    "q": "For an unbiased estimator \\( \\hat{\\mu} \\), how are \\( \\operatorname{MSE}(\\hat{\\mu}) \\) and \\( \\operatorname{Var}(\\hat{\\mu}) \\) related?",
+    "choices": [
+      "The MSE is 0, because an unbiased estimator has no error",
+      "The MSE is the square root of the variance",
+      "They are equal, because the squared-bias term is 0",
+      "The MSE exceeds the variance by \\( \\mu^2 \\)"
+    ],
+    "answer": 2,
+    "explain": "With \\( E[\\hat{\\mu}] = \\mu \\), \\( E[(\\hat{\\mu} - \\mu)^2] \\) is exactly the variance. Unbiased doesn't mean error-free: individual estimates still scatter around \\( \\mu \\), and that scatter is the whole MSE."
+  },
+  {
+    "id": "bias-050",
+    "section": "4.7",
+    "q": "Four estimators of the same \\( \\mu \\) have these properties:\n```\nestimator   bias   variance\n1              0        9.0\n2              2        4.0\n3             -3        0.5\n4              1       10.0\n```\nWhich has the lowest MSE?",
+    "choices": [
+      "Estimator 1",
+      "Estimator 2",
+      "Estimator 3",
+      "Estimator 4"
+    ],
+    "answer": 1,
+    "explain": "\\( \\operatorname{MSE} = \\operatorname{Bias}^2 + \\operatorname{Var} \\) gives 9, 8, 9.5, and 11 for estimators 1 to 4. Estimator 2 wins despite its bias: estimator 1 is unbiased but more variable, and estimator 3's tiny variance can't make up for a squared bias of 9."
+  },
+  {
+    "id": "bias-051",
+    "section": "4.7",
+    "q": "In the hawk design, females are 9 times as likely to be sampled as males. For one variable, females and males have nearly the same average. For estimating that variable's population mean, how do the naive mean and \\( \\hat{\\mu}_{\\text{IPW}} \\) likely compare?",
+    "choices": [
+      "The naive mean likely has lower MSE: its bias is near 0, and it avoids the extra variance from the weights",
+      "IPW likely has lower MSE, since it removes the design bias no matter which variable is measured",
+      "The naive mean is unbiased here while IPW becomes biased, so IPW has the larger MSE",
+      "They have the same MSE, since both estimators are unbiased when the two sexes are similar"
+    ],
+    "answer": 0,
+    "explain": "Over-sampling females only biases the naive mean when females and males differ on the variable, so here its bias is close to 0. IPW is still unbiased, but its weight-9 males inflate its variance, so the naive mean likely lands closer to \\( \\mu \\) on average."
+  },
+  {
+    "id": "bias-052",
+    "section": "4.7",
+    "q": "\\( \\hat{\\mu}_1 \\) has bias 1 and variance 2. \\( \\hat{\\mu}_2 \\) is unbiased with variance 6. Judged by MSE, which is the better estimator?",
+    "choices": [
+      "\\( \\hat{\\mu}_2 \\), since 6 is less than \\( (1 + 2)^2 = 9 \\)",
+      "\\( \\hat{\\mu}_2 \\), since an unbiased estimator has no error on average",
+      "They tie, since the bias of \\( \\hat{\\mu}_1 \\) offsets its lower variance",
+      "\\( \\hat{\\mu}_1 \\), since \\( 1^2 + 2 = 3 \\) is less than 6"
+    ],
+    "answer": 3,
+    "explain": "\\( \\operatorname{MSE}(\\hat{\\mu}_1) = 1^2 + 2 = 3 \\) and \\( \\operatorname{MSE}(\\hat{\\mu}_2) = 0^2 + 6 = 6 \\). A small bias can be a good trade for a big drop in variance: on average \\( \\hat{\\mu}_1 \\) lands closer to \\( \\mu \\)."
+  },
+  {
+    "id": "bias-053",
+    "section": "4.7",
+    "q": "Which statement best describes the bias-variance tradeoff when choosing between the naive mean and \\( \\hat{\\mu}_{\\text{IPW}} \\) under a biased design?",
+    "choices": [
+      "Removing the bias with weights also lowers the variance, so the IPW estimator always ends up with the smaller MSE",
+      "Bias and variance always change by equal amounts, so the two estimators always have the same MSE",
+      "Removing bias with weights costs extra variance, so the better estimator depends on which effect dominates the MSE",
+      "The naive mean is always better, because bias can be corrected after the fact but variance cannot"
+    ],
+    "answer": 2,
+    "explain": "IPW drives the squared-bias term to 0 but raises the variance term, while the naive mean does the reverse. MSE adds the two, so neither estimator wins in every situation; compare \\( \\operatorname{Bias}^2 + \\operatorname{Var} \\) for the design and sample size at hand."
+  },
+  {
+    "id": "bias-054",
+    "section": "4.7",
+    "q": "A simulation stores 5000 estimates in `est`, and the true population mean is `mu`. Which line approximates \\( \\operatorname{MSE}(\\hat{\\mu}) \\)?",
+    "choices": [
+      "`mean(est - mu)^2`",
+      "`mean((est - mu)^2)`",
+      "`var(est - mu)`",
+      "`mean((est - mean(est))^2)`"
+    ],
+    "answer": 1,
+    "explain": "MSE is the average squared distance from the truth: subtract `mu` from each estimate, square, then average. `mean(est - mu)^2` squares the average error, giving only the squared bias, while `var(est - mu)` and `mean((est - mean(est))^2)` measure spread around the estimates' own center, which is the variance."
+  },
+  {
+    "id": "bias-055",
+    "section": "4.7",
+    "q": "In the hawk design (females over-sampled and larger), what happens to the MSE of each estimator as the sample size \\( n \\) grows very large?",
+    "choices": [
+      "IPW's MSE shrinks toward 0, but the naive mean's MSE levels off at its squared bias",
+      "Both MSEs shrink toward 0, since a large enough sample removes every source of error",
+      "The naive mean's MSE shrinks toward 0, but IPW's MSE levels off at its variance",
+      "Both MSEs stay the same, since bias and variance do not depend on the sample size"
+    ],
+    "answer": 0,
+    "explain": "Both variances fall as \\( n \\) grows, but the naive mean's bias comes from the design and doesn't shrink: a bigger sample with the same over-representation of females is off by the same amount. With large samples the unbiased IPW estimator wins."
+  },
+  {
+    "id": "bias-056",
+    "section": "4.7",
+    "q": "An estimator ignores the data and always reports \\( \\hat{\\mu} = 50 \\). If the true mean is \\( \\mu = 47 \\), what is its MSE?",
+    "choices": [
+      "0, since its variance is 0",
+      "3, the size of its bias",
+      "Undefined, since it never uses a sample",
+      "9, all of it from bias"
+    ],
+    "answer": 3,
+    "explain": "A constant has \\( \\operatorname{Var} = 0 \\) and \\( \\operatorname{Bias} = 50 - 47 = 3 \\), so \\( \\operatorname{MSE} = 3^2 + 0 = 9 \\). Zero variance alone doesn't make an estimator good; MSE also charges for being centered in the wrong place."
+  },
+  {
+    "id": "bias-057",
+    "section": "4.7",
+    "q": "True or false: for every estimator, \\( \\operatorname{MSE}(\\hat{\\mu}) \\ge \\operatorname{Var}(\\hat{\\mu}) \\).",
+    "choices": [
+      "True",
+      "False"
+    ],
+    "answer": 0,
+    "explain": "\\( \\operatorname{MSE} = \\operatorname{Bias}^2 + \\operatorname{Var} \\) and \\( \\operatorname{Bias}^2 \\ge 0 \\), so the MSE can never fall below the variance. The two are equal exactly when the estimator is unbiased.",
+    "fixed": true
+  },
+  {
+    "id": "bias-058",
+    "section": "4.7",
+    "q": "A simulation reports \\( \\widetilde{\\operatorname{MSE}}(\\hat{\\mu}) = 13 \\) and \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] = 4 \\). About how large is the bias, in absolute value?",
+    "choices": [
+      "9",
+      "3",
+      "17",
+      "1.6"
+    ],
+    "answer": 1,
+    "explain": "\\( \\operatorname{Bias}^2 = \\operatorname{MSE} - \\operatorname{Var} = 13 - 4 = 9 \\), so \\( |\\operatorname{Bias}| = 3 \\). Nine is the squared bias, and subtracting square roots (\\( \\sqrt{13} - 2 \\approx 1.6 \\)) doesn't undo the decomposition."
+  },
+  {
+    "id": "bias-059",
+    "section": "4.7",
+    "q": "A simulation of two estimators, where the true mean is \\( \\mu = 50 \\), prints:\n```\n# A tibble: 2 × 3\n  method mean_est var_est\n  <chr>     <dbl>   <dbl>\n1 naive        53       2\n2 ipw          50       6\n```\nWhich conclusion is correct?",
+    "choices": [
+      "IPW has the lower MSE, 6 versus 11",
+      "The naive mean has the lower MSE, 5 versus 6",
+      "The naive mean has the lower MSE, since its variance is smaller",
+      "IPW has the lower MSE, 6 versus 9"
+    ],
+    "answer": 0,
+    "explain": "Bias is `mean_est` minus 50: 3 for naive and 0 for IPW, so the MSEs are \\( 3^2 + 2 = 11 \\) and \\( 0^2 + 6 = 6 \\). Not squaring the bias gives 5, leaving out the variance gives 9, and comparing variances alone ignores the naive mean's bias."
+  },
+  {
+    "id": "bias-060",
+    "section": "4.7",
+    "q": "A team must choose between an unbiased estimator and a slightly biased one for a monthly report. Why is MSE a better basis for the decision than bias alone?",
+    "choices": [
+      "It ignores bias entirely, so it focuses on the precision that matters most for regular reports",
+      "It is always smaller for unbiased estimators, so it simply confirms choosing the unbiased one",
+      "It can be computed from the one sample in hand, whereas bias requires knowing the true value of \\( \\mu \\)",
+      "It measures how far estimates typically land from \\( \\mu \\), counting both systematic error and spread"
+    ],
+    "answer": 3,
+    "explain": "An unbiased estimator can still be so variable that a typical estimate is far from \\( \\mu \\). \\( \\operatorname{MSE} = \\operatorname{Bias}^2 + \\operatorname{Var} \\) puts both kinds of error on one scale, which is what matters when you will only ever see one estimate."
+  }
+]

@@ -1,0 +1,782 @@
+[
+  {
+    "id": "ethicsviz-001",
+    "section": "4.8",
+    "q": "In Swain v. Alabama (1965), the population eligible for jury duty in Talladega County was about 26% Black, but Robert Swain's jury panel of 100 had only 8 Black members. The course simulates many panels of 100 under simple random sampling. What does the distribution of simulated counts represent?",
+    "choices": [
+      "How many Black members the actual panels assembled in Talladega County in the years around 1965 had",
+      "How many Black members panels of 100 would have if drawn at random from a population that is 26% Black",
+      "The range of plausible values for the county's true Black share, given the observed panel with 8",
+      "How many Black members panels of 100 would have if drawn at random from a population that is 8% Black"
+    ],
+    "answer": 1,
+    "explain": "Each simulated panel is something random selection from a 26%-Black population could produce, so the distribution shows the counts to expect if the process were fair. It is not a record of real panels, and it is built from the 26% population share, not from the observed 8."
+  },
+  {
+    "id": "ethicsviz-002",
+    "section": "4.8",
+    "q": "Under simple random sampling from an eligible population that is 26% Black, which best describes the number of Black members on a panel of 100?",
+    "choices": [
+      "It averages 26, and most panels land somewhere between roughly 17 and 35",
+      "It is exactly 26 on every panel, since 26% of 100 people is 26 people",
+      "It averages 26, and nearly every panel lands between 25 and 27",
+      "It averages 8, and most panels land somewhere between roughly 0 and 16"
+    ],
+    "answer": 0,
+    "explain": "The expected count is \\( 100 \\times 0.26 = 26 \\), but random panels vary: the simulated counts have a standard deviation of about 4.4, so about 97% fall between 17 and 35. Only about a quarter of random panels land in 25 to 27, and exactly 26 every time would mean there was no randomness at all."
+  },
+  {
+    "id": "ethicsviz-003",
+    "section": "4.8",
+    "q": "What does this line of R create?\n```r\nsims <- rbinom(10000, 100, 0.26)\n```",
+    "choices": [
+      "A vector of 100 counts, each the number of Black members in a simulated group of 10,000 people",
+      "A single count: the total number of Black members across 10,000 simulated panels of 100",
+      "A vector of 10,000 proportions between 0 and 1, one for each simulated panel of 100",
+      "A vector of 10,000 counts, each the number of Black members on one simulated panel of 100"
+    ],
+    "answer": 3,
+    "explain": "In `rbinom(n, size, prob)`, `n` is how many random counts to draw and `size` is the number of trials in each, so this gives 10,000 counts out of 100 with success probability 0.26. The results are whole numbers from 0 to 100, not proportions; `sims / 100` would turn them into proportions."
+  },
+  {
+    "id": "ethicsviz-004",
+    "section": "4.8",
+    "q": "One simulated panel is drawn and summarized like this:\n```r\npanel <- sample(c(\"Black\", \"Other\"), 100, replace = TRUE,\n                prob = c(0.26, 0.74))\nsum(panel == \"Black\")\n```\nWhat does the last line return?",
+    "choices": [
+      "The proportion of Black members on this simulated panel, a number between 0 and 1",
+      "A logical vector of length 100 that is `TRUE` wherever the simulated panelist is Black",
+      "The number of Black members on this one simulated panel, which changes from run to run",
+      "The expected number of Black members, which comes out as 26 every time the code runs"
+    ],
+    "answer": 2,
+    "explain": "`panel == \"Black\"` is a logical vector of length 100, and `sum()` counts its `TRUE` values, giving a whole-number count. Because `sample()` is random, the count varies around 26 from run to run; using `mean()` instead of `sum()` would give the proportion."
+  },
+  {
+    "id": "ethicsviz-005",
+    "section": "4.8",
+    "q": "A student drops `replace = TRUE` from the panel simulation:\n```r\nsample(c(\"Black\", \"Other\"), 100, prob = c(0.26, 0.74))\n```\nWhat happens?",
+    "choices": [
+      "A panel of 100 drawn without replacement, which is closer to how real juries are chosen",
+      "An error, because without replacement R cannot draw 100 values from a vector of only 2",
+      "A panel with exactly 26 `\"Black\"` and 74 `\"Other\"` values, matching `prob` exactly",
+      "A panel of 100 in which `prob` is ignored and both labels are equally likely each time"
+    ],
+    "answer": 1,
+    "explain": "`sample()` draws from the vector it is given, here just two labels, so without replacement it can return at most 2 values and stops with an error. With `replace = TRUE`, each of the 100 draws is an independent Black/Other label with the given probabilities, which approximates SRS from a large eligible population."
+  },
+  {
+    "id": "ethicsviz-006",
+    "section": "4.8",
+    "q": "With `sims <- rbinom(10000, 100, 0.26)`, which operator completes `mean(sims ___ 8)` so that it estimates the chance that a randomly selected panel has 8 or fewer Black members?",
+    "choices": [
+      "`<=`",
+      "`==`",
+      "`>=`",
+      "`<`"
+    ],
+    "answer": 0,
+    "explain": "`sims <= 8` is `TRUE` for each simulated panel with 8 or fewer Black members, and the mean of a logical vector is the proportion of `TRUE`s. `==` would count only panels with exactly 8, and `<` would leave out panels with exactly 8."
+  },
+  {
+    "id": "ethicsviz-007",
+    "section": "4.8",
+    "q": "In 10,000 simulated random panels, not one had 8 or fewer Black members. What is the most appropriate conclusion about Swain's panel?",
+    "choices": [
+      "The panel was drawn at random but was unlucky, since the simulation shows that counts this low do happen",
+      "The chance the panel was chosen at random is exactly 0, so the simulation proves there was intentional discrimination",
+      "Nothing can be concluded, because the observed count of 8 falls outside the range of the simulated counts",
+      "Random selection from the eligible population is not a plausible explanation for a panel with only 8 Black members"
+    ],
+    "answer": 3,
+    "explain": "A count that random selection essentially never produces is strong evidence that the panel did not come from random selection out of that population. The simulation can't show the probability is exactly 0 or prove anyone's intent; it shows the data are inconsistent with the random-selection model."
+  },
+  {
+    "id": "ethicsviz-008",
+    "section": "4.8",
+    "q": "Which statement best captures what a \"fair\" jury panel means in the Swain analysis?",
+    "choices": [
+      "It has exactly 26 Black members, precisely matching the eligible population's 26% share",
+      "It has at least 26 Black members, so that Black residents are never underrepresented",
+      "Its makeup looks like a typical result of drawing at random from the eligible population",
+      "It has equal numbers of Black and other members, whatever the population's makeup"
+    ],
+    "answer": 2,
+    "explain": "Fairness here is a property of the selection process: random selection gives every eligible person the same chance, and its panels vary around 26, so a panel with 22 or 30 Black members is unremarkable. Demanding exactly 26 confuses the expected count with what every random panel must look like."
+  },
+  {
+    "id": "ethicsviz-009",
+    "section": "4.8",
+    "q": "Suppose another panel of 100 from the same county had 22 Black members. Compared with the simulated distribution under random selection, what should you conclude?",
+    "choices": [
+      "22 is below the expected 26, so this panel is clear evidence that Black residents were deliberately excluded",
+      "22 is well within the usual range of simulated counts, so this panel alone is little evidence of unfairness",
+      "22 is close to the expected 26, so this panel proves that the selection process was fair",
+      "22 can only be judged by running a new simulation from a population that is 22% Black"
+    ],
+    "answer": 1,
+    "explain": "About 21% of random panels have 22 or fewer Black members, so 22 is an ordinary result of random selection. What matters is how far into the tail a count falls, not merely that it is below 26; and a typical-looking count is consistent with fairness without proving it."
+  },
+  {
+    "id": "ethicsviz-010",
+    "section": "4.8",
+    "q": "Jury commissioners draw names completely at random from their master list, yet the panels still have far fewer Black members than the county's eligible population would suggest. What is the most likely explanation?",
+    "choices": [
+      "The master list leaves out many eligible Black residents, so random draws reproduce its bias",
+      "Random draws always underrepresent smaller groups, because their counts are more variable",
+      "Random draws match population shares only when panels are drawn without replacement",
+      "Random draws match population shares only once a panel has more than 100 members"
+    ],
+    "answer": 0,
+    "explain": "Random sampling makes a sample representative of the frame it is drawn from, not of the people the frame leaves out. If the list underrepresents Black residents (for example, because it is built from property records), every random panel inherits that bias; panel size and replacement don't fix it."
+  },
+  {
+    "id": "ethicsviz-011",
+    "section": "4.8",
+    "q": "A county builds its jury list from the names in its property-ownership records. What problem does this sampling frame create?",
+    "choices": [
+      "Renters are left out, but drawing names at random from the list removes the resulting bias",
+      "Homeowners are left out, so panels systematically overrepresent younger and lower-income residents",
+      "Renters are left out, but the bias disappears as long as each panel has at least 100 members",
+      "Renters are left out, so panels systematically underrepresent groups who are more likely to rent"
+    ],
+    "answer": 3,
+    "explain": "Anyone who doesn't own property has no chance of being called, so groups more likely to rent (younger, lower-income, and in many places Black and Hispanic residents) are underrepresented on every panel. Random draws and bigger panels only reproduce the frame more precisely; they can't add people who aren't on it."
+  },
+  {
+    "id": "ethicsviz-012",
+    "section": "4.8",
+    "q": "A city wants residents' views on a proposed rent-control law and mails a survey to a random sample of the property owners in its tax records. Why can't reweighting the responses fix the resulting bias?",
+    "choices": [
+      "Reweighting applies only to simple random samples, and this sample came from tax records",
+      "Reweighting can correct nonresponse, but never a difference in inclusion probabilities",
+      "Renters have zero chance of being sampled, so there are no renter responses to weight up",
+      "Renters are sampled but respond less often, so their weights would be too large to trust"
+    ],
+    "answer": 2,
+    "explain": "Weighting by inverse inclusion probabilities works only when every group has some chance of selection; renters have inclusion probability zero, so no weight can stand in for them, and they are the people rent control affects most. Correcting unequal but nonzero inclusion probabilities is exactly what weighting is for."
+  },
+  {
+    "id": "ethicsviz-013",
+    "section": "4.8",
+    "q": "A skin-cancer classifier is trained on a dermatology image collection in which most images show light skin. What is the most likely result?",
+    "choices": [
+      "It is equally accurate for all patients, since a lesion's features don't depend on skin tone",
+      "It is less accurate for darker-skinned patients, whose cases were rare in its training data",
+      "It is more accurate for patients with darker skin, since rare images stand out in training",
+      "Its accuracy is the same for every skin tone, as long as the training set is large enough"
+    ],
+    "answer": 1,
+    "explain": "A model learns from the cases it sees, and lesions can look different against darker skin, so a collection dominated by light skin yields a model that performs worse for the underrepresented group. A large training set doesn't help if darker skin is still rare within it."
+  },
+  {
+    "id": "ethicsviz-014",
+    "section": "4.8",
+    "q": "To fix the skin-tone problem, a team proposes doubling the training set with more images from the same clinics and textbooks. Why is this unlikely to help?",
+    "choices": [
+      "The new images share the same imbalance; more data from a biased frame cuts variance, not bias",
+      "Doubling the data also doubles the bias, which makes the model twice as inaccurate on darker skin",
+      "Extra images would help only if they were drawn from the same sources without replacement",
+      "Larger training sets always overfit, so the model would get worse for every skin tone"
+    ],
+    "answer": 0,
+    "explain": "The problem is who the frame includes, so more of the same images keeps darker skin rare; the fix is to collect images that cover darker skin. Bias doesn't double with sample size either: it stays about the same while the variability shrinks."
+  },
+  {
+    "id": "ethicsviz-015",
+    "section": "4.8",
+    "q": "In a study published in 2014, Facebook altered the news feeds of about 700,000 users, showing them fewer positive or fewer negative posts, to see whether emotions spread between users. What was the central ethical objection?",
+    "choices": [
+      "About 700,000 users was far too small a sample to detect emotional contagion on a site with a billion users",
+      "Users' private posts were published openly as part of the study, without the users' permission",
+      "The users were a convenience sample, so the results could not generalize to all Facebook users",
+      "Users became experimental subjects without informed consent; terms of service are not consent to a study"
+    ],
+    "answer": 3,
+    "explain": "The study deliberately manipulated people's emotional experience without telling them or letting them opt out, and a data-use policy clicked through at sign-up is not informed consent to an experiment. The sample was huge, and the posts were scored by software rather than published."
+  },
+  {
+    "id": "ethicsviz-016",
+    "section": "4.8",
+    "q": "A company builds a face-recognition dataset by scraping millions of photos that people posted publicly online. It argues that because the photos were public, no consent was needed. What is wrong with this argument?",
+    "choices": [
+      "Nothing; once a photo is posted publicly, the person pictured has given up any privacy interest in it",
+      "It fails only if the photos were taken by someone other than the person who appears in them",
+      "Posting a photo publicly is not agreement to every later use of it, such as training face recognition",
+      "It fails only because scraped photos are not a representative sample of all people's faces"
+    ],
+    "answer": 2,
+    "explain": "Consent is tied to a purpose: someone sharing a photo with friends or followers hasn't agreed to have their face used to build a system that can identify them. Scraped datasets may also be unrepresentative, but that is a separate problem from the missing consent."
+  },
+  {
+    "id": "ethicsviz-017",
+    "section": "4.8",
+    "q": "Blood samples taken from Yanomami people in the 1960s were stored in laboratories and used in research for decades afterward. Which statement best describes the ethical problem?",
+    "choices": [
+      "Too few samples were collected to represent the Yanomami population, so the later findings were biased",
+      "The samples were reused for purposes the donors never agreed to, against the community's beliefs about the dead",
+      "There was none: the donors agreed to give blood, and that consent automatically covered any later research use",
+      "The only issue was privacy, because the donors' names were published alongside their genetic data"
+    ],
+    "answer": 1,
+    "explain": "Whatever consent was given in the 1960s did not cover decades of storage and new uses, and keeping the blood of people who had died went against Yanomami beliefs that the remains of the dead should be destroyed; the community campaigned for years to get the samples back. Consent covers a specific use, not every future one."
+  },
+  {
+    "id": "ethicsviz-018",
+    "section": "4.8",
+    "q": "Which of these scenarios is mainly a problem with the sampling frame rather than with consent or privacy?",
+    "choices": [
+      "A dermatology image collection used to train a diagnostic model consists mostly of light-skinned patients",
+      "A social network secretly changes which posts users see in order to study their emotional responses",
+      "Researchers keep blood samples for decades and use them in studies the donors never agreed to",
+      "A company copies millions of people's online photos, without asking them, to train its face-recognition software"
+    ],
+    "answer": 0,
+    "explain": "The dermatology problem is about who is in the data: darker-skinned patients are underrepresented, so the model works worse for them. The other three are about using people or their data without their agreement."
+  },
+  {
+    "id": "ethicsviz-019",
+    "section": "4.8",
+    "q": "This code plots the simulated counts and marks Swain's panel:\n```r\ntibble(black = rbinom(10000, 100, 0.26)) |>\n  ggplot(aes(x = black)) +\n  geom_histogram(binwidth = 1) +\n  geom_vline(xintercept = 8, color = \"red\")\n```\nWhat would the plot show?",
+    "choices": [
+      "Bars centered near 8, with the red line running straight through the tallest bar of the histogram",
+      "Bars centered near 74, with the red line far out in the left tail where essentially no bars appear",
+      "Bars spread almost evenly from 0 to 100, with the red line close to the left edge of the bars",
+      "Bars centered near 26, with the red line far out in the left tail where essentially no bars appear"
+    ],
+    "answer": 3,
+    "explain": "Each bar counts simulated panels with a given number of Black members; they pile up around \\( 100 \\times 0.26 = 26 \\), and over 99% lie between 15 and 37. The line at 8 sits where random selection essentially never reaches, which is the picture behind the conclusion. (74 would be the center for the count of other panelists.)"
+  },
+  {
+    "id": "ethicsviz-020",
+    "section": "4.8",
+    "q": "The simulated counts of Black panelists have a mean of about 26 and a standard deviation of about 4.4. Roughly how many standard deviations below the mean is Swain's count of 8?",
+    "choices": [
+      "About 2",
+      "About 18",
+      "About 4",
+      "About 0.3"
+    ],
+    "answer": 2,
+    "explain": "\\( (26 - 8) / 4.4 \\approx 18 / 4.4 \\approx 4 \\). Counts more than 2 or 3 standard deviations from the mean are already rare under random selection, and 4 is far beyond that. 18 is the gap in panelists, not in standard deviations."
+  },
+  {
+    "id": "ethicsviz-021",
+    "section": "5.1",
+    "q": "Why are tables a poor way to tell a story with data?",
+    "choices": [
+      "Tables can't show exact values, so readers lose the precision that a well-made graphic would keep",
+      "Readers must take in values one by one, so trends, comparisons, and outliers are hard to see at a glance",
+      "Tables can show only one variable at a time, so the relationships between variables are lost",
+      "Tables take more memory than graphics, so large datasets can't be stored or displayed in them"
+    ],
+    "answer": 1,
+    "explain": "A table leaves the pattern-finding to the reader, who must read and compare numbers, while a graphic uses position, color, and shape so patterns are seen almost instantly. Tables are actually better than graphics for looking up exact values."
+  },
+  {
+    "id": "ethicsviz-022",
+    "section": "5.1",
+    "q": "Right after loading a new dataset, an analyst makes twenty quick scatterplots with default settings and no titles to see which variables seem related. What kind of graphics are these?",
+    "choices": [
+      "Exploratory graphics, made quickly and in quantity to help the analyst understand the data",
+      "Presentation graphics, since they show relationships that might later be reported to others",
+      "Infographics, since they combine several variables into visual summaries for a reader",
+      "Presentation graphics, since every plot of real data should be ready for an audience"
+    ],
+    "answer": 0,
+    "explain": "Exploratory graphics are quick, numerous, and for the analyst's own use, so default labels are fine. Presentation graphics are the few polished plots chosen afterwards to communicate a finding to someone else."
+  },
+  {
+    "id": "ethicsviz-023",
+    "section": "5.1",
+    "q": "You will show one plot from the SEDA data to a school board to illustrate how achievement gaps relate to district income. Which practice matters much more here than in exploratory work?",
+    "choices": [
+      "Producing many quick variations of the plot to see what patterns happen to emerge",
+      "Keeping ggplot's default labels so the plot can be made in a single short line of code",
+      "Mapping every available variable to some aesthetic so that nothing is left out of the plot",
+      "Clear text: a title, axis labels with units, and a legend that non-specialists can read"
+    ],
+    "answer": 3,
+    "explain": "A presentation graphic is for an audience that didn't do the analysis, so the text has to explain what each position and color means. Making many fast variations is the hallmark of exploration, and cramming in every variable makes a plot harder, not easier, to read."
+  },
+  {
+    "id": "ethicsviz-024",
+    "section": "5.1",
+    "q": "A newspaper prints a poster about household water use that combines icons, illustrations, a few key numbers, and short captions. Which category does it belong to?",
+    "choices": [
+      "An exploratory graphic, made quickly to help an analyst look for patterns",
+      "A presentation graphic, a polished statistical plot showing a single finding",
+      "An infographic, designed with images and text to engage a general audience",
+      "A statistical table, arranging exact values in rows and columns for lookup"
+    ],
+    "answer": 2,
+    "explain": "Infographics mix data with illustration, icons, and narrative text to inform a broad audience, often favoring engagement over precise comparison. A presentation graphic is still a data plot, just polished for an audience."
+  },
+  {
+    "id": "ethicsviz-025",
+    "section": "5.1",
+    "q": "Which statement about exploratory graphics is correct?",
+    "choices": [
+      "They need finished titles and custom colors before any analysis can begin",
+      "They are made fast and in large numbers, and most are never shown to anyone else",
+      "They are designed to persuade a general audience of a single conclusion",
+      "They are useful only after the analysis is complete, to decorate the final report"
+    ],
+    "answer": 1,
+    "explain": "Exploration is about the analyst learning from the data, so speed and quantity matter more than polish, and most exploratory plots are thrown away. Persuading an audience is the job of presentation graphics and infographics."
+  },
+  {
+    "id": "ethicsviz-026",
+    "section": "5.1",
+    "q": "A table lists the average temperature in two cities for each of the 12 months. Which question would a line plot of the same numbers (month on the x-axis, one line per city) answer more easily than the table?",
+    "choices": [
+      "Which city has the larger seasonal swing, and when each city's temperatures peak",
+      "Exactly what City A's average temperature was in March, to one decimal place",
+      "The precise difference between the two cities' July averages, to one decimal place",
+      "How many months of temperature data are recorded for each of the two cities"
+    ],
+    "answer": 0,
+    "explain": "Graphics make overall shape and comparisons visible at once: the size and timing of each line's rise and fall jump out. Looking up an exact value, or counting rows, is what a table already does well."
+  },
+  {
+    "id": "ethicsviz-027",
+    "section": "5.1",
+    "q": "Four small datasets have nearly identical means, standard deviations, and correlations, yet their scatterplots look completely different: one is a straight-line cloud, one is a curve, and two are dominated by a single outlier. What does this show?",
+    "choices": [
+      "Summary statistics are computed incorrectly whenever a dataset contains an outlier",
+      "Scatterplots exaggerate small differences that are not really present in the data",
+      "The datasets must contain entry errors, since matching statistics imply matching data",
+      "Summary statistics can hide structure that a plot makes obvious, so plot the data"
+    ],
+    "answer": 3,
+    "explain": "This is Anscombe's quartet: the same numerical summaries fit very different patterns, and only a plot reveals the curve or the influential point. The statistics are computed correctly; they just compress the structure away."
+  },
+  {
+    "id": "ethicsviz-028",
+    "section": "5.1",
+    "q": "Which pairing of graphic type and use is correct?",
+    "choices": [
+      "Exploratory graphic: a carefully designed figure prepared for the final written report",
+      "Infographic: a quick default plot that an analyst makes to check one variable's spread",
+      "Presentation graphic: one of a few polished plots chosen to communicate a finding to others",
+      "Presentation graphic: one of dozens of rough plots used to decide what to analyze next"
+    ],
+    "answer": 2,
+    "explain": "Presentation graphics are few and polished for an audience; exploratory graphics are many and rough, for the analyst. Infographics are designed pieces for a general audience, not quick checks."
+  },
+  {
+    "id": "ethicsviz-029",
+    "section": "5.1",
+    "q": "An exploratory plot made with `ggplot(districts) + geom_point(aes(x = income, y = gap))` turned up a clear pattern, and you now want to put it in a report. Which change best turns it into a presentation graphic?",
+    "choices": [
+      "Map several more variables to color, size, and shape so the plot shows everything",
+      "Add a title and descriptive axis labels with units, for example with `labs()`",
+      "Remove the axis labels, since readers can infer the variables from the report text",
+      "Replace the plot with a table of every district's values so readers see exact numbers"
+    ],
+    "answer": 1,
+    "explain": "The audience needs text to know what the axes and marks mean, so informative titles and labels are the key step from exploration to presentation. Adding more aesthetics clutters the message, and switching to a table hides the pattern you found."
+  },
+  {
+    "id": "ethicsviz-030",
+    "section": "5.1",
+    "q": "Why make many quick exploratory plots, rather than one carefully designed plot, when you first meet a dataset?",
+    "choices": [
+      "You don't yet know which relationships matter, so many cheap views are the fastest way to find out",
+      "One carefully designed plot can show every relationship at once, so it is always the better first step",
+      "Quick plots are more accurate than polished ones, because they use ggplot's default settings",
+      "Making many plots guarantees that the eventual presentation graphic will be correct"
+    ],
+    "answer": 0,
+    "explain": "Exploration is a search: early on you don't know which variables or forms matter, so fast, disposable plots let you try many ideas. Polish is wasted on plots you'll discard; it belongs on the few you present."
+  },
+  {
+    "id": "ethicsviz-031",
+    "section": "5.2",
+    "q": "In this code, which variable is mapped to color?\n```r\nggplot(diamonds) +\n  geom_point(aes(x = carat, y = price, color = cut, alpha = 0.2))\n```",
+    "choices": [
+      "`carat`",
+      "`price`",
+      "None; every point gets the same fixed color",
+      "`cut`"
+    ],
+    "answer": 3,
+    "explain": "Inside `aes()`, `color = cut` maps the `cut` column to color, so each cut gets its own color and a legend entry; `carat` and `price` are mapped to x and y. (Putting the constant `alpha = 0.2` inside `aes()` is a separate slip; it belongs outside.)"
+  },
+  {
+    "id": "ethicsviz-032",
+    "section": "5.2",
+    "q": "An analyst wanted every point to be faint and wrote `geom_point(aes(x = carat, y = price, color = cut, alpha = 0.2))`. What does putting `alpha = 0.2` inside `aes()` do?",
+    "choices": [
+      "It makes every point exactly 20% opaque, and no legend is drawn for the alpha value",
+      "It fades the points according to `price`, so the cheapest 20% of diamonds are faintest",
+      "It maps the constant 0.2 as if it were data, adding an alpha legend; set it outside `aes()`",
+      "It causes an error, because only column names from `diamonds` may appear inside `aes()`"
+    ],
+    "answer": 2,
+    "explain": "Anything inside `aes()` is treated as a mapping, so the constant 0.2 goes through an alpha scale and gets its own legend instead of simply setting transparency. `geom_point(aes(x = carat, y = price, color = cut), alpha = 0.2)` sets every point to 20% opacity with no extra legend."
+  },
+  {
+    "id": "ethicsviz-033",
+    "section": "5.2",
+    "q": "A student wants blue points and writes:\n```r\nggplot(diamonds) +\n  geom_point(aes(x = carat, y = price, color = \"blue\"))\n```\nWhat appears?",
+    "choices": [
+      "Blue points with no legend, exactly as intended, since \"blue\" is one of R's built-in color names",
+      "Reddish-salmon points (ggplot's first default color) and a legend with one key labelled blue",
+      "An error, because `diamonds` has no column named `blue` for `aes()` to look up",
+      "Blue points plus a legend that lists every level of `cut` in a different shade of blue"
+    ],
+    "answer": 1,
+    "explain": "Inside `aes()`, the string \"blue\" is treated as a one-level categorical variable: the default discrete color scale draws it in its first hue and labels it \"blue\" in a legend. To set the color, write `color = \"blue\"` outside `aes()`."
+  },
+  {
+    "id": "ethicsviz-034",
+    "section": "5.2",
+    "q": "Which layer draws every diamond as a blue point, with no color legend?",
+    "choices": [
+      "`geom_point(aes(x = carat, y = price), color = \"blue\")`",
+      "`geom_point(aes(x = carat, y = price, color = \"blue\"))`",
+      "`geom_point(aes(x = carat, y = price, color = blue))`",
+      "`geom_point(aes(x = carat, y = price), fill = \"blue\")`"
+    ],
+    "answer": 0,
+    "explain": "Setting an aesthetic to a constant goes outside `aes()`, as an argument to the geom. Inside `aes()`, `\"blue\"` becomes a mapped value with a legend, unquoted `blue` is looked up as a variable and fails, and `fill` has no effect on the default solid point shape, which stays black."
+  },
+  {
+    "id": "ethicsviz-035",
+    "section": "5.2",
+    "q": "What is the difference between these two layers?\n```r\ngeom_point(aes(x = carat, y = price, color = cut))\ngeom_point(aes(x = carat, y = price), color = \"darkgreen\")\n```",
+    "choices": [
+      "The first gives every point one color chosen by `cut`; the second maps a variable named darkgreen to color",
+      "Both map a variable to color; the second just swaps the default palette for a palette of greens",
+      "The first draws a legend only if `cut` has many levels; the second draws a legend with one key",
+      "The first maps `cut` to color, one color per cut, with a legend; the second colors all points dark green"
+    ],
+    "answer": 3,
+    "explain": "Inside `aes()` an aesthetic varies with a column and gets a legend; outside `aes()` it is set to one fixed value for the whole layer, with no legend. In the second layer only the positions are mapped."
+  },
+  {
+    "id": "ethicsviz-036",
+    "section": "5.2",
+    "q": "A student wants bars filled with a different color for each clarity grade:\n```r\nggplot(diamonds) +\n  geom_bar(aes(x = cut, color = clarity))\n```\nWhat do they get?",
+    "choices": [
+      "Stacked bars whose interiors are each filled with a different color for each clarity grade, as intended",
+      "Side-by-side bars for each clarity grade, with every bar filled in the same default gray",
+      "Stacked bars with gray interiors and outlines colored by clarity; they need `fill = clarity`",
+      "An error, because `color` is not an aesthetic that `geom_bar()` understands"
+    ],
+    "answer": 2,
+    "explain": "For bars and other area marks, `color` sets the outline and `fill` sets the interior. Mapping `clarity` to `color` still splits each bar into stacked pieces by clarity, but only their borders change color."
+  },
+  {
+    "id": "ethicsviz-037",
+    "section": "5.2",
+    "q": "For which of these layers does mapping a variable to `fill` visibly change the inside of the marks?",
+    "choices": [
+      "`geom_line(aes(x = carat, y = price, fill = cut))`",
+      "`geom_histogram(aes(x = price, fill = cut))`",
+      "`geom_point(aes(x = carat, y = price, fill = cut))`",
+      "`geom_text(aes(x = carat, y = price, label = cut, fill = cut))`"
+    ],
+    "answer": 1,
+    "explain": "Histogram bars are areas, so `fill` colors their interiors (stacked by cut). Lines and text have no interior to fill, and the default point shape is a solid dot drawn entirely with `color`, so `fill` has no visible effect on them."
+  },
+  {
+    "id": "ethicsviz-038",
+    "section": "5.2",
+    "q": "In `diamonds`, `cut` is ordered: Fair < Good < Very Good < Premium < Ideal. Which encoding best conveys that order?",
+    "choices": [
+      "A sequential color scale running from light to dark in the order of the levels",
+      "A different point shape for each level, such as a circle, triangle, and square",
+      "Five unrelated hues, such as red, green, blue, purple, and orange, one per level",
+      "A single fixed color for every point, with the order of the cuts noted in the title"
+    ],
+    "answer": 0,
+    "explain": "Lightness has a natural order, so a sequential scale lets readers see that Ideal is further along than Fair; ggplot2 uses such a scale (viridis) by default for ordered factors. Shapes and unrelated hues separate the groups but say nothing about which comes first."
+  },
+  {
+    "id": "ethicsviz-039",
+    "section": "5.2",
+    "q": "In the hawks data, `Species` has three unordered levels: Cooper's, red-tailed, and sharp-shinned. Which aesthetic suits it best in a scatterplot?",
+    "choices": [
+      "Size, drawing each species at a different point size from small to large",
+      "A light-to-dark gradient of one color, giving each species its own shade",
+      "Opacity, so that one species is faint, one is medium, and one is solid",
+      "Shape or distinct hues, which separate groups without implying a ranking"
+    ],
+    "answer": 3,
+    "explain": "Size, lightness, and opacity all suggest more or less of something, which would imply an order the species don't have. Shape and distinct hues are the natural encodings for unordered categories."
+  },
+  {
+    "id": "ethicsviz-040",
+    "section": "5.2",
+    "q": "What happens when this code is run? (`depth` is a continuous numeric column.)\n```r\nggplot(diamonds) +\n  geom_point(aes(x = carat, y = price, shape = depth))\n```",
+    "choices": [
+      "Points whose shapes grow more complex as `depth` increases, with a gradient legend",
+      "Points colored along a gradient by `depth`, since ggplot2 swaps the shape for color",
+      "An error: ggplot2 won't map a continuous variable to shape, which has no natural order",
+      "A separate shape for every distinct value of `depth`, all listed in one very long legend"
+    ],
+    "answer": 2,
+    "explain": "ggplot2 refuses to map a continuous variable to shape and stops with an error, because there is no meaningful way to arrange a handful of shapes along a numeric scale. A continuous variable is better shown with position, size, or a color gradient."
+  },
+  {
+    "id": "ethicsviz-041",
+    "section": "5.2",
+    "q": "How many variables from `diamonds` are mapped to aesthetics in this layer?\n```r\ngeom_point(aes(x = carat, y = price, color = clarity, size = depth),\n           alpha = 0.3, shape = 1)\n```",
+    "choices": [
+      "6",
+      "4",
+      "2",
+      "3"
+    ],
+    "answer": 1,
+    "explain": "Only arguments inside `aes()` are mappings: `carat` to x, `price` to y, `clarity` to color, and `depth` to size. `alpha = 0.3` and `shape = 1` are outside `aes()`, so they are fixed settings for every point."
+  },
+  {
+    "id": "ethicsviz-042",
+    "section": "5.2",
+    "q": "A data frame `hawks` has columns `Wing` (mm), `Weight` (g), `Species`, and `Sex`. Which code draws wing length on the x-axis, weight on the y-axis, a color for each species, and a different point shape for each sex?",
+    "choices": [
+      "`ggplot(hawks) + geom_point(aes(x = Wing, y = Weight, color = Species, shape = Sex))`",
+      "`ggplot(hawks) + geom_point(aes(x = Weight, y = Wing, color = Species, shape = Sex))`",
+      "`ggplot(hawks) + geom_point(aes(x = Wing, y = Weight, color = Sex, shape = Species))`",
+      "`ggplot(hawks) + geom_point(aes(x = Wing, y = Weight, shape = Sex), color = Species)`"
+    ],
+    "answer": 0,
+    "explain": "Each argument in `aes()` names the column an aesthetic shows: x = `Wing`, y = `Weight`, color = `Species`, shape = `Sex`. Swapping columns swaps what the plot shows, and `color = Species` outside `aes()` fails because there is no object called `Species` outside the data."
+  },
+  {
+    "id": "ethicsviz-043",
+    "section": "5.2",
+    "q": "Which description matches this plot?\n```r\nggplot(mpg) +\n  geom_point(aes(x = displ, y = hwy, color = drv, size = cyl))\n```",
+    "choices": [
+      "Highway mpg on the x-axis, displacement on the y-axis, color by drive type, bigger points for more cylinders",
+      "Displacement on the x-axis, highway mpg on the y-axis, color by cylinders, point size by drive type",
+      "Displacement on the x-axis, highway mpg on the y-axis, all points one color, point size by drive type",
+      "Displacement on the x-axis, highway mpg on the y-axis, color by drive type, bigger points for more cylinders"
+    ],
+    "answer": 3,
+    "explain": "Read each mapping in `aes()`: `displ` to x, `hwy` to y, `drv` (drive type) to color, and `cyl` (number of cylinders) to size. Swapping the axes, or the color and size variables, describes a different plot."
+  },
+  {
+    "id": "ethicsviz-044",
+    "section": "5.2",
+    "q": "In `mpg`, `cyl` takes the values 4, 5, 6, and 8 and is stored as a number. You want one distinct color per cylinder count. What does `geom_point(aes(x = displ, y = hwy, color = cyl))` give, and what fixes it?",
+    "choices": [
+      "Four distinct colors already, because `cyl` has only four values, so nothing needs fixing",
+      "A continuous color gradient; writing `color = \"cyl\"` instead makes ggplot treat it as categorical",
+      "A continuous color gradient; writing `color = factor(cyl)` gives one distinct color per value",
+      "No legend at all, because numeric columns can be mapped only to the x and y positions"
+    ],
+    "answer": 2,
+    "explain": "ggplot chooses the scale from the column's type, so a numeric `cyl` gets a continuous gradient even though it has few values. `factor(cyl)` makes it categorical; quoting the name instead would map the constant string \"cyl\" and color every point the same."
+  },
+  {
+    "id": "ethicsviz-045",
+    "section": "5.2",
+    "q": "A survey records the number of children in each household (0, 1, 2, and so on). What type of variable is this?",
+    "choices": [
+      "Quantitative, continuous",
+      "Quantitative, discrete",
+      "Categorical, ordered",
+      "Categorical, unordered"
+    ],
+    "answer": 1,
+    "explain": "It's a count: differences and averages make sense (2 children is one more than 1), so it is quantitative, and it takes only whole-number values, so it is discrete. A continuous variable, like weight, can take any value in a range."
+  },
+  {
+    "id": "ethicsviz-046",
+    "section": "5.2",
+    "q": "A dataset of customers includes each customer's 5-digit zip code. What type of variable is zip code?",
+    "choices": [
+      "Categorical: the digits are labels for areas, so arithmetic on them is meaningless",
+      "Quantitative, discrete: every zip code is a whole number with exactly five digits",
+      "Quantitative, continuous: zip codes take many different values across a wide range",
+      "Categorical, ordered: zip codes can be sorted from the smallest to the largest"
+    ],
+    "answer": 0,
+    "explain": "Numbers used as labels are categorical: the average of two zip codes isn't a meaningful place, and 93106 isn't more of anything than 90210. Being able to sort the labels doesn't make the categories ordered."
+  },
+  {
+    "id": "ethicsviz-047",
+    "section": "5.2",
+    "q": "Which pairing of variable and type is correct?",
+    "choices": [
+      "Blood type (A, B, AB, or O), as recorded at a hospital clinic: categorical, ordered",
+      "A hawk's body weight, measured in grams on a scale: quantitative, discrete",
+      "The calendar date of each patient's clinic visit: categorical, unordered",
+      "Highest education level (high school, college, graduate): categorical, ordered"
+    ],
+    "answer": 3,
+    "explain": "Education levels are categories with a natural ranking, so they are ordered categorical. Blood types have no order, weight can take any value in a range (continuous), and a date is its own date/time type, with a meaningful order and spacing."
+  },
+  {
+    "id": "ethicsviz-048",
+    "section": "5.2",
+    "q": "Which column of `diamonds` is quantitative and continuous?",
+    "choices": [
+      "`cut`, the quality of the cut, from Fair to Ideal",
+      "`clarity`, a grade from I1 (worst) to IF (best)",
+      "`carat`, the diamond's weight",
+      "`color`, a grade from D (best) to J (worst)"
+    ],
+    "answer": 2,
+    "explain": "Carat is a measured weight that can take any value in a range. `cut`, `clarity`, and `color` are graded categories with a natural order (ordered categorical), even though they can be ranked."
+  },
+  {
+    "id": "ethicsviz-049",
+    "section": "5.2",
+    "q": "A course survey has a column where students explain, in their own words, why they chose their major. What type of variable is this column?",
+    "choices": [
+      "Categorical, unordered: each response is one category among the many that the students wrote",
+      "Text: free-form responses that are mostly unique, not values from a fixed set of levels",
+      "Categorical, ordered: the responses can be sorted alphabetically from A to Z",
+      "Quantitative, discrete: each response has a whole-number count of words in it"
+    ],
+    "answer": 1,
+    "explain": "Categorical variables take values from a limited set of levels that repeat across observations; open-ended answers are nearly all different, so they are text. You could derive a number such as word count, but that would be a new variable, not the type of this one."
+  },
+  {
+    "id": "ethicsviz-050",
+    "section": "5.2",
+    "q": "In the Billboard data, `date.entered` records the day each song first entered the Hot 100 chart (for example, 2000-02-26). What type of variable is it?",
+    "choices": [
+      "Date/time: its values have a natural order and spacing, so they belong on a time axis",
+      "Categorical, unordered: each date is just a label for the week in which the song was released",
+      "Text: the values contain dashes, so they can't be ordered or compared like numbers",
+      "Quantitative, discrete: it counts the number of days the song spent on the chart"
+    ],
+    "answer": 0,
+    "explain": "Dates are their own type: they are ordered, and the gap between two dates is a meaningful length of time, which is why ggplot2 puts them on a time axis. A date stored as a string is still conceptually a date and should be converted, not treated as text."
+  },
+  {
+    "id": "ethicsviz-051",
+    "section": "5.2",
+    "q": "In the grammar of graphics, what is an aesthetic mapping?",
+    "choices": [
+      "A visual property, such as a color, that is set to the same value for every mark in a layer",
+      "A summary statistic, such as a mean, computed from a column before the data are plotted",
+      "A plot's overall styling, such as its background color, its fonts, and its grid lines",
+      "A link from a data column to a visual property, so the property changes with the column's values"
+    ],
+    "answer": 3,
+    "explain": "A graphic is built by mapping columns to positions and to aesthetics like color, size, or shape, so that the marks encode the data. A property fixed at one value for every mark is a setting, not a mapping, and overall styling is the theme."
+  },
+  {
+    "id": "ethicsviz-052",
+    "section": "5.2",
+    "q": "In `ggplot(diamonds) + geom_boxplot(aes(x = cut, y = price, fill = cut))`, which description of the plot's elements is correct?",
+    "choices": [
+      "Data `diamonds`; geometric object a boxplot; `cut` mapped to fill only; `price` mapped to x and y",
+      "Data `cut`; geometric object a box; `diamonds` mapped to x; `price` mapped to y",
+      "Data `diamonds`; geometric object a boxplot; `cut` mapped to x and fill; `price` mapped to y",
+      "Data `diamonds`; geometric object a fill; `cut` mapped to x; `price` mapped to the boxes"
+    ],
+    "answer": 2,
+    "explain": "`ggplot()` supplies the data, the `geom_` function sets the geometric object, and each `aes()` argument maps a column to an aesthetic. Here `cut` appears twice, for x position and for fill, which is allowed (a redundant encoding)."
+  },
+  {
+    "id": "ethicsviz-053",
+    "section": "5.2",
+    "q": "Which argument name fills the blank so the legend title reads \"Cut quality\"?\n```r\nggplot(diamonds) +\n  geom_point(aes(x = carat, y = price, color = cut)) +\n  labs(x = \"Weight (carats)\", y = \"Price (USD)\", ____ = \"Cut quality\")\n```",
+    "choices": [
+      "`legend`",
+      "`color`",
+      "`fill`",
+      "`cut`"
+    ],
+    "answer": 1,
+    "explain": "`labs()` titles each aesthetic by its name, and the legend here comes from the `color` mapping, so `color = \"Cut quality\"` retitles it. There is no `fill` mapping in this plot, so a `fill` label has nothing to attach to, and `labs()` labels aesthetics, not variables like `cut`."
+  },
+  {
+    "id": "ethicsviz-054",
+    "section": "5.2",
+    "q": "A colleague's scatterplot has axes labelled `x1` and `v7` and a color legend titled `grp` with keys 1, 2, and 3. What is the main problem?",
+    "choices": [
+      "Without meaningful text, readers can't tell what the positions and colors stand for",
+      "The plot uses too many aesthetics for a reader to decode all of them at once",
+      "Scatterplots should never include a color legend alongside the two axes",
+      "Numeric legend keys mean ggplot was forced to use a continuous color scale"
+    ],
+    "answer": 0,
+    "explain": "Titles, axis labels, and legend titles are what give a plot its meaning; cryptic column names leave readers guessing. The fix is descriptive labels with units, for example via `labs()`, not removing the color mapping."
+  },
+  {
+    "id": "ethicsviz-055",
+    "section": "5.2",
+    "q": "A scatterplot of `price` against `carat` for all 53,940 diamonds is a solid blob in its densest regions. Which change helps most?",
+    "choices": [
+      "Map `alpha = cut` inside `aes()` so that diamonds with better cuts are drawn more solidly",
+      "Increase the point `size` so that each individual diamond is easier to pick out",
+      "Add a title with `labs()` that warns readers that many of the points overlap",
+      "Add `alpha = 0.1` to `geom_point()` so overlapping points build up darker where data are dense"
+    ],
+    "answer": 3,
+    "explain": "With low opacity, a single point is faint but many stacked points look dark, so the density of the cloud becomes visible. Mapping alpha to `cut` encodes a variable rather than fixing overplotting, and bigger points only make the overlap worse."
+  },
+  {
+    "id": "ethicsviz-056",
+    "section": "5.2",
+    "q": "Which statement about this code is correct?\n```r\nggplot(economics) +\n  geom_line(aes(x = date, y = unemploy), linewidth = 1.5, color = \"darkred\")\n```",
+    "choices": [
+      "`linewidth` and `color` are mapped to `unemploy`, so the line thickens as unemployment rises",
+      "`date` is mapped to color and `unemploy` is mapped to line width",
+      "`date` and `unemploy` are mapped to x and y; line width and color are fixed settings",
+      "Four aesthetics are mapped, so the plot shows a legend for line width and one for color"
+    ],
+    "answer": 2,
+    "explain": "Only `x = date` and `y = unemploy` are inside `aes()`. The `linewidth` and `color` arguments sit outside it, so the whole line is drawn thick and dark red with no legend; to vary thickness with a variable, map it inside `aes()`."
+  },
+  {
+    "id": "ethicsviz-057",
+    "section": "5.2",
+    "q": "How many smoothed curves does this code draw?\n```r\nggplot(diamonds, aes(x = carat, y = price)) +\n  geom_point(aes(color = cut)) +\n  geom_smooth()\n```",
+    "choices": [
+      "Five, one for each level of `cut`, because every layer inherits the color mapping",
+      "One, for all diamonds, because `color = cut` is mapped only in `geom_point()`",
+      "None, because `geom_smooth()` has no `aes()` of its own that gives it x and y",
+      "Five, one for each level of `cut`, all drawn in the same default blue"
+    ],
+    "answer": 1,
+    "explain": "Mappings in `ggplot()` are shared by every layer, but mappings inside one geom's `aes()` apply only to that layer. The smooth inherits x and y but not color, so it fits one curve to all the data; moving `color = cut` into `ggplot()` would give five curves."
+  },
+  {
+    "id": "ethicsviz-058",
+    "section": "5.2",
+    "q": "What happens when this code runs?\n```r\nggplot(diamonds) +\n  geom_point(x = carat, y = price)\n```",
+    "choices": [
+      "An error, because outside `aes()` R looks for objects named `carat` and `price` and finds none",
+      "A scatterplot of price against carat, the same as writing the mapping inside `aes()`",
+      "An empty plot with axes titled carat and price but no points drawn on it",
+      "A scatterplot in which every diamond is stacked on a single point at the origin"
+    ],
+    "answer": 0,
+    "explain": "Column names are looked up in the data only when they appear inside `aes()`. As plain geom arguments, `carat` and `price` are evaluated as ordinary R objects, which don't exist, so R reports that object `carat` was not found."
+  },
+  {
+    "id": "ethicsviz-059",
+    "section": "5.2",
+    "q": "In a scatterplot of `diamonds`, how do the legends for `aes(color = price)` and `aes(color = cut)` differ?",
+    "choices": [
+      "`price` gets a separate key for each distinct price; `cut` gets a continuous color bar",
+      "Both get a continuous color bar, because both are columns of the same data frame",
+      "Neither gets a legend, because ggplot draws legends only for the `fill` aesthetic",
+      "`price` gets a continuous color bar; `cut` gets a separate key for each of its levels"
+    ],
+    "answer": 3,
+    "explain": "ggplot picks the scale from the variable type: a quantitative variable like `price` gets a gradient shown as a color bar, and a categorical one like `cut` gets one key per level. (Because `cut` is ordered, its colors follow a sequential palette.)"
+  },
+  {
+    "id": "ethicsviz-060",
+    "section": "5.2",
+    "q": "A bar chart shows the number of diamonds of each cut, with each bar filled in its own color and a legend repeating the cut names. Which code made it?",
+    "choices": [
+      "`ggplot(diamonds) + geom_bar(aes(x = cut, color = cut))`",
+      "`ggplot(diamonds) + geom_bar(aes(x = cut), fill = \"cut\")`",
+      "`ggplot(diamonds) + geom_bar(aes(x = cut, fill = cut))`",
+      "`ggplot(diamonds) + geom_bar(aes(fill = cut))`"
+    ],
+    "answer": 2,
+    "explain": "`x = cut` makes one bar per cut and `fill = cut` colors each bar's interior and adds a legend, a redundant but common encoding. `color` would color only the outlines, a quoted \"cut\" is not a color name, and without an x or y mapping `geom_bar()` has nothing to count."
+  }
+]
