@@ -49,7 +49,7 @@ window.DASHCARDS_DECKS["pstat100-midterm"] = {
   {
    "id": "summ-031",
    "section": "3",
-   "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 NA\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
+   "q": "Given `df`:\n```\n# A tibble: 4 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     1 a\n2     2    NA b\n3     3     3 <NA>\n4     4    NA d\n```\nwhat does `colMeans(is.na(df))` return?",
    "choices": [
     "`id` 0, `x` 0.5, `y` 0.25: the share missing per column",
     "`id` 0, `x` 2, `y` 1: the number missing in each column",
@@ -218,7 +218,7 @@ window.DASHCARDS_DECKS["pstat100-midterm"] = {
   {
    "id": "summ-044",
    "section": "3",
-   "q": "Given `df`:\n```\n# A tibble: 5 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     2 a\n2     2    NA b\n3     3     5 NA\n4     4    NA NA\n5     5     7 e\n```\nhow many rows do `df |> drop_na()` and `df |> drop_na(x)` return?",
+   "q": "Given `df`:\n```\n# A tibble: 5 × 3\n     id     x y\n  <int> <dbl> <chr>\n1     1     2 a\n2     2    NA b\n3     3     5 <NA>\n4     4    NA <NA>\n5     5     7 e\n```\nhow many rows do `df |> drop_na()` and `df |> drop_na(x)` return?",
    "choices": [
     "3 and 2",
     "2 and 3",
@@ -2109,7 +2109,7 @@ window.DASHCARDS_DECKS["pstat100-midterm"] = {
     "`left_join(covars, gaps, by = c(\"id\", \"grade\"))`"
    ],
    "answer": 1,
-   "explain": "A left join keeps every row of its first table and fills the second table's columns with `NA` where there is no match. The inner join drops the unmatched district-grades, and the last two keep all of `covars` instead."
+   "explain": "A left join keeps every row of its first table and fills the second table's columns with `NA` where there is no match. The inner join drops the unmatched district-grades, and `right_join(gaps, covars)` and `left_join(covars, gaps)` keep all of `covars` instead."
   },
   {
    "id": "reshape-052",
@@ -4416,8 +4416,8 @@ window.DASHCARDS_DECKS["pstat100-midterm"] = {
    "section": "4.5",
    "q": "A simulation plots \\( \\widetilde{\\operatorname{Var}}[\\hat{\\mu}] \\) against \\( n \\) for a population of \\( N = 200 \\), once using `sample(pop, n)` and once using `sample(pop, n, replace = TRUE)`, for \\( n \\) from 10 to 200. What pattern should appear?",
    "choices": [
-    "The without-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
-    "The with-replacement curve is lower, and the gap widens as \\( n \\) nears 200, where that curve hits 0",
+    "The without-replacement curve is lower, and it pulls further below the other, relative to its size, as \\( n \\) nears 200, where that curve hits 0",
+    "The with-replacement curve is lower, and it pulls further below the other, relative to its size, as \\( n \\) nears 200, where that curve hits 0",
     "The two curves lie on top of each other, because both sample means are unbiased for \\( \\mu \\)",
     "The without-replacement curve is lower for small \\( n \\), but the curves cross near \\( n = 100 \\)"
    ],
@@ -5864,7 +5864,7 @@ window.DASHCARDS_DECKS["pstat100-midterm"] = {
     "`group = genhlth`"
    ],
    "answer": 0,
-   "explain": "Mapping `fill = sex` splits each category into one group per sex with its own fill color, and `position = \"dodge\"` then sets those bars side by side. Quoting `\"sex\"` maps a constant string, so every bar is in the same group and the same color."
+   "explain": "Mapping `fill = sex` splits each category into one group per sex with its own fill color, and `position = \"dodge\"` then sets those bars side by side. Quoting `\"sex\"` maps a constant string, so the two sexes' bars are not split into groups: they share one color and overlap instead of dodging."
   },
   {
    "id": "graphics-011",
