@@ -227,6 +227,14 @@ input[type=checkbox], input[type=radio] {
     font-weight: bold;
 }
 
+#storage-warning {
+    margin: 0 0 20px;
+    padding: 10px 14px;
+    border: 1px solid var(--wrong);
+    border-radius: 8px;
+    color: var(--wrong);
+}
+
 /* HOME */
 
 #section-picker { margin-top: 4px; }

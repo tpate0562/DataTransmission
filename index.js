@@ -85,7 +85,8 @@ function writeStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
-        //storage blocked or full: progress just won't survive a reload
+        //storage blocked (private window, site data disabled) or full: say so instead of losing progress silently
+        show("storage-warning", true);
     }
 }
 
