@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Dashcards - Create Deck</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="theme-color" content="#000000">
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" id="logo">Dashcards</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="createdeck.html">Create Deck</a>
+            <a href="about.html">About</a>
+        </nav>
+    </div>
+
+    <div id="content">
+        <h1 class="title">Create a deck</h1>
+        <p class="lede">Add at least 5 cards, then download the deck and open it with <em>Load File</em> on the home page.
+            Terms and definitions can use LaTeX: <code>\( \hat{\mu} \)</code> for inline math, <code>\[ ... \]</code> for display math.</p>
+        <h2 id="create-error" style="display: none">
+            <span>Fill in every input before downloading!</span>
+        </h2>
+        <div id="deck-input">
+            <div id="title-input">
+                <label for="title">Deck title</label>
+                <input type="text" id="title" autocomplete="off" placeholder="Title">
+            </div>
+            <input type="text" id="input1" autocomplete="off" placeholder="Term">
+            <input type="text" id="input2" autocomplete="off" placeholder="Definition">
+            <input type="text" id="input3" autocomplete="off" placeholder="Term">
+            <input type="text" id="input4" autocomplete="off" placeholder="Definition">
+            <input type="text" id="input5" autocomplete="off" placeholder="Term">
+            <input type="text" id="input6" autocomplete="off" placeholder="Definition">
+            <input type="text" id="input7" autocomplete="off" placeholder="Term">
+            <input type="text" id="input8" autocomplete="off" placeholder="Definition">
+            <input type="text" id="input9" autocomplete="off" placeholder="Term">
+            <input type="text" id="input10" autocomplete="off" placeholder="Definition">
+        </div>
+        <br><br><br>
+        <div id="button-controls">
+            <button class="btn" onclick="addTermInput()">Add a card</button>
+            <button class="btn primary" onclick="downloadDeck()">Download</button>
+        </div>
+    </div>
+    <script src="createdeck.js"></script>
+</body>
+</html>

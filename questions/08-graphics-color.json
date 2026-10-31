@@ -1,0 +1,782 @@
+[
+  {
+    "id": "graphics-001",
+    "section": "5.3",
+    "q": "You want to see the shape of the distribution of `price` in the `diamonds` data: where values pile up, how skewed it is, whether there is more than one peak. Which layer is built for that?",
+    "choices": [
+      "`geom_point()`",
+      "`geom_histogram()`",
+      "`geom_density_2d()`",
+      "`geom_col()`"
+    ],
+    "answer": 1,
+    "explain": "A histogram bins one quantitative variable and shows how many observations fall in each bin, which reveals center, skew and peaks. `geom_point()` and `geom_density_2d()` need two variables, and `geom_col()` draws bars whose heights you already have."
+  },
+  {
+    "id": "graphics-002",
+    "section": "5.3",
+    "q": "In HW2 you looked at each school district's achievement gap (`gap`) and its socioeconomic status (`ses`), both quantitative. Which plot shows how the two variables are related?",
+    "choices": [
+      "A histogram of `gap`, then a separate histogram of `ses`",
+      "A boxplot of `gap` for all districts with `geom_boxplot()`",
+      "One bar per district with height `gap`, using `geom_col()`",
+      "A scatterplot: `geom_point()` with `ses` on x and `gap` on y"
+    ],
+    "answer": 3,
+    "explain": "Each district becomes one point at (`ses`, `gap`), so the direction and tightness of the cloud show the relationship. Histograms and boxplots summarize one variable at a time and can't show how one moves with the other."
+  },
+  {
+    "id": "graphics-003",
+    "section": "5.3",
+    "q": "The Billboard data record each song's chart rank in every week after it entered the Hot 100. To show how one song's rank changed over those weeks, which plot is the natural choice?",
+    "choices": [
+      "A histogram of the weekly ranks with `geom_histogram()`",
+      "A boxplot of the weekly ranks with `geom_boxplot()`",
+      "A density curve of the weekly ranks with `geom_density()`",
+      "A line plot of rank against week with `geom_line()`"
+    ],
+    "answer": 3,
+    "explain": "Change over time calls for time on the x-axis and a line joining consecutive weeks, so rises and falls are visible. The other three show only the distribution of the ranks and throw away their order in time."
+  },
+  {
+    "id": "graphics-004",
+    "section": "5.3",
+    "q": "After summarizing BRFSS you have one row per general-health category (Excellent to Poor) with the proportion of respondents in it who reported any adverse childhood experience. Which plot best compares that proportion across the five categories?",
+    "choices": [
+      "A histogram of the five proportions with `geom_histogram()`",
+      "A bar plot with `geom_col()`: one bar per category, height = proportion",
+      "A boxplot of the five proportions with `geom_boxplot()`",
+      "A 2D density plot of category and proportion with `geom_density_2d()`"
+    ],
+    "answer": 1,
+    "explain": "A quantity across categories is what a bar plot is for: one bar per category, so the values are compared from a common baseline. A histogram or boxplot of the five numbers loses which proportion belongs to which category."
+  },
+  {
+    "id": "graphics-005",
+    "section": "5.3",
+    "q": "`ace_summary` already has one row per general-health category, with the proportion reporting ACEs in `prop`. Fill in the blank so each bar's height equals `prop`:\n```r\nace_summary |>\n  ggplot(aes(x = genhlth, y = prop)) +\n  ______\n```",
+    "choices": [
+      "`geom_bar()`",
+      "`geom_histogram()`",
+      "`geom_density()`",
+      "`geom_col()`"
+    ],
+    "answer": 3,
+    "explain": "`geom_col()` uses the y values exactly as they are in the data. `geom_bar()` instead counts rows per category (and errors if you also map y), while histograms and densities describe the distribution of a single variable."
+  },
+  {
+    "id": "graphics-006",
+    "section": "5.3",
+    "q": "`brfss` has one row per survey respondent. What does this code draw?\n```r\nggplot(brfss, aes(x = genhlth)) +\n  geom_bar()\n```",
+    "choices": [
+      "One bar per respondent, with height equal to that respondent's health rating",
+      "One bar per health category, with height equal to the proportion reporting ACEs",
+      "One bar per health category, with height equal to the number of respondents in it",
+      "An error, because `geom_bar()` needs a y aesthetic to set the bar heights"
+    ],
+    "answer": 2,
+    "explain": "`geom_bar()` uses `stat = \"count\"`: it counts the rows in each x category and uses the counts as heights, so no y is needed. To plot a precomputed value such as a proportion, map it to y and use `geom_col()`."
+  },
+  {
+    "id": "graphics-007",
+    "section": "5.3",
+    "q": "Which call draws exactly the same bars as `geom_col()`?",
+    "choices": [
+      "`geom_bar(stat = \"count\")`",
+      "`geom_bar(position = \"dodge\")`",
+      "`geom_bar(position = \"stack\")`",
+      "`geom_bar(stat = \"identity\")`"
+    ],
+    "answer": 3,
+    "explain": "`geom_col()` is shorthand for `geom_bar(stat = \"identity\")`: bar heights are the y values in the data. The other calls keep counting rows; `position` only controls how bars for different groups are arranged."
+  },
+  {
+    "id": "graphics-008",
+    "section": "5.3",
+    "q": "`ace_props` has columns `genhlth`, `sex`, and `prop`. What does `position = \"dodge\"` do in this plot?\n```r\nggplot(ace_props, aes(x = genhlth, y = prop, fill = sex)) +\n  geom_col(position = \"dodge\")\n```",
+    "choices": [
+      "In each health category, the two sexes' bars sit side by side, not stacked",
+      "The two bars in each category are rescaled so they stack to a total height of 1",
+      "The two bars overlap at the same position, so the shorter one can be hidden",
+      "Each sex is moved into its own panel, giving two separate side-by-side plots"
+    ],
+    "answer": 0,
+    "explain": "Dodging places the groups' bars next to each other within each x category, all starting from zero, so their heights compare directly. Rescaling to 1 is `position = \"fill\"`, overlapping is `position = \"identity\"`, and separate panels come from faceting."
+  },
+  {
+    "id": "graphics-009",
+    "section": "5.3",
+    "q": "In HW1 you plotted the proportion reporting ACEs by general health and sex. Why are dodged bars better here than the default stacked bars from `geom_col()`?",
+    "choices": [
+      "The stacked height would add two proportions, a sum with no meaning",
+      "Stacked bars cannot be filled by `sex`, so the two sexes would look identical",
+      "Stacking would reorder the health categories alphabetically along the x-axis",
+      "Stacked bars only work for counts, so `geom_col()` would fail on proportions"
+    ],
+    "answer": 0,
+    "explain": "Each bar is a proportion within one sex, so a female proportion plus a male proportion isn't a proportion of anything. Stacking also leaves only the bottom segment on the zero baseline, which makes the sexes hard to compare; dodging fixes both problems."
+  },
+  {
+    "id": "graphics-010",
+    "section": "5.3",
+    "q": "Fill in the blank so each health category gets one bar per sex, in two different colors:\n```r\nggplot(ace_props, aes(x = genhlth, y = prop, ______)) +\n  geom_col(position = \"dodge\")\n```",
+    "choices": [
+      "`fill = sex`",
+      "`fill = \"sex\"`",
+      "`fill = genhlth`",
+      "`group = genhlth`"
+    ],
+    "answer": 0,
+    "explain": "Mapping `fill = sex` splits each category into one group per sex with its own fill color, and `position = \"dodge\"` then sets those bars side by side. Quoting `\"sex\"` maps a constant string, so the two sexes' bars are not split into groups: they share one color and overlap instead of dodging."
+  },
+  {
+    "id": "graphics-011",
+    "section": "5.3",
+    "q": "In HW2 you added trend lines with `geom_smooth(method = \"lm\", se = FALSE)`. What does `se = FALSE` remove?",
+    "choices": [
+      "The scatterplot points underneath the fitted line",
+      "The legend that identifies each line's group",
+      "The curvature, forcing the fitted line to be straight",
+      "The shaded confidence band drawn around each line"
+    ],
+    "answer": 3,
+    "explain": "`se` controls the standard-error band: by default `geom_smooth()` shades a confidence interval around the fitted line, and `se = FALSE` drops it. Straightness comes from `method = \"lm\"`, not from `se`."
+  },
+  {
+    "id": "graphics-012",
+    "section": "5.3",
+    "q": "What does `method = \"lm\"` tell `geom_smooth()` to do?",
+    "choices": [
+      "Connect the data points with line segments in order of the x variable",
+      "Fit a separate curve for every level of the color variable",
+      "Fit a straight least-squares line, not the default smooth curve",
+      "Remove the shaded confidence band around the fitted line"
+    ],
+    "answer": 2,
+    "explain": "`\"lm\"` stands for linear model, so the layer fits a straight regression line. Without it `geom_smooth()` fits a flexible smoother (loess or a GAM); separate lines come from a grouping aesthetic, and the band is controlled by `se`."
+  },
+  {
+    "id": "graphics-013",
+    "section": "5.3",
+    "q": "`subject` takes two values, math and reading. How many trend lines does this draw?\n```r\nggplot(seda, aes(x = ses, y = gap, color = subject)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", se = FALSE)\n```",
+    "choices": [
+      "Two: one per subject, each matching its points' color",
+      "One: fit to all districts together, in the default blue",
+      "Two: one per subject, but both in the default blue",
+      "None, until `color` is also mapped inside `geom_smooth()`"
+    ],
+    "answer": 0,
+    "explain": "Aesthetics mapped in `ggplot()` are inherited by every layer, so `geom_smooth()` also groups by `subject`, fitting and coloring one line per subject. That is the plot you want for comparing the gap–SES relationship across subjects."
+  },
+  {
+    "id": "graphics-014",
+    "section": "5.3",
+    "q": "This time `color = subject` is mapped only inside `geom_point()`. What does `geom_smooth()` draw?\n```r\nggplot(seda, aes(x = ses, y = gap)) +\n  geom_point(aes(color = subject)) +\n  geom_smooth(method = \"lm\", se = FALSE)\n```",
+    "choices": [
+      "Two lines, one per subject, colored to match the points",
+      "A single line fit to math and reading districts pooled together",
+      "Two lines, one per subject, both drawn in the default blue",
+      "No line at all, since the smooth has no color mapping to follow"
+    ],
+    "answer": 1,
+    "explain": "A mapping inside one layer applies only to that layer, so `geom_smooth()` sees no grouping variable and fits one line to all points. Move `color = subject` into `ggplot()` (or into `geom_smooth()`) to get one line per subject."
+  },
+  {
+    "id": "graphics-015",
+    "section": "5.3",
+    "q": "You want the two subjects' trend lines to differ by dash pattern (one solid, one dashed) so the plot still works in black and white. Which layer does that?",
+    "choices": [
+      "`geom_smooth(linetype = subject, method = \"lm\", se = FALSE)`",
+      "`geom_smooth(aes(linetype = \"dashed\"), method = \"lm\", se = FALSE)`",
+      "`geom_smooth(aes(linetype = subject), method = \"lm\", se = FALSE)`",
+      "`geom_smooth(aes(group = subject), method = \"lm\", se = FALSE)`"
+    ],
+    "answer": 2,
+    "explain": "Mapping `linetype = subject` inside `aes()` gives each subject its own line and its own dash pattern, with a legend. Outside `aes()` ggplot2 expects a fixed linetype and can't find an object called `subject`, and `group = subject` makes two lines that look identical."
+  },
+  {
+    "id": "graphics-016",
+    "section": "5.3",
+    "q": "Suppose that in a plot of `gap` against `ses` like HW2's, both the math and the reading trend lines slope upward and are nearly parallel, with the math line above the reading line across the whole SES range. What does that suggest?",
+    "choices": [
+      "The gap rises with SES faster in math than in reading, since the math line is higher",
+      "Similar slopes in both subjects, with a larger math gap at every SES level",
+      "SES is unrelated to the gap in both subjects, since the two lines never cross",
+      "Districts measured in math tend to have higher SES than those measured in reading"
+    ],
+    "answer": 1,
+    "explain": "Parallel lines mean equal slopes, so the gap–SES relationship is about the same in both subjects; the vertical distance between them says the math gap is larger by a roughly constant amount. A higher line is not a steeper one."
+  },
+  {
+    "id": "graphics-017",
+    "section": "5.3",
+    "q": "A scatterplot of `carat` against `price` for all 53,940 diamonds is a solid blob in places, so you can't tell where most diamonds are. Which layer, added on top, shows where the points are most concentrated?",
+    "choices": [
+      "`geom_smooth(method = \"lm\")`",
+      "`geom_histogram()`",
+      "`geom_density_2d()`",
+      "`geom_col()`"
+    ],
+    "answer": 2,
+    "explain": "`geom_density_2d()` estimates the joint density of the two variables and draws contour lines around regions with many points, which stays readable where points overlap. A smooth shows the average trend of y given x, not where observations pile up."
+  },
+  {
+    "id": "graphics-018",
+    "section": "5.3",
+    "q": "In a 2D density plot drawn with `geom_density_2d()`, what does a single contour line connect?",
+    "choices": [
+      "The observations that belong to the same group or category",
+      "Locations with the same estimated density of observations",
+      "The observed data points, joined in increasing order of x",
+      "Locations where the fitted trend predicts the same y value"
+    ],
+    "answer": 1,
+    "explain": "Like elevation contours on a topographic map, each curve joins locations of equal estimated density. Nested rings close in on the regions where the data are most concentrated."
+  },
+  {
+    "id": "graphics-019",
+    "section": "5.3",
+    "q": "In a boxplot drawn with `geom_boxplot()`, what does the line inside the box mark?",
+    "choices": [
+      "The mean",
+      "The median",
+      "The mode",
+      "The midpoint of the range"
+    ],
+    "answer": 1,
+    "explain": "The box runs from the first to the third quartile (the middle 50% of the data), and the line inside it is the median. A boxplot doesn't show the mean unless you add it yourself."
+  },
+  {
+    "id": "graphics-020",
+    "section": "5.3",
+    "q": "Suppose hawk body weights form two clear clumps, one for the small species and one for the large. Which display of weight would reveal the two clumps that a single boxplot could hide?",
+    "choices": [
+      "A boxplot with whiskers extended to the min and max",
+      "A histogram, which can show two separate peaks",
+      "A single bar of the mean weight, using `geom_col()`",
+      "A boxplot with the outlying points removed"
+    ],
+    "answer": 1,
+    "explain": "A boxplot reduces a distribution to a few summary numbers, so two peaks with a gap between them can look like one wide box. A histogram (or a density curve) shows the shape itself, including more than one mode."
+  },
+  {
+    "id": "graphics-021",
+    "section": "5.3",
+    "q": "Which code compares the distribution of `price` across the five levels of `cut` in `diamonds`?",
+    "choices": [
+      "`ggplot(diamonds, aes(x = cut, y = price)) + geom_col()`",
+      "`ggplot(diamonds, aes(x = cut, y = price)) + geom_boxplot()`",
+      "`ggplot(diamonds, aes(x = cut)) + geom_bar()`",
+      "`ggplot(diamonds, aes(x = price)) + geom_histogram(bins = 50)`"
+    ],
+    "answer": 1,
+    "explain": "Side-by-side boxplots give one box per `cut`, so medians and spreads of `price` can be compared at a glance. `geom_col()` on raw rows stacks every diamond's price into one bar (a sum), `geom_bar()` counts diamonds per cut, and the histogram ignores `cut`."
+  },
+  {
+    "id": "graphics-022",
+    "section": "5.3",
+    "q": "Your scatterplot shows `gap` against `ses`, one point per district. Which variable would be most sensible to map to `size`?",
+    "choices": [
+      "State name, so each of the 50 states gets its own point size",
+      "Subject, so math and reading points get different sizes",
+      "Enrollment, since larger points read naturally as larger amounts",
+      "District name, so that each point gets its own size and can be identified"
+    ],
+    "answer": 2,
+    "explain": "Size is perceived as magnitude, so it suits a quantitative variable such as enrollment. Mapping an unordered category to size implies an order that isn't there (ggplot2 warns about it); use color or shape for categories."
+  },
+  {
+    "id": "graphics-023",
+    "section": "5.3",
+    "q": "How many variables from `diamonds` does this plot display?\n```r\nggplot(diamonds, aes(x = carat, y = price, color = clarity, size = depth)) +\n  geom_point()\n```",
+    "choices": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "answer": 2,
+    "explain": "Each mapped aesthetic shows one variable: `carat` (x), `price` (y), `clarity` (color), and `depth` (size). Color and size are how a scatterplot carries a third and fourth dimension."
+  },
+  {
+    "id": "graphics-024",
+    "section": "5.3",
+    "q": "`ca_counties` is an `sf` data frame with one row per California county, the county outlines, and a numeric `median_income` column. What does this draw?\n```r\nggplot(ca_counties) +\n  geom_sf(aes(fill = median_income))\n```",
+    "choices": [
+      "A bar for each county, with height equal to median income",
+      "A scatterplot of county centers, sized by median income",
+      "A histogram of median income across the counties",
+      "A map of the counties, each shaded by its median income"
+    ],
+    "answer": 3,
+    "explain": "`geom_sf()` draws the shapes stored in the `sf` object, and `fill = median_income` shades each county by its value, giving a choropleth map. Color here represents a numeric value, the third variable on top of the two map coordinates."
+  },
+  {
+    "id": "graphics-025",
+    "section": "5.3",
+    "q": "When you call `geom_sf()`, where does ggplot2 get the shape of each region from?",
+    "choices": [
+      "The x and y aesthetics you map in `aes()`",
+      "The geometry column of the `sf` object",
+      "Latitude and longitude columns found by name",
+      "A built-in world map that `geom_sf()` downloads"
+    ],
+    "answer": 1,
+    "explain": "An `sf` (simple features) data frame stores each row's shape (points, lines, or polygons) in a special geometry column, and `geom_sf()` draws those shapes automatically. You don't map x and y yourself; you map other aesthetics such as `fill`."
+  },
+  {
+    "id": "graphics-026",
+    "section": "5.3",
+    "q": "Which question can a histogram of district `ses` answer on its own?",
+    "choices": [
+      "Do districts with higher SES have larger achievement gaps?",
+      "How has the average district's SES changed over the years?",
+      "Is the SES–gap relationship different for math and reading?",
+      "Which SES values are common, and how spread out are they?"
+    ],
+    "answer": 3,
+    "explain": "A histogram displays the distribution of one variable: its center, spread, and shape. The other questions involve a second variable (gap, time, or subject) and need a scatterplot, a line plot, or grouped trend lines."
+  },
+  {
+    "id": "graphics-027",
+    "section": "5.3",
+    "q": "`billboard_long` has one row per song per week, with columns `track`, `week`, and `rank`. This code should show one rank trajectory per song but draws a single zigzag through every song's points. What fixes it?\n```r\nggplot(billboard_long, aes(x = week, y = rank)) +\n  geom_line()\n```",
+    "choices": [
+      "Replace `geom_line()` with `geom_col(position = \"dodge\")`",
+      "Sort the data with `arrange(week)` before plotting",
+      "Swap the axes, using `aes(x = rank, y = week)` instead",
+      "Map `group = track` inside `aes()`"
+    ],
+    "answer": 3,
+    "explain": "`geom_line()` joins all points in a group in order of x, so with no grouping variable it connects different songs to each other. Mapping `group = track` (or `color = track`, which also groups) draws one line per song."
+  },
+  {
+    "id": "graphics-028",
+    "section": "5.3",
+    "q": "Why is `geom_line()` a poor choice for plotting `gap` against `ses` across school districts?",
+    "choices": [
+      "Line plots can only display a categorical variable on the y-axis, not `gap`",
+      "`geom_line()` only works when the x variable is a date or a date-time",
+      "Joining districts in order of SES implies a sequence that isn't there",
+      "A line plot would need `method = \"lm\"` to handle two quantitative variables"
+    ],
+    "answer": 2,
+    "explain": "Connecting points says that neighboring values belong together, like successive weeks for one song. Districts that happen to have similar SES aren't linked, so a scatterplot (with a trend line if wanted) is the honest display."
+  },
+  {
+    "id": "graphics-029",
+    "section": "5.4",
+    "q": "On a screen each RGB channel runs from 0 to 255. What color is the triplet (255, 255, 255)?",
+    "choices": [
+      "Black",
+      "A muddy brown",
+      "Medium gray",
+      "White"
+    ],
+    "answer": 3,
+    "explain": "Screens mix light additively: each channel adds light, so all three at full intensity make white. The intuition that mixing everything gives brown or black comes from paint, which mixes subtractively."
+  },
+  {
+    "id": "graphics-030",
+    "section": "5.4",
+    "q": "A color has the same value in all three channels, such as (60, 60, 60). As that shared value goes from 0 to 255, what do these colors look like?",
+    "choices": [
+      "Grays, from white at 0 to black at 255",
+      "Grays, from black at 0 to white at 255",
+      "Shades of red, from dark red to bright red",
+      "Rainbow hues, running from red to violet"
+    ],
+    "answer": 1,
+    "explain": "With equal red, green, and blue no hue dominates, so the result is a neutral gray: (0, 0, 0) emits no light and is black, (128, 128, 128) is a middle gray, and (255, 255, 255) is white."
+  },
+  {
+    "id": "graphics-031",
+    "section": "5.4",
+    "q": "What color does the RGB triplet (255, 255, 0) produce?",
+    "choices": [
+      "Yellow",
+      "Brown",
+      "Purple",
+      "Cyan"
+    ],
+    "answer": 0,
+    "explain": "Full red light plus full green light, with no blue, mixes additively to yellow. Red plus blue would give magenta, and green plus blue gives cyan."
+  },
+  {
+    "id": "graphics-032",
+    "section": "5.4",
+    "q": "What does R return here?\n```r\nrgb(0, 114, 178, maxColorValue = 255)\n```",
+    "choices": [
+      "`\"#B27200\"`",
+      "`\"#0072B2\"`",
+      "`\"#00114178\"`",
+      "`\"#00B272\"`"
+    ],
+    "answer": 1,
+    "explain": "Each channel becomes two hex digits in the order red, green, blue: 0 is `00`, \\( 114 = 7 \\times 16 + 2 \\) is `72`, and \\( 178 = 11 \\times 16 + 2 \\) is `B2`. This is the blue of the Okabe–Ito palette (`maxColorValue = 255` says the inputs are on the 0–255 scale)."
+  },
+  {
+    "id": "graphics-033",
+    "section": "5.4",
+    "q": "In the hex code `#4B9CD3`, which two characters give the green channel?",
+    "choices": [
+      "`9C`",
+      "`4B`",
+      "`D3`",
+      "`B9`"
+    ],
+    "answer": 0,
+    "explain": "Hex codes are `#RRGGBB`: two digits for red, then two for green, then two for blue. So red is `4B`, green is `9C`, and blue is `D3`."
+  },
+  {
+    "id": "graphics-034",
+    "section": "5.4",
+    "q": "Each pair of hex digits is a base-16 number. What is \\( 80_{16} \\) in decimal?",
+    "choices": [
+      "80",
+      "160",
+      "64",
+      "128"
+    ],
+    "answer": 3,
+    "explain": "The first digit counts sixteens: \\( 80_{16} = 8 \\times 16 + 0 = 128 \\), about halfway up the 0–255 range. That's why `#808080` is a middle gray."
+  },
+  {
+    "id": "graphics-035",
+    "section": "5.4",
+    "q": "What is \\( FF_{16} \\) in decimal, and what does it mean for a color channel?",
+    "choices": [
+      "256, the maximum intensity for a channel",
+      "255, the maximum intensity for a channel",
+      "240, just short of the maximum intensity",
+      "15, since the digit F stands for 15"
+    ],
+    "answer": 1,
+    "explain": "`F` is 15, so \\( FF_{16} = 15 \\times 16 + 15 = 255 \\). Two hex digits run from `00` = 0 to `FF` = 255, exactly the 256 levels of one RGB channel."
+  },
+  {
+    "id": "graphics-036",
+    "section": "5.4",
+    "q": "Each channel in a hex color code gets two hexadecimal digits. How many distinct values can two hex digits represent?",
+    "choices": [
+      "\\( 2 \\times 16 = 32 \\)",
+      "\\( 16^2 = 256 \\)",
+      "\\( 16^3 = 4096 \\)",
+      "\\( 10^2 = 100 \\)"
+    ],
+    "answer": 1,
+    "explain": "Each digit has 16 options (0–9 and A–F), so two digits give \\( 16 \\times 16 = 256 \\) values, 0 through 255. That matches the 0–255 range of each RGB channel."
+  },
+  {
+    "id": "graphics-037",
+    "section": "5.4",
+    "q": "Which channel is strongest in the color `#1F77B4`?",
+    "choices": [
+      "Red",
+      "Blue",
+      "Green",
+      "All three are about equal"
+    ],
+    "answer": 1,
+    "explain": "Split into pairs: red `1F` = 31, green `77` = 119, blue `B4` = 180. Blue is largest, with some green and little red, so this is a medium, slightly muted blue."
+  },
+  {
+    "id": "graphics-038",
+    "section": "5.4",
+    "q": "Which description fits the color `#E69F00`?",
+    "choices": [
+      "Teal: lots of green and blue, with no red at all",
+      "Orange: lots of red, a fair amount of green, no blue",
+      "Purple: lots of red and blue, with very little green",
+      "Pale gray: all three channels high and nearly equal"
+    ],
+    "answer": 1,
+    "explain": "Red `E6` = 230, green `9F` = 159, blue `00` = 0. Strong red plus a moderate amount of green with no blue reads as orange; it's the orange of the Okabe–Ito palette."
+  },
+  {
+    "id": "graphics-039",
+    "section": "5.4",
+    "q": "`#F0E442` has red `F0`, green `E4`, and blue `42`. Roughly what color is it?",
+    "choices": [
+      "Yellow",
+      "Blue",
+      "Purple",
+      "Dark green"
+    ],
+    "answer": 0,
+    "explain": "Red (240) and green (228) are both high and blue (66) is low, and red plus green light mixes to yellow. This is the Okabe–Ito yellow."
+  },
+  {
+    "id": "graphics-040",
+    "section": "5.4",
+    "q": "Which of these grays is the lightest?",
+    "choices": [
+      "`#333333`",
+      "`#CCCCCC`",
+      "`#999999`",
+      "`#666666`"
+    ],
+    "answer": 1,
+    "explain": "In a gray all channels are equal, and higher values mean more light. `CC` = 204 beats `99` = 153, `66` = 102, and `33` = 51, so `#CCCCCC` is closest to white."
+  },
+  {
+    "id": "graphics-041",
+    "section": "5.4",
+    "q": "Which RGB triplet does `#0080FF` describe?",
+    "choices": [
+      "(0, 80, 255)",
+      "(255, 128, 0)",
+      "(0, 255, 128)",
+      "(0, 128, 255)"
+    ],
+    "answer": 3,
+    "explain": "Read the pairs in order red, green, blue: `00` = 0, `80` = \\( 8 \\times 16 = 128 \\), and `FF` = 255, a bright azure blue. Reading `80` as eighty forgets it's base 16, and reversing the pairs would give an orange."
+  },
+  {
+    "id": "graphics-042",
+    "section": "5.4",
+    "q": "Why is pure red, `#FF0000`, a poor choice for the color of an ordinary data series?",
+    "choices": [
+      "ggplot2 can't reproduce `#FF0000` reliably and shifts it toward orange",
+      "Most colorblind viewers see pure red as completely invisible against white",
+      "Channel values of `FF` overflow and get clipped when the plot is saved",
+      "Its intensity grabs attention and signals danger the data don't call for"
+    ],
+    "answer": 3,
+    "explain": "Fully saturated red is the most intense, alarm-like color on a screen, so it overpowers the rest of the plot and suggests an emergency. Save it for genuine warnings and pick softer colors, such as the Okabe–Ito palette, for ordinary series."
+  },
+  {
+    "id": "graphics-043",
+    "section": "5.4",
+    "q": "In which of these plots is pure `#FF0000` most defensible?",
+    "choices": [
+      "Coloring every bar in a bar chart of total sales by region",
+      "Flagging the few readings above a safety limit; everything else gray",
+      "One of five political parties, with the other four parties in pastels",
+      "The lowest end of a continuous color scale for monthly temperature"
+    ],
+    "answer": 1,
+    "explain": "Strong red is best kept for a warning: a small set of values that really demand attention. Used for an ordinary group or a whole chart, it either overwhelms everything or falsely singles out one category."
+  },
+  {
+    "id": "graphics-044",
+    "section": "5.4",
+    "q": "In a plot like HW2's, `aes(x = ses, y = gap, color = subject)` colors the points and trend lines by subject. Which of the three uses of color is this?",
+    "choices": [
+      "Distinguishing groups",
+      "Representing values",
+      "Highlighting",
+      "Signaling a warning"
+    ],
+    "answer": 0,
+    "explain": "`subject` is a category (math or reading), and color tells the reader which points and line belong to which group. Representing values would map a numeric variable to a color gradient, and highlighting would make one item stand out against a muted background."
+  },
+  {
+    "id": "graphics-045",
+    "section": "5.4",
+    "q": "Which of these plots uses color to **represent values**?",
+    "choices": [
+      "A scatterplot with math districts in orange and reading districts in blue",
+      "A county map whose fill runs from light to dark with unemployment rate",
+      "A line plot of 20 songs, all gray except one song shown in vermillion",
+      "A bar chart in which every bar is the same shade of blue"
+    ],
+    "answer": 1,
+    "explain": "Representing values means mapping a quantitative variable to a color scale, as the unemployment map does. Orange vs. blue for subjects distinguishes groups, and one colored line among gray ones is highlighting."
+  },
+  {
+    "id": "graphics-046",
+    "section": "5.4",
+    "q": "What is the role of color in this plot?\n```r\nggplot(seda, aes(x = ses, y = gap)) +\n  geom_point(color = \"gray70\") +\n  geom_point(data = filter(seda, district == \"Santa Barbara Unified\"),\n             color = \"#D55E00\", size = 3)\n```",
+    "choices": [
+      "Distinguishing groups: each district is drawn in its own color",
+      "Representing values: the points get darker as `gap` increases",
+      "Highlighting: one district stands out against all the others in gray",
+      "Distinguishing groups: gray marks one subject, orange the other"
+    ],
+    "answer": 2,
+    "explain": "Every district is drawn in muted gray, then the chosen district is redrawn on top in a strong color. Setting `color` outside `aes()` uses a fixed color instead of mapping a variable, which is the usual way to highlight."
+  },
+  {
+    "id": "graphics-047",
+    "section": "5.4",
+    "q": "A map colors each congressional district by the party of its representative: Democrat, Republican, Independent, or Libertarian. Which palette type fits?",
+    "choices": [
+      "Sequential",
+      "Diverging",
+      "Qualitative",
+      "A continuous color gradient"
+    ],
+    "answer": 2,
+    "explain": "Party is an unordered category, so it needs distinct hues with no implied order or magnitude: a qualitative palette. Sequential and diverging palettes encode more vs. less, which parties don't have."
+  },
+  {
+    "id": "graphics-048",
+    "section": "5.4",
+    "q": "You map each county's average July high temperature, which ranges from 70°F to 110°F. No particular temperature serves as a reference point. Which palette type fits?",
+    "choices": [
+      "Diverging",
+      "Qualitative",
+      "Sequential",
+      "Rainbow"
+    ],
+    "answer": 2,
+    "explain": "Temperature here is an ordered numeric variable with no meaningful midpoint, so a sequential palette (light to dark for low to high) fits. A diverging palette would imply a neutral center, and a rainbow has no natural order."
+  },
+  {
+    "id": "graphics-049",
+    "section": "5.4",
+    "q": "A map shows each state's change in median household income since last year; some states rose and some fell. Which palette type fits?",
+    "choices": [
+      "Sequential, from lowest to highest change",
+      "Qualitative, with one hue per state",
+      "Diverging, centered at 0",
+      "Diverging, centered at the largest change"
+    ],
+    "answer": 2,
+    "explain": "Zero (no change) is a meaningful midpoint, so a diverging palette puts a neutral color at 0 and contrasting hues on the increase and decrease sides. A sequential palette would hide where gains turn into losses."
+  },
+  {
+    "id": "graphics-050",
+    "section": "5.4",
+    "q": "BRFSS respondents are grouped into income brackets: under $25k, $25k–50k, $50k–100k, and over $100k. Which palette type should color the brackets?",
+    "choices": [
+      "Qualitative, since the brackets are categories",
+      "Diverging, since some brackets are below average",
+      "Qualitative, using the Okabe–Ito palette",
+      "Sequential, since the brackets are ordered"
+    ],
+    "answer": 3,
+    "explain": "The brackets are categories, but they have a natural order, so a sequential palette (light to dark) lets the reader see which is higher. A qualitative palette throws that order away, and \"below average\" isn't a meaningful center here."
+  },
+  {
+    "id": "graphics-051",
+    "section": "5.4",
+    "q": "A heatmap shows the correlation between every pair of variables, from −1 to 1. Which palette type fits?",
+    "choices": [
+      "Sequential, from lightest at −1 to darkest at 1",
+      "Qualitative, with one hue for each pair of variables",
+      "Sequential, with the darkest color at 0",
+      "Diverging, with a neutral color at 0"
+    ],
+    "answer": 3,
+    "explain": "Correlation has a meaningful midpoint, 0 (no linear relationship), and two directions that mean opposite things. A diverging palette shows positive and negative correlations in contrasting hues that fade to neutral near 0."
+  },
+  {
+    "id": "graphics-052",
+    "section": "5.4",
+    "q": "SEDA's `gap` variable is positive in some districts and negative in others, with 0 meaning no gap. Which scale makes a map of `gap` read correctly?",
+    "choices": [
+      "`scale_fill_gradient2(low = \"#0072B2\", mid = \"white\", high = \"#D55E00\", midpoint = 0)`",
+      "`scale_fill_gradient(low = \"white\", high = \"#D55E00\")`",
+      "`scale_fill_manual(values = c(\"#0072B2\", \"#D55E00\"))`",
+      "`scale_fill_gradient2(low = \"#0072B2\", mid = \"white\", high = \"#D55E00\", midpoint = 1)`"
+    ],
+    "answer": 0,
+    "explain": "`scale_fill_gradient2()` builds a diverging scale: white at `midpoint = 0` (no gap) and contrasting hues for the two directions. A one-hue gradient shows negative gaps as merely small, a midpoint of 1 has no meaning, and a manual scale is for discrete variables."
+  },
+  {
+    "id": "graphics-053",
+    "section": "5.4",
+    "q": "A student maps each county's annual rainfall (0 to 40 inches) with a blue–white–red diverging scale, white at 20 inches. Nothing special happens at 20 inches. What's the problem?",
+    "choices": [
+      "It splits counties into two opposite kinds at a midpoint that means nothing",
+      "Diverging scales can only be used for variables with negative values",
+      "Rainfall is a categorical variable here, so it calls for a qualitative palette",
+      "White at the midpoint makes the map unreadable for colorblind viewers"
+    ],
+    "answer": 0,
+    "explain": "A diverging palette tells the reader that values on either side of the midpoint differ in kind. Without a meaningful center, a sequential palette (light to dark for low to high rainfall) is the honest choice."
+  },
+  {
+    "id": "graphics-054",
+    "section": "5.4",
+    "q": "A palette runs from dark blue through pale gray to dark red. What kind of variable is it designed for?",
+    "choices": [
+      "An unordered categorical variable with three levels",
+      "A numeric variable that only runs from low to high",
+      "Numeric values above and below a meaningful midpoint",
+      "A variable where only one value should be highlighted"
+    ],
+    "answer": 2,
+    "explain": "Two hues diverging from a light neutral center make a diverging palette: gray marks the midpoint, and the depth of blue or red shows how far a value is below or above it. A plain low-to-high variable would use a sequential palette."
+  },
+  {
+    "id": "graphics-055",
+    "section": "5.4",
+    "q": "Why is a rainbow color scale a poor choice for a continuous variable such as elevation?",
+    "choices": [
+      "Rainbow scales only work for discrete variables, not continuous ones in ggplot2",
+      "It has too few distinct colors to cover every value in a continuous range",
+      "Rainbow colors print as solid black when the plot is converted to grayscale",
+      "Hue changes look uneven, so it creates boundaries that aren't in the data"
+    ],
+    "answer": 3,
+    "explain": "The eye sees sharp changes in some parts of the spectrum (around yellow and cyan) and little change in others, so equal data steps look unequal and smooth data seem to have edges. Hue also has no natural order, which is why a sequential scale such as viridis is preferred."
+  },
+  {
+    "id": "graphics-056",
+    "section": "5.4",
+    "q": "A line plot shows the weekly rank of 20 Billboard songs, each in its own color with a 20-entry legend. What is the best fix?",
+    "choices": [
+      "Switch to a rainbow palette so the 20 colors are spread evenly",
+      "Use a sequential palette, ordered alphabetically by song title",
+      "Draw most songs in gray and color only the few you want to discuss",
+      "Make every line thicker so that each of the 20 colors is easier to see"
+    ],
+    "answer": 2,
+    "explain": "Readers can tell apart and match to a legend only about 6–8 hues; beyond that, color stops working as a key. Highlighting a few songs against gray (or faceting, or labeling lines directly) keeps the message readable."
+  },
+  {
+    "id": "graphics-057",
+    "section": "5.4",
+    "q": "A chart shows increases in green and decreases in red. Why might this fail for many viewers?",
+    "choices": [
+      "Red and green have the same lightness, so nobody can tell them apart",
+      "Red–green colorblindness is the most common type, about 1 in 12 men",
+      "Most screens can't display saturated red and green in the same image",
+      "Convention requires increases in blue and decreases in orange in all charts"
+    ],
+    "answer": 1,
+    "explain": "Roughly 8% of men (and far fewer women) have trouble telling red from green, so those two hues alone can't carry the meaning. Use a colorblind-safe pair such as blue and orange, or add a second cue like shape, linetype, or labels."
+  },
+  {
+    "id": "graphics-058",
+    "section": "5.4",
+    "q": "What is the Okabe–Ito palette designed for?",
+    "choices": [
+      "A sequential scale whose lightness increases evenly from dark to light",
+      "A diverging scale with two hues on either side of a neutral gray midpoint",
+      "Reproducing the visible spectrum as closely as a screen allows",
+      "Distinct category colors that colorblind viewers can still tell apart"
+    ],
+    "answer": 3,
+    "explain": "Okabe and Ito chose eight qualitative colors (orange, sky blue, bluish green, yellow, blue, vermillion, reddish purple, black) that stay distinguishable under the common forms of colorblindness. It's a palette for groups, not for continuous values."
+  },
+  {
+    "id": "graphics-059",
+    "section": "5.4",
+    "q": "Fill in the blank to color the math and reading points and lines with two Okabe–Ito colors:\n```r\nggplot(seda, aes(x = ses, y = gap, color = subject)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  ______\n```",
+    "choices": [
+      "`scale_fill_manual(values = c(\"#E69F00\", \"#56B4E9\"))`",
+      "`scale_color_gradient(low = \"#E69F00\", high = \"#56B4E9\")`",
+      "`geom_point(color = c(\"#E69F00\", \"#56B4E9\"))`",
+      "`scale_color_manual(values = c(\"#E69F00\", \"#56B4E9\"))`"
+    ],
+    "answer": 3,
+    "explain": "`subject` is mapped to `color`, so you need a discrete color scale; `scale_color_manual()` assigns the given colors to the subject levels. A `fill` scale doesn't touch `color`, and a gradient scale is for continuous variables."
+  },
+  {
+    "id": "graphics-060",
+    "section": "5.4",
+    "q": "Suppose you map `subject` to both `color` and `linetype` in HW2's trend-line plot. What does the extra `linetype` mapping buy you?",
+    "choices": [
+      "The fitted lines become smooth curves instead of straight lines",
+      "The legend disappears, because the dashes label the lines directly",
+      "The lines can still be told apart without color, e.g. in grayscale",
+      "The confidence bands come back, one around each subject's line"
+    ],
+    "answer": 2,
+    "explain": "Encoding the same variable two ways (redundant encoding) means the plot doesn't rely on color alone, which helps readers with color vision deficiencies and anyone looking at a black-and-white printout. It doesn't change what is fitted."
+  }
+]

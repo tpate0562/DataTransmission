@@ -1,0 +1,781 @@
+[
+  {
+    "id": "explore-001",
+    "section": "5.5",
+    "q": "With `library(patchwork)` loaded, `p1` is a histogram of `price` and `p2` is a scatterplot of `price` against `carat`. What does `p1 + p2` display?",
+    "choices": [
+      "One figure with the histogram stacked directly above the scatterplot",
+      "One figure with the histogram on the left and the scatterplot on the right",
+      "A single panel in which the scatterplot points are layered on top of the histogram bars",
+      "An error, because `+` can only add layers to a single ggplot object"
+    ],
+    "answer": 1,
+    "explain": "With patchwork, `+` places complete plots next to each other in a row, each keeping its own panel and axes. Stacking is what `/` does, and layering geoms in one panel is what `+ geom_...()` does inside a single ggplot."
+  },
+  {
+    "id": "explore-002",
+    "section": "5.5",
+    "q": "Using patchwork, which expression puts plot `p1` directly above plot `p2` in one figure?",
+    "choices": [
+      "`p2 / p1`",
+      "`p1 + p2`",
+      "`p1 | p2`",
+      "`p1 / p2`"
+    ],
+    "answer": 3,
+    "explain": "`/` stacks plots vertically with the left operand on top, so `p1 / p2` puts `p1` above. `p2 / p1` reverses the order, and both `+` and `|` place plots side by side."
+  },
+  {
+    "id": "explore-003",
+    "section": "5.5",
+    "q": "What layout does `(p1 + p2) / p3` produce?",
+    "choices": [
+      "`p1` across the top, with `p2` and `p3` side by side in a bottom row",
+      "`p1` and `p2` stacked on the left, with `p3` on the right at full height",
+      "All three plots in a single row, in the order `p1`, `p2`, `p3`",
+      "`p1` and `p2` side by side on top, `p3` alone below at full width"
+    ],
+    "answer": 3,
+    "explain": "The parentheses are evaluated first: `p1 + p2` makes a side-by-side row, and `/ p3` stacks that row above `p3`, which takes the whole bottom width. `p1 / (p2 + p3)` would instead put `p1` on top with `p2` and `p3` side by side below it."
+  },
+  {
+    "id": "explore-004",
+    "section": "5.5",
+    "q": "You want a wide time-series plot `ts` across the top of a figure, with two smaller plots `a` and `b` side by side underneath it. Which patchwork expression does this?",
+    "choices": [
+      "`(ts + a) / b`",
+      "`ts / (a + b)`",
+      "`ts + (a / b)`",
+      "`ts + a + b`"
+    ],
+    "answer": 1,
+    "explain": "`a + b` builds the bottom row and `ts / (...)` stacks `ts` above it. `(ts + a) / b` puts `ts` and `a` in the top row, and `ts + (a / b)` puts `ts` beside a column of `a` stacked over `b`."
+  },
+  {
+    "id": "explore-005",
+    "section": "5.5",
+    "q": "You want the same scatterplot of `price` against `carat` drawn separately for each of the five levels of `cut`, so the panels can be compared. Which approach fits best?",
+    "choices": [
+      "Build five filtered ggplots, one per cut, and join them with patchwork",
+      "Add `facet_wrap(~ price)` to one ggplot of `carat` against `cut`",
+      "Map `cut` to `color` and overlay all 53,940 points in one panel",
+      "Add `facet_wrap(~ cut)` to one ggplot of `price` against `carat`"
+    ],
+    "answer": 3,
+    "explain": "Faceting repeats one plot specification for each level of a variable and by default puts every panel on the same axes, which is what a comparison across groups needs. Five separately built plots would each pick their own axis ranges; patchwork is meant for combining different plots."
+  },
+  {
+    "id": "explore-006",
+    "section": "5.5",
+    "q": "You want a histogram of `price` next to a boxplot of `price` by `cut` in one figure. Why is patchwork the right tool rather than `facet_wrap()`?",
+    "choices": [
+      "Faceting works only for scatterplots, so it has no way to split a histogram into separate panels",
+      "Patchwork automatically forces both plots onto one shared y-axis scale",
+      "Faceting repeats one plot across levels of a variable, and these are two different plots",
+      "Faceting needs the data in wide format, with one column for each panel"
+    ],
+    "answer": 2,
+    "explain": "`facet_wrap()` splits a single plot specification (same geoms, same aesthetics) into panels by a grouping variable. Putting different kinds of plots together is what patchwork's `+` and `/` are for, and each plot keeps its own scales."
+  },
+  {
+    "id": "explore-007",
+    "section": "5.5",
+    "q": "`cut` in `diamonds` has five levels. What does this code draw?\n```r\nggplot(diamonds, aes(x = carat, y = price)) +\n  geom_point() +\n  facet_wrap(~ cut)\n```",
+    "choices": [
+      "Five scatterplot panels, one per cut, each with axis ranges fit to its own data",
+      "One scatterplot in which the five cuts are drawn in five different colors",
+      "Five panels for the cuts, plus a sixth panel that pools all of the diamonds",
+      "Five scatterplot panels, one per cut, all sharing the same x- and y-axis ranges"
+    ],
+    "answer": 3,
+    "explain": "`facet_wrap(~ cut)` makes one panel per level, and its default `scales = \"fixed\"` gives every panel the same axes so positions are comparable. Panel-specific ranges only happen if you set `scales = \"free\"`, `\"free_x\"`, or `\"free_y\"`."
+  },
+  {
+    "id": "explore-008",
+    "section": "5.5",
+    "q": "Fill in the blank so each panel gets its own y-axis range while all panels keep a common x-axis:\n```r\nggplot(diamonds, aes(x = price)) +\n  geom_histogram(binwidth = 500) +\n  facet_wrap(~ clarity, scales = ____)\n```",
+    "choices": [
+      "`\"free_y\"`",
+      "`\"free_x\"`",
+      "`\"free\"`",
+      "`\"fixed\"`"
+    ],
+    "answer": 0,
+    "explain": "`\"free_y\"` lets each panel's y-axis fit its own counts while the x-axis stays shared. `\"free_x\"` frees the wrong axis, `\"free\"` frees both, and `\"fixed\"` is the default, where both are shared."
+  },
+  {
+    "id": "explore-009",
+    "section": "5.5",
+    "q": "A faceted bar chart of counts uses `scales = \"free_y\"`. What is the main risk for a reader?",
+    "choices": [
+      "Bars of equal height in different panels may stand for very different counts",
+      "Panels whose counts are small get dropped from the figure entirely",
+      "The x-axis categories get put in a different order in each panel",
+      "Each panel's bars are converted to proportions that sum to 1"
+    ],
+    "answer": 0,
+    "explain": "Freeing the y-axis fits each panel's own range, so heights are comparable only within a panel. Readers naturally compare heights across panels, so they must read every axis to avoid being misled; nothing is dropped or turned into proportions."
+  },
+  {
+    "id": "explore-010",
+    "section": "5.5",
+    "q": "You facet yearly population by country for the U.S. and Oman. With the default shared y-axis, Oman's panel looks like a flat line near zero. When is switching to `scales = \"free_y\"` the right call?",
+    "choices": [
+      "When the question is about each country's own growth pattern, not their sizes",
+      "When the question is which country has the larger population in each year",
+      "Whenever any panel looks flat, since shared axes are always misleading",
+      "Never, because freeing an axis changes the underlying data values"
+    ],
+    "answer": 0,
+    "explain": "Free y-axes reveal the shape of each country's trend, which is what you need to see Oman's growth, but they hide the size difference. If the question compares levels across countries, the shared axis is the honest choice; freeing axes changes only the display, never the data."
+  },
+  {
+    "id": "explore-011",
+    "section": "5.5",
+    "q": "You build `p_fair` (prices of Fair-cut diamonds) and `p_ideal` (prices of Ideal-cut diamonds) as two separate histograms and show them with `p_fair + p_ideal`. Compared with one histogram using `facet_wrap(~ cut)`, what should you watch out for?",
+    "choices": [
+      "Patchwork recomputes both histograms from the pooled data of the two cuts",
+      "Patchwork strips the axis labels from combined plots, so neither shows what scale it uses",
+      "The two histograms get overlaid in one panel, so one hides behind the other",
+      "Each plot fits its own axis ranges, so the two may be drawn on different scales"
+    ],
+    "answer": 3,
+    "explain": "Separately built ggplots each fit their own scales, so a tall bar on the left and one on the right can mean different counts or price ranges. `facet_wrap()` shares axes by default; with patchwork you must set matching limits yourself for a fair comparison."
+  },
+  {
+    "id": "explore-012",
+    "section": "5.5",
+    "q": "You want readers to judge, year by year, whether average wages in region A were above or below those in region B (both in dollars). Which display makes that comparison most direct?",
+    "choices": [
+      "Two line plots, one per region, stacked with patchwork, each with its own y-axis",
+      "A plot faceted by region with `scales = \"free_y\"` so each trend is clear",
+      "Both regions as two lines in a single panel with one shared y-axis",
+      "A single line showing the yearly average of the two regions combined"
+    ],
+    "answer": 2,
+    "explain": "Judging which of two values is larger is easiest when both are positions on the same scale in the same panel. Separate panels with their own y-axes force readers to compare numbers read off two different axes, and averaging the regions throws the comparison away."
+  },
+  {
+    "id": "explore-013",
+    "section": "5.5",
+    "q": "You plot raw population since 1960 for the U.S. and Oman on one shared y-axis. Oman's line is squashed against zero and looks flat. Which question does this plot answer well?",
+    "choices": [
+      "How much larger the U.S. population is than Oman's, in absolute terms",
+      "Which country grew faster relative to its own 1960 population",
+      "Whether Oman's population has barely changed since 1960",
+      "Which of the two countries doubled its population first"
+    ],
+    "answer": 0,
+    "explain": "On an absolute scale the U.S. (hundreds of millions) dwarfs Oman (a few million), so the size gap is clear. Oman's flat look is a scale effect: its population grew many-fold, which only shows when each country is compared with its own baseline."
+  },
+  {
+    "id": "explore-014",
+    "section": "5.5",
+    "q": "Population is normalized so that each country's 1960 value equals 100. In 2000, one country's index is 300. What does that mean?",
+    "choices": [
+      "Its population grew by 300% between 1960 and 2000",
+      "Its 2000 population was three times its 1960 population",
+      "Its 2000 population was three times that of a country at 100",
+      "It added 300 thousand people between 1960 and 2000"
+    ],
+    "answer": 1,
+    "explain": "An index of \\(100 \\times \\text{pop}_{2000} / \\text{pop}_{1960} = 300\\) means the population tripled, which is growth of 200%, not 300%. The index compares a country only with its own 1960 level, so it says nothing about its size relative to another country."
+  },
+  {
+    "id": "explore-015",
+    "section": "5.5",
+    "q": "Using rounded figures, Oman had about 0.5 million people in 1960 and 4.5 million in 2020, while the U.S. had about 180 million in 1960 and 330 million in 2020. With each country's 1960 value set to 100, what are the 2020 index values?",
+    "choices": [
+      "Oman about 800, U.S. about 83",
+      "Oman about 9.0, U.S. about 1.83",
+      "Oman about 900, U.S. about 183",
+      "Oman about 11, U.S. about 55"
+    ],
+    "answer": 2,
+    "explain": "The index is \\(100 \\times \\text{pop}_{2020} / \\text{pop}_{1960}\\): \\(100 \\times 4.5 / 0.5 = 900\\) for Oman and \\(100 \\times 330 / 180 \\approx 183\\) for the U.S. The values 800 and 83 are percent growth, not index levels, and 9.0 and 1.83 forget the factor of 100."
+  },
+  {
+    "id": "explore-016",
+    "section": "5.5",
+    "q": "With the same rounded figures (Oman 0.5 million in 1960 and 4.5 million in 2020; U.S. 180 million and 330 million), you re-normalize so each country's **2020** value is 100. What does the plot show for 1960?",
+    "choices": [
+      "Oman near 55 and the U.S. near 11, so Oman's line still sits above",
+      "Oman near 11 and the U.S. near 55, so Oman's line sits below the U.S. line",
+      "Oman near 900 and the U.S. near 183, exactly the same as with a 1960 baseline",
+      "Both at 100, because normalizing always lines the series up in 1960"
+    ],
+    "answer": 1,
+    "explain": "With 2020 as the baseline, the 1960 values are \\(100 \\times 0.5 / 4.5 \\approx 11\\) and \\(100 \\times 180 / 330 \\approx 55\\). Every line passes through 100 in the baseline year, so moving the baseline changes which line looks higher at other times even though the data are the same."
+  },
+  {
+    "id": "explore-017",
+    "section": "5.5",
+    "q": "Which question is answered by the absolute population plot of Oman and the U.S. but **not** by the plot normalized to 1960 = 100?",
+    "choices": [
+      "Which country grew more relative to its 1960 population",
+      "How many times its 1960 size each country was in 2020",
+      "Which country added more people between 1960 and 2020",
+      "Whether each country's growth sped up or slowed down"
+    ],
+    "answer": 2,
+    "explain": "Normalizing divides each series by its own 1960 value, which erases the countries' sizes: the U.S. added roughly 150 million people versus about 4 million for Oman, yet Oman's index line is far higher. Questions about growth relative to each country's own start are what the normalized plot answers."
+  },
+  {
+    "id": "explore-018",
+    "section": "5.5",
+    "q": "`pop` has columns `country`, `year`, and `population`. Which code adds an `index` column equal to 100 in 1960 for every country?",
+    "choices": [
+      "`pop |> group_by(year) |> mutate(index = 100 * population / population[year == 1960])`",
+      "`pop |> group_by(country) |> mutate(index = 100 * population / population[year == 1960])`",
+      "`pop |> group_by(country) |> mutate(index = 100 * (population - population[year == 1960]))`",
+      "`pop |> mutate(index = 100 * population / max(population))`"
+    ],
+    "answer": 1,
+    "explain": "Grouping by country makes `population[year == 1960]` that country's own 1960 value, so each series is divided by its own baseline. Grouping by year leaves most groups with no 1960 row (an error), subtracting gives absolute change with 1960 = 0, and `max(population)` is one shared reference that isn't 1960."
+  },
+  {
+    "id": "explore-019",
+    "section": "5.5",
+    "q": "A chart shown at a 2015 congressional hearing drew Planned Parenthood's cancer screenings (falling) and abortions (rising) from 2006 to 2013 as two lines that cross, with no y-axis. Why is it misleading?",
+    "choices": [
+      "It draws counts as lines, but counts of services should always be shown as bars instead",
+      "Each line has its own unlabeled scale, so the crossing falsely implies abortions overtook screenings",
+      "Abortions and screenings are in different units, so they can never share one chart",
+      "It puts two different series in a single panel, and an honest chart only ever shows one series per panel"
+    ],
+    "answer": 1,
+    "explain": "Both series are counts, so they belong on one labeled scale, where screenings (about 935,000 in 2013) stay far above abortions (about 327,000). Leaving off the y-axis let each line be stretched independently, so the crossing reflects drawing choices, not the data."
+  },
+  {
+    "id": "explore-020",
+    "section": "5.5",
+    "q": "Behind that chart, cancer screenings fell from about 2,000,000 (2006) to about 935,000 (2013), while abortions rose from about 290,000 to about 327,000. Redrawn on one shared y-axis starting at zero, what would you see?",
+    "choices": [
+      "The two lines crossing around 2010, just as in the original chart",
+      "The screening line well above the abortion line every year, never crossing",
+      "The abortion line above the screening line in the years after 2010",
+      "Two nearly flat lines, since both of the series changed by less than 10% over the period"
+    ],
+    "answer": 1,
+    "explain": "Even in 2013 screenings were nearly three times abortions (\\(935{,}000 / 327{,}000 \\approx 2.9\\)), so on a common scale the screening line stays far above. The abortion line would look almost flat, because a rise of about 37,000 is small on an axis reaching 2,000,000."
+  },
+  {
+    "id": "explore-021",
+    "section": "5.5",
+    "q": "You are asked to redesign the Planned Parenthood chart so it compares the two services honestly. Which redesign does that?",
+    "choices": [
+      "Keep the two lines as drawn but add a legend naming each color",
+      "Plot both counts against one labeled y-axis that starts at zero",
+      "Rescale each series to run from its own minimum to its own maximum",
+      "Smooth both lines with a trend curve so that the crossing is clearer"
+    ],
+    "answer": 1,
+    "explain": "A single, labeled count axis lets readers see both the trends and the true levels. A legend doesn't fix mismatched scales, and stretching each series between its own min and max recreates the original problem of independent scales."
+  },
+  {
+    "id": "explore-022",
+    "section": "5.5",
+    "q": "True or false: when two lines are drawn against different (or unlabeled) y-axes, the point where they cross shows when the two quantities were equal.",
+    "choices": [
+      "True",
+      "False"
+    ],
+    "answer": 1,
+    "explain": "False. With separate scales, where the lines cross depends on how each axis was stretched and shifted, which is an arbitrary drawing choice. A crossing means equality only when both series share one scale.",
+    "fixed": true
+  },
+  {
+    "id": "explore-023",
+    "section": "5.6",
+    "q": "In `diamonds`, a handful of stones have a recorded length `x` of 0 mm. How should you think of these values?",
+    "choices": [
+      "As the smallest diamonds, belonging at the low end of the sizes",
+      "As legitimate extremes that should be kept without comment",
+      "As data errors, since a real diamond cannot have zero length",
+      "As lengths recorded in a different unit from the other stones"
+    ],
+    "answer": 2,
+    "explain": "A length of 0 is physically impossible, so these are recording errors, not unusual diamonds. Impossible values differ from extreme-but-possible ones, like a 5-carat stone, which may be real and call for investigation rather than automatic removal."
+  },
+  {
+    "id": "explore-024",
+    "section": "5.6",
+    "q": "You decide to exclude diamonds with impossible dimensions from an analysis. Which approach follows good practice?",
+    "choices": [
+      "Remove whatever points look unusual on the final plot, and then present only the cleaned-up results",
+      "Try several exclusion rules and keep whichever one makes the relationship look the strongest",
+      "Fix the rule in advance, report how many rows it removed, and show results with and without them",
+      "Drop the rows without mentioning it, since 20 rows out of 53,940 can't change any conclusion"
+    ],
+    "answer": 2,
+    "explain": "A rule fixed before seeing results can't be tuned toward a desired answer, the count lets readers judge the impact, and showing both versions reveals whether conclusions depend on the exclusion. Shopping among rules for the strongest result is exactly what pre-specification prevents."
+  },
+  {
+    "id": "explore-025",
+    "section": "5.6",
+    "q": "Why should an outlier-exclusion rule be specified **before** you see how the results come out?",
+    "choices": [
+      "Because ggplot2 requires every filter to run before the first plot is drawn",
+      "Because outliers can only be detected before the data have been visualized",
+      "So that no points will ever need to be removed from the data afterward",
+      "So the choice of which points to drop can't be steered toward the hoped-for result"
+    ],
+    "answer": 3,
+    "explain": "If you choose exclusions after seeing their effect, it's easy, even unintentionally, to keep the version that supports your hypothesis. Deciding the rule first, from what is physically impossible or known to be an error, keeps the analysis honest."
+  },
+  {
+    "id": "explore-026",
+    "section": "5.6",
+    "q": "What does this code keep?\n```r\ndiamonds |>\n  filter(x > 0, y > 0, z > 0)\n```",
+    "choices": [
+      "Rows where at least one dimension is greater than 0",
+      "Rows where all three dimensions are greater than 0",
+      "Rows where any one of the dimensions equals exactly 0",
+      "Only the columns `x`, `y`, and `z`, for rows above 0"
+    ],
+    "answer": 1,
+    "explain": "Comma-separated conditions in `filter()` are combined with AND, so a row survives only if `x`, `y`, and `z` are all positive. Keeping rows with at least one positive dimension would need `x > 0 | y > 0 | z > 0`, and `filter()` never drops columns."
+  },
+  {
+    "id": "explore-027",
+    "section": "5.6",
+    "q": "`diamonds` has 53,940 rows. After `clean <- diamonds |> filter(x > 0, y > 0, z > 0)`, `nrow(clean)` is 53,920. What should your write-up report?",
+    "choices": [
+      "That 53,920 diamonds were excluded for impossible zero dimensions",
+      "That 2% of the diamonds were excluded for impossible zero dimensions",
+      "Nothing at all, since the exclusion rule was fixed before the analysis",
+      "That 20 diamonds (about 0.04%) were excluded for impossible zero dimensions"
+    ],
+    "answer": 3,
+    "explain": "\\(53{,}940 - 53{,}920 = 20\\) rows were removed, which is \\(20 / 53{,}940 \\approx 0.04\\%\\). Pre-specifying a rule doesn't replace reporting it: readers still need to know how many points were dropped and why."
+  },
+  {
+    "id": "explore-028",
+    "section": "5.6",
+    "q": "Which of these recorded diamonds is clearly a data error rather than an unusual but possible stone?",
+    "choices": [
+      "A 5-carat diamond with a price of $18,000",
+      "A 0.2-carat diamond with a price of $350",
+      "A Fair-cut diamond with the top clarity grade, IF",
+      "A diamond with a recorded depth `z` of 0 mm"
+    ],
+    "answer": 3,
+    "explain": "Zero depth is physically impossible, so it must be a recording error. The others are rare or extreme but possible (the data really contain a 5.01-carat stone near $18,000), and dropping real extremes just because they look unusual would distort the data."
+  },
+  {
+    "id": "explore-029",
+    "section": "5.6",
+    "q": "A scatterplot of `price` against `carat` for all 53,940 diamonds uses `geom_point(alpha = 0.1)`. What does `alpha = 0.1` accomplish?",
+    "choices": [
+      "A random 10% of the points is plotted, so the scatterplot is less crowded overall",
+      "Every point is shrunk to one tenth of its default size, so fewer of them overlap",
+      "Each point is mostly transparent, so dense regions build up darker where points pile up",
+      "Points closer together than 0.1 units are merged into a single point before drawing"
+    ],
+    "answer": 2,
+    "explain": "`alpha` sets opacity, so with `alpha = 0.1` a single point is faint and many overlapping points add up to a dark area. Every point is still drawn; shrinking them is what `size` does, and sampling would have to be done to the data."
+  },
+  {
+    "id": "explore-030",
+    "section": "5.6",
+    "q": "What does this code display?\n```r\nggplot(diamonds, aes(x = carat, y = price)) +\n  geom_hex()\n```",
+    "choices": [
+      "One hexagon-shaped point for each diamond, filled by that diamond's price",
+      "Six panels, one for each of six equal-width ranges of carat values",
+      "A smoothed trend line surrounded by a hexagon-shaped confidence band",
+      "Hexagonal bins tiling the plane, each filled by how many diamonds fall in it"
+    ],
+    "answer": 3,
+    "explain": "`geom_hex()` is a two-dimensional histogram: it divides the x-y plane into hexagons and maps the count in each to `fill`. Because it shows counts rather than individual points, it handles 50,000 overlapping points without hiding where they pile up (it needs the hexbin package installed)."
+  },
+  {
+    "id": "explore-031",
+    "section": "5.6",
+    "q": "A scatterplot of 50,000 points is a solid black blob. Which change would **not** help with this overplotting?",
+    "choices": [
+      "Making the points smaller with `size = 0.3`",
+      "Making the points larger with `size = 3`",
+      "Adding transparency with `alpha = 0.05`",
+      "Replacing `geom_point()` with `geom_hex()`"
+    ],
+    "answer": 1,
+    "explain": "Larger points overlap even more and make the blob worse. Smaller points, transparency, and binning with `geom_hex()` are the standard fixes because each lets the density of the points show through."
+  },
+  {
+    "id": "explore-032",
+    "section": "5.6",
+    "q": "A student wants every point drawn at 10% opacity but writes:\n```r\nggplot(diamonds, aes(carat, price)) +\n  geom_point(aes(alpha = 0.1))\n```\nWhat goes wrong, and what is the fix?",
+    "choices": [
+      "It maps a constant instead of setting it, adding a legend; put `alpha = 0.1` outside `aes()`",
+      "`alpha` is only understood by `geom_hex()` and `geom_bin2d()`, so switch to one of those geoms",
+      "`alpha` must be given as a percentage, so the fix is to write `aes(alpha = 10)` instead",
+      "Nothing goes wrong, because a constant behaves the same inside `aes()` as outside it"
+    ],
+    "answer": 0,
+    "explain": "Inside `aes()`, `0.1` is treated as a data value and passed through an alpha scale, which adds a legend and an opacity you didn't ask for. A fixed value is set outside `aes()`: `geom_point(alpha = 0.1)`."
+  },
+  {
+    "id": "explore-033",
+    "section": "5.6",
+    "q": "Each panel of this faceted scatterplot is a solid mass of points. Which arguments in the blank best reveal where points concentrate within each panel?\n```r\nggplot(diamonds, aes(carat, price)) +\n  geom_point(____) +\n  facet_wrap(~ color)\n```",
+    "choices": [
+      "`alpha = 1, size = 3, shape = 16`",
+      "`alpha = 0.05, size = 0.5`",
+      "`aes(color = cut)`",
+      "`scales = \"free\"`"
+    ],
+    "answer": 1,
+    "explain": "Faceting splits the data but doesn't stop points from piling up within each panel, so the fix goes in `geom_point()`: small, transparent points let dense regions show as darker. Coloring by `cut` adds information but not visibility, and `scales` is an argument of `facet_wrap()`, not `geom_point()`."
+  },
+  {
+    "id": "explore-034",
+    "section": "5.6",
+    "q": "You plot 50,000 points with `alpha = 0.01`. What is a downside of making the points this transparent?",
+    "choices": [
+      "Isolated points, including any outliers, become nearly invisible",
+      "Dense and sparse regions end up looking equally dark on the plot",
+      "The axis ranges shrink so that sparse regions fall off the plot",
+      "ggplot2 drops any point whose opacity is set below 0.05"
+    ],
+    "answer": 0,
+    "explain": "With very low alpha a lone point barely shows, so rare values and outliers can vanish from view. Transparency changes only how points are drawn: dense areas still look darker than sparse ones, and no points or axis limits are removed."
+  },
+  {
+    "id": "explore-035",
+    "section": "5.6",
+    "q": "With `alpha = 0.1`, the dense core of the diamonds scatterplot is still uniformly black. Why might `geom_hex()` work better there?",
+    "choices": [
+      "`geom_hex()` removes outlying diamonds before drawing, so only the dense core of the data is left",
+      "`geom_hex()` moves each point to a random spot inside its hexagon, spreading out the crowded ones",
+      "Transparency only takes effect when a plot has fewer than about 1,000 points to draw in total",
+      "Overlapping points saturate past some count, while hex bins color by the actual count"
+    ],
+    "answer": 3,
+    "explain": "Overlapping transparent points saturate: a spot with 200 points and a spot with 5,000 both look solid. Binning counts the points in each hexagon and colors by that count, so differences in density stay visible even in the core."
+  },
+  {
+    "id": "explore-036",
+    "section": "5.6",
+    "q": "Which histogram of `carat` would reveal that diamonds pile up at round values such as 0.5, 1, and 1.5 carats?",
+    "choices": [
+      "`geom_histogram(binwidth = 0.5)`",
+      "`geom_histogram(binwidth = 0.01)`",
+      "`geom_histogram(binwidth = 1)`",
+      "`geom_histogram(binwidth = 0.75)`"
+    ],
+    "answer": 1,
+    "explain": "Spikes at specific values only show when bins are much narrower than the spacing between them. Bins half a carat wide or wider lump each pile-up together with the many stones around it, so the spikes are averaged away."
+  },
+  {
+    "id": "explore-037",
+    "section": "5.6",
+    "q": "What is the main danger of choosing a histogram bin width that is too **narrow**?",
+    "choices": [
+      "Real features such as gaps and clusters get averaged away into smooth bars",
+      "Chance fluctuations create many jagged spikes that obscure the overall shape",
+      "Observations near the edges of the data's range get dropped from the plot",
+      "The total count represented changes depending on how many bins are used"
+    ],
+    "answer": 1,
+    "explain": "Very narrow bins hold few observations each, so their heights bounce around with chance variation and the main shape is hard to see. Averaging away gaps and clusters is the opposite problem, caused by bins that are too wide."
+  },
+  {
+    "id": "explore-038",
+    "section": "5.6",
+    "q": "Diamond prices run from $326 to $18,823. The default `geom_histogram()` uses 30 bins, so each bin is roughly $640 wide. Why does this default hide the empty stretch of prices between about $1,454 and $1,546?",
+    "choices": [
+      "ggplot2 automatically deletes any empty bins from a histogram before drawing it",
+      "The roughly $90 gap falls inside one bin that also holds many nearby prices",
+      "The gap lies outside the range of prices that the 30 default bins cover",
+      "With 30 bins, every bar is forced to be drawn at the same height"
+    ],
+    "answer": 1,
+    "explain": "A bin about $640 wide that covers the gap still contains the many diamonds priced just below and just above it, so no empty bar appears. A narrow width such as `binwidth = 10` is needed for the missing stretch to show up as a hole."
+  },
+  {
+    "id": "explore-039",
+    "section": "5.6",
+    "q": "You've drawn one histogram of a new variable using the default bins. What is the best next step for understanding its distribution?",
+    "choices": [
+      "Report it as is, since ggplot2's default bin count is tuned to each dataset",
+      "Redraw it with several bin widths, since one choice can hide or invent features",
+      "Use the widest bins that still look reasonable, so noise can't be mistaken for signal",
+      "Switch to a boxplot, since a boxplot doesn't depend on any arbitrary choices"
+    ],
+    "answer": 1,
+    "explain": "The default of 30 bins isn't tuned to your data (ggplot2 even prints a message suggesting you pick a better `binwidth`). Looking at several widths shows which features are stable and which are artifacts of one binning choice."
+  },
+  {
+    "id": "explore-040",
+    "section": "5.6",
+    "q": "A fine-binned histogram of diamond prices shows no diamonds at all between about $1,454 and $1,546. Following Occam's razor, what should you check first?",
+    "choices": [
+      "Whether the gap came from how the data were collected or processed",
+      "Whether jewelers deliberately avoid pricing stones close to $1,500",
+      "Whether a tax threshold at $1,500 discourages sales in that range",
+      "Whether cut quality changes abruptly for stones priced near $1,500"
+    ],
+    "answer": 0,
+    "explain": "The simplest explanation is a data problem, and here the gap traced back to an error in scraping the data. Elaborate market theories are worth considering only after mistakes in collection and processing have been ruled out."
+  },
+  {
+    "id": "explore-041",
+    "section": "5.6",
+    "q": "In exploratory analysis, what does applying Occam's razor to a surprising pattern mean?",
+    "choices": [
+      "Prefer whichever explanation tells the most interesting and surprising story about the subject",
+      "Rule out simple explanations, like a data mistake, before considering elaborate ones",
+      "Delete the surprising observations so that the simplest model fits the rest",
+      "Treat the pattern as real until someone proves it is an error in the data"
+    ],
+    "answer": 1,
+    "explain": "Occam's razor says to favor the simplest explanation consistent with the evidence. For a weird feature in a plot that usually means checking for a data mistake first, as with the $1,500 diamond price gap that turned out to be a scraping error."
+  },
+  {
+    "id": "explore-042",
+    "section": "5.6",
+    "q": "A histogram of patient weights in pounds has a tall spike at exactly 999. What is the most sensible first move?",
+    "choices": [
+      "Report that a sizable group of patients weighs exactly 999 pounds",
+      "Widen the bins until the spike blends into the rest of the distribution",
+      "Fit a model that gives patients near 999 pounds their own separate group",
+      "Check the codebook, since 999 is often a code for a missing or unknown value"
+    ],
+    "answer": 3,
+    "explain": "A pile-up at a value like 999 is a classic artifact: a placeholder for missing data. Checking how the data were recorded is the simple explanation to rule out first; hiding the spike with wide bins would leave the bad values in the analysis."
+  },
+  {
+    "id": "explore-043",
+    "section": "5.6",
+    "q": "Combining measurements from two labs, you notice every value from Lab B is almost exactly 1,000 times the typical value from Lab A. What explanation should you check before any other?",
+    "choices": [
+      "Lab B's subjects come from a population a thousand times larger",
+      "Lab B's instruments are a thousand times more precise than Lab A's",
+      "A rare biological effect that only shows up in Lab B's subjects",
+      "Lab B recorded in different units, such as grams instead of kilograms"
+    ],
+    "answer": 3,
+    "explain": "An almost exact factor of 1,000 points to a units mismatch, a simple processing explanation that is easy to verify. More elaborate stories about the subjects or the instruments should wait until that is ruled out."
+  },
+  {
+    "id": "explore-044",
+    "section": "5.6",
+    "q": "Suppose the $1,500 gap in diamond prices is confirmed to be a scraping error. Which conclusion is justified?",
+    "choices": [
+      "Diamonds are essentially never sold at prices anywhere near $1,500",
+      "The data say nothing reliable about prices near $1,500, a limitation to report",
+      "The diamond market treats $1,500 as a psychological price barrier",
+      "The whole dataset is unreliable and should be discarded, since one error was found"
+    ],
+    "answer": 1,
+    "explain": "An artifact tells you about the data-collection process, not the market, so you can't conclude anything about real prices in that range. One localized error is a limitation to report, not proof that the whole dataset is worthless."
+  },
+  {
+    "id": "explore-045",
+    "section": "5.6",
+    "q": "A fine histogram of `carat` shows tall spikes at 0.5, 1, 1.5, and 2 carats. What is the most likely explanation?",
+    "choices": [
+      "Buyers and sellers value round sizes, so stones are cut to land at or just above them",
+      "Natural diamonds tend to form in sizes that are multiples of half a carat",
+      "Narrow bins always create spikes at round numbers, whatever the data are",
+      "Larger diamonds are rarer, so the counts fall as the carat value increases"
+    ],
+    "answer": 0,
+    "explain": "Prices jump at round weights, so cutters keep stones at or just over thresholds like 1 carat and buyers seek them out. The spikes are a real feature driven by something not recorded in the data, human preference for round sizes, not a quirk of nature or of binning."
+  },
+  {
+    "id": "explore-046",
+    "section": "5.6",
+    "q": "In `diamonds`, 23 stones weigh 0.99 carats while 2,242 weigh 1.01 carats. What best explains this asymmetry?",
+    "choices": [
+      "Random sampling variation, which would even out in a larger sample of diamonds",
+      "A stone just under 1 carat is worth much less, so cutters keep it at 1 or above",
+      "Rough stones in nature are more often slightly over 1 carat than slightly under it",
+      "Heavier stones are more common than lighter ones throughout the diamonds data"
+    ],
+    "answer": 1,
+    "explain": "Because buyers pay a premium for reaching 1 carat, a stone that could end up at 0.99 is usually cut to stay at 1.00 or above. A split of 23 versus 2,242 is far too lopsided to be chance, and nature has no reason to favor a human round number."
+  },
+  {
+    "id": "explore-047",
+    "section": "5.6",
+    "q": "What pattern would you expect from this plot?\n```r\ndiamonds |>\n  filter(carat < 3) |>\n  ggplot(aes(x = carat)) +\n  geom_histogram(binwidth = 0.01)\n```",
+    "choices": [
+      "A smooth, single-peaked bell curve centered close to 1 carat, with no visible spikes",
+      "A flat distribution, since bins this narrow each hold about the same number of stones",
+      "Sharp spikes at or just above round values like 0.3, 0.5, 1, and 2, trailing off to the right",
+      "Spikes just below each round value, such as at 0.99 and 1.49, with dips right at the round values"
+    ],
+    "answer": 2,
+    "explain": "With 0.01-carat bins the pile-ups at popular weights show as spikes, and because stones are kept at or above each threshold, counts drop off to the right of each spike rather than the left. Wider bins would smooth these spikes away."
+  },
+  {
+    "id": "explore-048",
+    "section": "5.6",
+    "q": "A scatterplot of two variables shows two clearly separated clouds of points. What should this prompt you to ask next?",
+    "choices": [
+      "Which of the two clouds is made up of outliers, so that it can be removed?",
+      "Which single straight line fits both of the two clouds of points the best?",
+      "Is some variable not on the plot, like a subgroup, separating the clouds?",
+      "Should the axes be freed so that the two clouds overlap each other?"
+    ],
+    "answer": 2,
+    "explain": "Distinct clusters often signal a hidden variable, with each cloud corresponding to a different kind of unit. Coloring or faceting by candidate variables tests that idea; discarding one cloud or forcing one line through both would hide the structure."
+  },
+  {
+    "id": "explore-049",
+    "section": "5.6",
+    "q": "`billboard_long` has one row per song per week, with columns `track`, `week` (weeks since the song entered the chart), and `rank`. Which mapping draws one line per song **without** a legend?",
+    "choices": [
+      "`aes(x = week, y = rank, color = track)`",
+      "`aes(x = track, y = rank, group = week)`",
+      "`aes(x = week, y = rank, group = track)`",
+      "`aes(x = week, y = rank)`"
+    ],
+    "answer": 2,
+    "explain": "`group = track` tells `geom_line()` to connect each song's points separately without assigning any visual property, so no legend is drawn. `color = track` also splits the lines but gives each of the roughly 300 songs its own color and legend entry."
+  },
+  {
+    "id": "explore-050",
+    "section": "5.6",
+    "q": "What happens if you draw the Billboard data with no grouping at all?\n```r\nggplot(billboard_long, aes(x = week, y = rank)) +\n  geom_line()\n```",
+    "choices": [
+      "ggplot2 recognizes the songs and automatically draws a separate line for each one",
+      "A single smooth line is drawn through the average rank of all songs in each week",
+      "One line joins every point in order of `week`, zigzagging up and down between songs",
+      "An error, because `geom_line()` cannot run without a `group` aesthetic mapped"
+    ],
+    "answer": 2,
+    "explain": "Without a grouping variable all rows form one group, so `geom_line()` joins every point, sorted by `week`, into a single jagged line that jumps between songs. ggplot2 can't guess which rows belong to which song; mapping `group = track` supplies that."
+  },
+  {
+    "id": "explore-051",
+    "section": "5.6",
+    "q": "Why is mapping `color = track` a poor choice for the Billboard plot of rank by week for about 300 songs?",
+    "choices": [
+      "`color` can't be mapped to a character variable such as `track`",
+      "Coloring by track merges songs with similar ranks into one line",
+      "It reverses the y-axis, so rank 1 ends up at the bottom of the plot",
+      "Hundreds of colors can't be told apart, and the legend swamps the plot"
+    ],
+    "answer": 3,
+    "explain": "Color works for a handful of categories, but with hundreds of songs neighboring hues are indistinguishable and the legend is enormous. When the goal is just one line per song, `group = track` gives the separation without the clutter."
+  },
+  {
+    "id": "explore-052",
+    "section": "5.6",
+    "q": "In the Billboard plot, why put weeks since the song entered the chart on the x-axis instead of the calendar date?",
+    "choices": [
+      "Calendar dates can't be placed on a ggplot2 x-axis without converting them to numbers",
+      "It shows at a glance which of the songs were on the chart during the same weeks as one another",
+      "It removes the missing values for weeks when a song was off the chart",
+      "It aligns every song at its debut, so their rise-and-fall paths can be compared directly"
+    ],
+    "answer": 3,
+    "explain": "Measuring time from each song's entry puts all songs on a common clock, so you can compare how fast they climb and how long they last. Calendar date spreads songs out by when they debuted, which answers a different question: when songs charted and which ones overlapped."
+  },
+  {
+    "id": "explore-053",
+    "section": "5.6",
+    "q": "For which question would calendar date on the x-axis be the better choice for the Billboard rank data?",
+    "choices": [
+      "Which songs were competing on the chart during the same weeks",
+      "How many weeks a typical song takes to reach its peak rank",
+      "Whether songs that debut higher tend to stay on the chart longer",
+      "How quickly a typical song falls down the chart after its peak"
+    ],
+    "answer": 0,
+    "explain": "Questions about timing relative to other songs need the real calendar, since overlapping dates show which songs charted together. Questions about the shape of a song's run (time to peak, longevity, decline) need weeks since entry, which aligns every song at its start."
+  },
+  {
+    "id": "explore-054",
+    "section": "5.6",
+    "q": "In the long Billboard data, rows for 2 Pac's \"Baby Don't Cry\" look like this, and every later week through 76 is also `NA`:\n```r\n# A tibble: 6 × 3\n  track                    week  rank\n  <chr>                   <dbl> <dbl>\n1 Baby Don't Cry (Keep...     5    87\n2 Baby Don't Cry (Keep...     6    94\n3 Baby Don't Cry (Keep...     7    99\n4 Baby Don't Cry (Keep...     8    NA\n5 Baby Don't Cry (Keep...     9    NA\n6 Baby Don't Cry (Keep...    10    NA\n```\nWhat do the `NA`s most likely represent?",
+    "choices": [
+      "Weeks after the song fell off the Hot 100, when it had no rank to record",
+      "Weeks when the song's rank was recorded but then lost during data entry",
+      "Weeks when the song reached number 1, which the data code as missing",
+      "Weeks before the song's release, when it could not yet have charted"
+    ],
+    "answer": 0,
+    "explain": "The rank sinks to 99 and then stops for good, which is what a song leaving the chart looks like. These `NA`s are structural: they mean \"not on the chart,\" not a lost measurement, which is why dropping them when pivoting (`values_drop_na = TRUE`) loses no ranks."
+  },
+  {
+    "id": "explore-055",
+    "section": "5.6",
+    "q": "The Billboard data has 317 songs and columns `wk1` to `wk76`. Pivoted to one row per song-week there are \\(317 \\times 76 = 24{,}092\\) rows, but only 5,307 have a rank. What does this missingness pattern tell you?",
+    "choices": [
+      "About 78% of the rank measurements were lost and should be imputed",
+      "Most songs chart for all 76 weeks, with a few weeks missing from each",
+      "Most songs chart for far fewer than 76 weeks; the average is under 17 weeks",
+      "Nearly every song has missing weeks, so those songs should be dropped from the plot"
+    ],
+    "answer": 2,
+    "explain": "\\(5{,}307 / 317 \\approx 16.7\\) ranked weeks per song, so for a typical song most of the 76 week columns are empty. Those `NA`s mark weeks off the chart, so they shouldn't be imputed or used to drop songs: there is no missing rank to fill in."
+  },
+  {
+    "id": "explore-056",
+    "section": "5.6",
+    "q": "In the Billboard rank plot, rank 1 is the top of the chart. Which addition makes better-ranked songs appear higher on the plot?",
+    "choices": [
+      "`scale_y_log10()`",
+      "`coord_flip()`",
+      "`facet_wrap(~ rank)`",
+      "`scale_y_reverse()`"
+    ],
+    "answer": 3,
+    "explain": "By default larger numbers sit higher, which would put rank 100 at the top. `scale_y_reverse()` flips the y-axis so rank 1 is at the top; `coord_flip()` swaps the x and y axes rather than reversing one."
+  },
+  {
+    "id": "explore-057",
+    "section": "5.6",
+    "q": "According to the exploratory workflow, what should come first when you start working with a new dataset?",
+    "choices": [
+      "A polished, publication-ready main plot",
+      "A plot of every pair of variables at once",
+      "A question you want the data to answer",
+      "A statistical model fit to all variables"
+    ],
+    "answer": 2,
+    "explain": "Exploration starts with a question, which tells you which variables to plot and what to look for. Polish comes last, and plotting everything without a question produces many pictures but little direction."
+  },
+  {
+    "id": "explore-058",
+    "section": "5.6",
+    "q": "You want to know how price relates to carat in `diamonds`. Following the exploratory workflow, which first plot makes the most sense?",
+    "choices": [
+      "A log-scaled scatterplot faceted by cut, colored by clarity, with a smoother",
+      "A plain `geom_point()` of price against carat, with default settings",
+      "A grid of histograms of every variable in the data, combined with patchwork",
+      "A carefully themed scatterplot with custom colors, labels, and annotations"
+    ],
+    "answer": 1,
+    "explain": "Start with the crudest plot that addresses the question and look at it before adding anything. Building a fully loaded plot first makes it hard to tell which choice is responsible for what you see, and polish can wait until you know what the plot should show."
+  },
+  {
+    "id": "explore-059",
+    "section": "5.6",
+    "q": "While refining an exploratory plot, why change only one thing at a time (for example, add transparency, look, then try a log scale)?",
+    "choices": [
+      "Because ggplot2 allows only one new layer to be added per call",
+      "So that the final plot ends up with fewer layers than the first",
+      "Because making several changes at once alters the underlying data",
+      "So you can tell which change produced each difference you see"
+    ],
+    "answer": 3,
+    "explain": "If several things change at once and the picture shifts, you can't attribute the shift to any one choice. Changing one element at a time keeps cause and effect clear; ggplot2 itself lets you add many layers in one go."
+  },
+  {
+    "id": "explore-060",
+    "section": "5.6",
+    "q": "A fine-binned histogram of `carat` shows spikes at round values. Which next step best reflects letting plots prompt new questions?",
+    "choices": [
+      "Widen the bins until the spikes disappear, then move on to the next variable",
+      "Declare the exploration finished, since the shape of the carat distribution has been described",
+      "Remove the diamonds at round carat values as outliers, then redraw the histogram",
+      "Ask whether price jumps at those thresholds, and plot price against carat near 1 carat"
+    ],
+    "answer": 3,
+    "explain": "A surprising feature is a lead: if stones pile up at 1 carat, a natural follow-up is whether buyers pay a premium there. Hiding or deleting the spikes would throw away exactly the structure that motivated the next question."
+  }
+]

@@ -1,0 +1,782 @@
+[
+  {
+    "id": "density-001",
+    "section": "6.1",
+    "q": "You are asked to describe the variation in a single variable, such as annual PM 2.5 concentration across US cities. Which set of questions does that call for?",
+    "choices": [
+      "What the mean is, whether it differs significantly from zero, and how big its standard error is",
+      "Which values are common, which are rare, how spread out the values are, and whether there is skew",
+      "Which variable is the predictor, which is the response, and how strongly the two are correlated",
+      "How many values are missing, which rows are duplicated, and which of the columns need renaming"
+    ],
+    "answer": 1,
+    "explain": "Describing variation is about the shape of a distribution: where values concentrate, where they are scarce, how wide the spread is, and whether one tail is longer. Inference about a mean and relationships between two variables are different questions."
+  },
+  {
+    "id": "density-002",
+    "section": "6.1",
+    "q": "Data frame `pm` has one row per city per year, with columns `city`, `year`, and `pm25`. Take the standard to be 12 µg/m³. What does this code return?\n```r\npm |>\n  filter(pm25 > 12) |>\n  group_by(year) |>\n  summarize(n_exceed = n())\n```",
+    "choices": [
+      "One row per year in which some city exceeded 12, with the number of cities that did",
+      "One row for every year in the data, with 0 for the years when no city exceeded 12",
+      "One row per city, giving the number of years in which it exceeded 12",
+      "A single row giving the total number of city-years that exceeded 12"
+    ],
+    "answer": 0,
+    "explain": "`filter()` runs first, so a year with no exceedances has no rows left and drops out of the grouped summary entirely; `n()` then counts the remaining rows (cities) in each year. To keep the zero years, summarize `sum(pm25 > 12)` without filtering."
+  },
+  {
+    "id": "density-003",
+    "section": "6.1",
+    "q": "Using the same `pm` data, you want one row for **every** year, including years in which no city exceeded the standard of 12. Which expression completes the code?\n```r\npm |>\n  group_by(year) |>\n  summarize(n_exceed = ____)\n```",
+    "choices": [
+      "`n()`",
+      "`mean(pm25 > 12)`",
+      "`sum(pm25[pm25 > 12])`",
+      "`sum(pm25 > 12)`"
+    ],
+    "answer": 3,
+    "explain": "`pm25 > 12` is a vector of indicators (TRUE/FALSE), and summing indicators counts the TRUEs, giving 0 for a year with no exceedances. `mean()` gives the proportion of cities instead, `n()` counts every city, and `sum(pm25[pm25 > 12])` adds up the concentrations rather than counting cities."
+  },
+  {
+    "id": "density-004",
+    "section": "6.1",
+    "q": "You want to compare the distribution of PM 2.5 across 20 years, so you draw 20 semi-transparent histograms on one set of axes. Why is this a poor choice?",
+    "choices": [
+      "Histograms can share one set of axes only when every year has the same number of cities",
+      "Semi-transparent bars change the bin counts, so the bar heights become inaccurate",
+      "Bars from different years cover one another, so no single year's shape can be read",
+      "Histograms show only each year's center, so the spread across cities is lost"
+    ],
+    "answer": 2,
+    "explain": "Overlapping bars occlude each other and blend colors, which becomes unreadable beyond two or three groups. Overlaid density curves (thin lines rather than filled bars) or an interval plot with one interval per year compare many distributions far more clearly."
+  },
+  {
+    "id": "density-005",
+    "section": "6.1",
+    "q": "Which display lets a reader compare the center and spread of PM 2.5 across 20 years most easily?",
+    "choices": [
+      "Twenty histograms in different colors, overlapping on a single shared set of axes",
+      "An interval plot: one segment per year from the 10th to 90th percentile, dot at the median",
+      "One histogram of all city-years pooled together, with the bars filled by year",
+      "A bar chart with one bar per year whose height is that year's mean PM 2.5"
+    ],
+    "answer": 1,
+    "explain": "An interval plot lines the years up side by side on one axis, so shifts in the median and changes in spread are easy to see even with many groups. Pooling or stacking hides each year's distribution, and a bar of means shows the center but nothing about spread."
+  },
+  {
+    "id": "density-006",
+    "section": "6.1",
+    "q": "What does the vertical extent of each segment show in this plot?\n```r\npm |>\n  group_by(year) |>\n  summarize(lo = quantile(pm25, 0.1),\n            med = median(pm25),\n            hi = quantile(pm25, 0.9)) |>\n  ggplot(aes(x = year, y = med, ymin = lo, ymax = hi)) +\n  geom_pointrange()\n```",
+    "choices": [
+      "The range holding the middle 80% of that year's city PM 2.5 values",
+      "A 90% confidence interval for the mean PM 2.5 in that year",
+      "The full range, from the lowest to the highest city value in that year",
+      "The middle 50% of that year's city values, from Q1 to Q3"
+    ],
+    "answer": 0,
+    "explain": "`ymin` and `ymax` are mapped to the 10th and 90th percentiles of the cities in each year, so each segment spans the middle 80% of that year's values and the point marks the median. It describes variation across cities, not uncertainty about a mean."
+  },
+  {
+    "id": "density-007",
+    "section": "6.1",
+    "q": "A histogram of city PM 2.5 values peaks around 8 µg/m³ and has a long tail stretching out to 20 µg/m³, with no values below 3. Which description fits?",
+    "choices": [
+      "Left-skewed: values near 8 are common and low values are rare",
+      "Symmetric: values near 8 are common, with equal spread on each side",
+      "Right-skewed: values near 20 are common and values near 8 are rare",
+      "Right-skewed: values near 8 are common and high values are rare"
+    ],
+    "answer": 3,
+    "explain": "Skew is named for the direction of the long tail. Here the tail runs toward large values, so the distribution is right-skewed; the peak shows which values are common and the thin tail shows which are rare."
+  },
+  {
+    "id": "density-008",
+    "section": "6.1",
+    "q": "For each year, an interval plot shows the median and the 10th to 90th percentile range of PM 2.5. Which feature of a year's distribution could this plot hide that overlaid density curves would reveal?",
+    "choices": [
+      "A shift in the typical PM 2.5 level from one year to the next",
+      "A year whose values are far more spread out than usual",
+      "Two separate clusters of cities, making that year bimodal",
+      "A steady downward trend in the median over the 20 years"
+    ],
+    "answer": 2,
+    "explain": "An interval plot summarizes each year with a few quantiles, which capture center and spread but not shape. Two modes can have the same median and percentile range as a single hump, while a density curve would show both peaks."
+  },
+  {
+    "id": "density-009",
+    "section": "6.2",
+    "q": "For observations \\( y_1, \\dots, y_n \\), what does \\( \\sum_{i=1}^n \\mathbf{1}\\{y_i > 12\\} \\) equal?",
+    "choices": [
+      "The proportion of observations greater than 12",
+      "The number of observations greater than 12",
+      "The sum of the observations greater than 12",
+      "The total amount by which observations exceed 12"
+    ],
+    "answer": 1,
+    "explain": "\\( \\mathbf{1}\\{y_i > 12\\} \\) is 1 when the condition holds and 0 otherwise, so adding them up counts the observations that satisfy it. Dividing by \\( n \\) would give the proportion; the values themselves never enter the sum."
+  },
+  {
+    "id": "density-010",
+    "section": "6.2",
+    "q": "For \\( y = (3, 7, 12, 15, 9) \\), what is \\( \\sum_{i=1}^5 \\mathbf{1}\\{5 \\le y_i < 12\\} \\)?",
+    "choices": [
+      "2",
+      "3",
+      "16",
+      "0.4"
+    ],
+    "answer": 0,
+    "explain": "Only 7 and 9 satisfy \\( 5 \\le y_i < 12 \\) (12 is excluded by the strict inequality), and each contributes 1, so the sum is 2. Adding the qualifying values themselves would give 16, and 0.4 is the proportion \\( 2/5 \\)."
+  },
+  {
+    "id": "density-011",
+    "section": "6.2",
+    "q": "A histogram of \\( n \\) observations uses bins \\( B_1, B_2, \\dots \\) of width \\( b \\). Which expression is the height of bin \\( B_j \\) on the density scale?",
+    "choices": [
+      "\\( \\frac{1}{n}\\sum_{i=1}^n \\mathbf{1}\\{y_i \\in B_j\\} \\)",
+      "\\( \\frac{b}{n}\\sum_{i=1}^n \\mathbf{1}\\{y_i \\in B_j\\} \\)",
+      "\\( \\frac{1}{nb}\\sum_{i=1}^n y_i\\,\\mathbf{1}\\{y_i \\in B_j\\} \\)",
+      "\\( \\frac{1}{nb}\\sum_{i=1}^n \\mathbf{1}\\{y_i \\in B_j\\} \\)"
+    ],
+    "answer": 3,
+    "explain": "The sum counts the observations in the bin; dividing by \\( n \\) makes it a proportion, and dividing by \\( b \\) as well makes the bar's area equal that proportion. Without the \\( 1/b \\), the bars would have total area \\( b \\) instead of 1."
+  },
+  {
+    "id": "density-012",
+    "section": "6.2",
+    "q": "A sample has \\( n = 50 \\) observations, and a histogram uses bins of width \\( b = 2 \\). One bin contains 10 observations. What is that bar's height on the density scale?",
+    "choices": [
+      "0.2",
+      "5",
+      "0.1",
+      "0.4"
+    ],
+    "answer": 2,
+    "explain": "The density-scale height is \\( \\frac{10}{50 \\cdot 2} = 0.1 \\). The value 0.2 is the proportion in the bin (forgetting to divide by \\( b \\)); it equals the bar's area, height times width \\( 0.1 \\times 2 \\)."
+  },
+  {
+    "id": "density-013",
+    "section": "6.2",
+    "q": "On the count scale, each bar's height is \\( \\sum_i \\mathbf{1}\\{y_i \\in B_j\\} \\). For \\( n \\) observations and bin width \\( b \\), what is the total area of all the bars?",
+    "choices": [
+      "\\( 1 \\)",
+      "\\( nb \\)",
+      "\\( n \\)",
+      "\\( n/b \\)"
+    ],
+    "answer": 1,
+    "explain": "Each bar has area \\( b \\times \\text{count}_j \\), and the counts add up to \\( n \\), so the total is \\( nb \\). That total depends on both the sample size and the bin width, which is why the density scale divides every height by \\( nb \\) to make the area 1."
+  },
+  {
+    "id": "density-014",
+    "section": "6.2",
+    "q": "Why do the bars of a density-scale histogram always have total area 1?",
+    "choices": [
+      "Each bar's area is \\( \\text{count}_j / n \\), the bin's proportion, and the proportions add to 1",
+      "Each bar's height is a proportion between 0 and 1, and the heights of all the bars add up to 1",
+      "`ggplot()` rescales the bars so the tallest one has height 1 and the rest shrink in proportion",
+      "The density scale sets the bin width to 1, so the area of every bar is the same as its height"
+    ],
+    "answer": 0,
+    "explain": "Multiplying the height \\( \\text{count}_j/(nb) \\) by the width \\( b \\) leaves the proportion of observations in that bin, and every observation lies in exactly one bin. The heights themselves need not add to 1, and they can exceed 1 when \\( b \\) is small."
+  },
+  {
+    "id": "density-015",
+    "section": "6.2",
+    "q": "Count-scale histograms of PM 2.5 for 2000 (300 cities) and 2019 (900 cities) use the same bins. The 2019 bars are about three times taller in every bin. What is the most likely explanation?",
+    "choices": [
+      "PM 2.5 was about three times higher in 2019 than in 2000 across the whole range of values",
+      "The 2019 values are three times as spread out, so their bars enclose three times the area",
+      "`ggplot()` picked a wider bin width for 2019 because that year has more observations",
+      "2019 has three times as many cities, and count-scale heights grow with \\( n \\)"
+    ],
+    "answer": 3,
+    "explain": "On the count scale the total area is \\( nb \\), so a sample three times as large gives bars about three times as tall even when the two distributions are identical. Dividing by \\( n \\) (the density scale) gives both years total area 1, so their shapes can be compared."
+  },
+  {
+    "id": "density-016",
+    "section": "6.2",
+    "q": "Two analysts plot the same 200 observations on the count scale, one with bin width 1 and one with bin width 4. The second histogram's bars are roughly four times taller. How does the density scale fix this?",
+    "choices": [
+      "Dividing each count by \\( n \\) turns both into proportions, which are always comparable",
+      "It forces both histograms to use the same number of bins over the data range",
+      "Dividing each count by \\( nb \\) cancels the extra counts that wider bins collect",
+      "It rescales each histogram so that its tallest bar has a height of exactly 1"
+    ],
+    "answer": 2,
+    "explain": "A bin four times as wide collects about four times as many points, so counts, and proportions too, grow with \\( b \\). Dividing by \\( b \\) as well as \\( n \\) gives heights that estimate the same density curve whatever the bin width."
+  },
+  {
+    "id": "density-017",
+    "section": "6.2",
+    "q": "In `ggplot(pm, aes(x = pm25))`, how does adding `geom_histogram(aes(y = after_stat(density)), binwidth = 2)` differ from adding `geom_histogram(binwidth = 2)`?",
+    "choices": [
+      "The bars are replaced by a smooth density curve estimated from the same data values",
+      "Only the y scale: each height becomes the count divided by \\( n \\) times the bin width",
+      "Each bar is divided by the largest count, so that the tallest bar has a height of 1",
+      "The bin width is recomputed from the data, so the bins themselves are different"
+    ],
+    "answer": 1,
+    "explain": "`after_stat(density)` maps y to a variable that `stat_bin()` computes after binning, \\( \\text{count}/(n \\cdot \\text{width}) \\). The bins and the shape are unchanged; only the y-axis is rescaled so the total area is 1. Scaling the tallest bar to 1 is `after_stat(ncount)`."
+  },
+  {
+    "id": "density-018",
+    "section": "6.2",
+    "q": "Fill in the blank so the histogram is on the density scale.\n```r\nggplot(pm, aes(x = pm25)) +\n  geom_histogram(aes(y = ____), binwidth = 2)\n```",
+    "choices": [
+      "`after_stat(density)`",
+      "`after_stat(count)`",
+      "`after_stat(count / sum(count))`",
+      "`pm25 / sum(pm25)`"
+    ],
+    "answer": 0,
+    "explain": "`after_stat(density)` uses the density that `stat_bin()` computes, the count divided by \\( n \\) times the bin width. `count / sum(count)` gives proportions, whose bars have total area 2 with this bin width, and `after_stat(count)` is just the default count scale."
+  },
+  {
+    "id": "density-019",
+    "section": "6.2",
+    "q": "This code is meant to overlay a density curve on a histogram, but the curve shows up as an almost flat line along the bottom of the plot. What is the fix?\n```r\nggplot(pm, aes(x = pm25)) +\n  geom_histogram(binwidth = 2) +\n  geom_density()\n```",
+    "choices": [
+      "Increase `binwidth` so the bars come down to the curve",
+      "Add `adjust = 2` to `geom_density()` to raise the curve",
+      "Draw `geom_density()` first so it sits behind the bars",
+      "Add `aes(y = after_stat(density))` to `geom_histogram()`"
+    ],
+    "answer": 3,
+    "explain": "The histogram is on the count scale, with total area \\( nb \\), while `geom_density()` has total area 1, so the curve looks flat beside the bars. Putting the histogram on the density scale puts both layers on the same scale. Wider bins make count-scale bars taller, not shorter."
+  },
+  {
+    "id": "density-020",
+    "section": "6.2",
+    "q": "Two histograms of the same data differ only in the bin origin:\n```r\nggplot(pm, aes(x = pm25)) + geom_histogram(binwidth = 2, boundary = 0)\nggplot(pm, aes(x = pm25)) + geom_histogram(binwidth = 2, boundary = 1)\n```\nThe first looks bimodal and the second looks unimodal. What should you conclude?",
+    "choices": [
+      "The second is right, because a boundary of 1 centers the bins more accurately on the data",
+      "The data must contain errors, since the same data and bin width always give one shape",
+      "The shape depends on where the arbitrary bin edges fall, so neither picture is definitive",
+      "The first is right, because bins for a nonnegative variable should always start at 0"
+    ],
+    "answer": 2,
+    "explain": "Shifting the origin regroups which observations share a bin, which can create or erase bumps. The bin origin is an arbitrary choice, like the bin width; a KDE, which has no bin edges, is one way to remove it."
+  },
+  {
+    "id": "density-021",
+    "section": "6.2",
+    "q": "Six observations: 1.5, 1.7, 1.9, 2.1, 2.3, 2.5. With bin width 2 and bins \\( [0, 2), [2, 4) \\), the counts are 3 and 3. If the origin shifts so the bins are \\( [1, 3), [3, 5) \\), what are the counts?",
+    "choices": [
+      "3 and 3",
+      "6 and 0",
+      "4 and 2",
+      "5 and 1"
+    ],
+    "answer": 1,
+    "explain": "All six values lie between 1 and 3, so they all fall in \\( [1, 3) \\). The same data and bin width give a flat histogram with one origin and a single spike with the other, which shows how much the arbitrary origin can matter."
+  },
+  {
+    "id": "density-022",
+    "section": "6.2",
+    "q": "About 200 cities have PM 2.5 values between 3 and 20. Which layer is most likely to show sampling noise as if it were real structure, with many spiky bars?",
+    "choices": [
+      "`geom_histogram(binwidth = 0.05)`",
+      "`geom_histogram(binwidth = 2)`",
+      "`geom_histogram(binwidth = 10)`",
+      "`geom_histogram(binwidth = 2, boundary = 0)`"
+    ],
+    "answer": 0,
+    "explain": "With bins of width 0.05, most bins hold zero, one, or two cities, so bar heights jump around by chance. Very wide bins (such as 10) err the other way, merging everything into two or three bars that hide real features."
+  },
+  {
+    "id": "density-023",
+    "section": "6.2",
+    "q": "Dataset A has 10 values all equal to 4.1. Dataset B has 10 values spread evenly from 4.1 to 5.9. With bins of width 2 and edges at 0, 2, 4, 6, …, how do their histograms compare?",
+    "choices": [
+      "A has a taller bar than B, since all of its values sit at a single point",
+      "B has a wider bar than A, since its values cover more of the bin",
+      "They differ: A's bar is drawn at 4.1, while B's is centered at 5",
+      "They are identical: a histogram keeps only which bin each value is in"
+    ],
+    "answer": 3,
+    "explain": "Both datasets put all 10 values in the bin from 4 to 6, so both histograms have one bar of the same height. Discarding where a point falls within its bin is one of the histogram's weaknesses; a KDE uses each value's exact location."
+  },
+  {
+    "id": "density-024",
+    "section": "6.2",
+    "q": "Viewed as an estimate \\( \\hat{f}(x) \\) of a smooth density, what kind of function is a density-scale histogram?",
+    "choices": [
+      "A smooth curve through the midpoints of the tops of the bars",
+      "A sum of small bell-shaped bumps, one centered at each observation",
+      "A step function, constant within each bin and jumping at the edges",
+      "A piecewise linear function joining the adjacent bin heights"
+    ],
+    "answer": 2,
+    "explain": "Every \\( x \\) in the same bin gets the same height, so the estimate is flat across a bin and jumps at each edge, even when the true density is smooth. A sum of bumps centered at the observations describes a Gaussian KDE instead."
+  },
+  {
+    "id": "density-025",
+    "section": "6.2",
+    "q": "What makes this plot hard to use for comparing the PM 2.5 distributions of the four regions?\n```r\nggplot(pm, aes(x = pm25, fill = region)) +\n  geom_histogram(binwidth = 1)\n```",
+    "choices": [
+      "The bars are overlaid, so the last region drawn hides the other regions",
+      "The bars are stacked by default, so only the bottom region has a common baseline",
+      "Mapping `fill` to `region` pools all the regions into one set of counts",
+      "A bin width of 1 is too narrow for any PM 2.5 histogram to be readable"
+    ],
+    "answer": 1,
+    "explain": "`geom_histogram()` uses `position = \"stack\"` by default, so each region's bars sit on top of the regions below and their shapes must be read from shifting baselines. Overlaid density curves or an interval plot per region compare the groups more clearly."
+  },
+  {
+    "id": "density-026",
+    "section": "6.2",
+    "q": "A density-scale histogram of \\( n = 40 \\) observations has a bar over \\( [8, 10) \\) with height 0.15. How many observations fall in that bin?",
+    "choices": [
+      "12",
+      "6",
+      "3",
+      "0.3"
+    ],
+    "answer": 0,
+    "explain": "On the density scale a bar's area is the proportion of observations in its bin, \\( 0.15 \\times 2 = 0.30 \\), so the count is \\( 0.30 \\times 40 = 12 \\). Forgetting the bin width gives 6, and 0.3 is the proportion rather than the count."
+  },
+  {
+    "id": "density-027",
+    "section": "6.3",
+    "q": "The local histogram estimates the density at \\( x \\) by \\( \\hat{f}(x) = \\frac{1}{nb}\\sum_{i=1}^n \\mathbf{1}\\{|x_i - x| < b/2\\} \\). How does it differ from an ordinary histogram?",
+    "choices": [
+      "It counts every observation at every \\( x \\), so all of them get equal weight",
+      "Its bins are fixed in advance, and each bar is then divided by \\( b \\) as well",
+      "Its bin width grows with \\( |x_i - x| \\), so distant points get wider bins",
+      "Its bin of width \\( b \\) is centered at the point \\( x \\) being estimated"
+    ],
+    "answer": 3,
+    "explain": "Instead of fixed bins, the window from \\( x - b/2 \\) to \\( x + b/2 \\) slides along with \\( x \\), and the estimate at \\( x \\) counts the observations inside it. With no fixed bin edges the bin origin disappears, but the width \\( b \\) still has to be chosen."
+  },
+  {
+    "id": "density-028",
+    "section": "6.3",
+    "q": "Data: 1.2, 2.0, 2.6, 3.9, 6.0 (\\( n = 5 \\)). With \\( b = 2 \\), what is the local histogram estimate \\( \\hat{f}(2) = \\frac{1}{nb}\\sum_i \\mathbf{1}\\{|x_i - 2| < 1\\} \\)?",
+    "choices": [
+      "0.6",
+      "0.4",
+      "0.3",
+      "1.5"
+    ],
+    "answer": 2,
+    "explain": "The values within 1 of 2 are 1.2, 2.0, and 2.6, so the count is 3 and \\( \\hat{f}(2) = 3/(5 \\cdot 2) = 0.3 \\). A window of half-width 2 instead of 1 would also take in 3.9 and give 0.4; forgetting the \\( b \\) gives 0.6."
+  },
+  {
+    "id": "density-029",
+    "section": "6.3",
+    "q": "The local histogram is a kernel density estimate with which kernel?",
+    "choices": [
+      "A Gaussian kernel whose standard deviation is equal to \\( b/2 \\)",
+      "A uniform (box) kernel: weight 1 within \\( b/2 \\) of \\( x \\), else 0",
+      "A kernel giving weight 1 to the single nearest observation and 0 to the rest",
+      "A triangular kernel whose weight falls linearly to 0 at \\( b \\)"
+    ],
+    "answer": 1,
+    "explain": "Each observation either counts fully (it is inside the window) or not at all, which is a flat, box-shaped kernel. Replacing the box with a smooth bump such as \\( \\varphi \\) gives the Gaussian KDE."
+  },
+  {
+    "id": "density-030",
+    "section": "6.3",
+    "q": "In the Gaussian KDE \\[ \\hat{f}(x) = \\frac{1}{n}\\sum_{i=1}^n \\frac{1}{b}\\varphi\\left(\\frac{x_i - x}{b}\\right), \\] what is the job of the factor \\( \\frac{1}{b} \\) in front of \\( \\varphi \\)?",
+    "choices": [
+      "It keeps each bump's area at 1 when \\( b \\) stretches the bump",
+      "It averages the bumps over all observations so the total area is 1",
+      "It sets how wide each bump is, so a larger \\( b \\) gives a smoother curve",
+      "It shifts each bump so it is centered at its own observation \\( x_i \\)"
+    ],
+    "answer": 0,
+    "explain": "Dividing \\( x_i - x \\) by \\( b \\) stretches the bump horizontally by a factor of \\( b \\); the \\( 1/b \\) in front shrinks its height by the same factor so its area stays 1. The \\( 1/n \\) averages the bumps, and the width comes from the \\( b \\) inside \\( \\varphi \\)."
+  },
+  {
+    "id": "density-031",
+    "section": "6.3",
+    "q": "As a function of \\( x \\), what does one term \\( \\frac{1}{b}\\varphi\\left(\\frac{x_i - x}{b}\\right) \\) of the Gaussian KDE look like?",
+    "choices": [
+      "A normal density curve with mean \\( \\bar{x} \\) and standard deviation \\( b \\)",
+      "A flat bar of height \\( 1/b \\) from \\( x_i - b/2 \\) to \\( x_i + b/2 \\)",
+      "A normal density curve with mean \\( x_i \\) and standard deviation \\( 1/b \\)",
+      "A normal density curve with mean \\( x_i \\) and standard deviation \\( b \\)"
+    ],
+    "answer": 3,
+    "explain": "Because \\( \\varphi \\) is symmetric, the term equals \\( \\frac{1}{b}\\varphi\\left(\\frac{x - x_i}{b}\\right) \\), the \\( N(x_i, b^2) \\) density. Each observation contributes its own bump centered at its own value, and \\( \\hat{f} \\) averages them; a flat bar would be the box kernel."
+  },
+  {
+    "id": "density-032",
+    "section": "6.3",
+    "q": "A Gaussian KDE is built from \\( n = 4 \\) observations with bandwidth \\( b = 0.5 \\). How much of the area under \\( \\hat{f} \\) does each observation contribute?",
+    "choices": [
+      "\\( 1 \\)",
+      "\\( 1/2 \\)",
+      "\\( 1/4 \\)",
+      "\\( 1/8 \\)"
+    ],
+    "answer": 2,
+    "explain": "Each term \\( \\frac{1}{b}\\varphi\\left(\\frac{x_i - x}{b}\\right) \\) is a density with area 1 whatever \\( b \\) is, and the \\( 1/n \\) shrinks that to \\( 1/4 \\). The four contributions add to 1, so \\( \\hat{f} \\) is itself a density."
+  },
+  {
+    "id": "density-033",
+    "section": "6.3",
+    "q": "Which of a histogram's arbitrary choices does a kernel density estimate eliminate, and which remains?",
+    "choices": [
+      "It eliminates the bin width; an origin for where the bumps start must still be chosen",
+      "It eliminates the bin origin; a bandwidth, like a bin width, must still be chosen",
+      "It eliminates both, because the kernel adapts its own width to fit the data",
+      "It eliminates neither; it only draws a smooth curve through the tops of the bars"
+    ],
+    "answer": 1,
+    "explain": "A KDE centers a bump at every observation, so there are no bin edges to place. How wide the bumps are is still a choice, and like the bin width it can change the picture a great deal; a software default is still a choice."
+  },
+  {
+    "id": "density-034",
+    "section": "6.3",
+    "q": "An analyst spends an afternoon comparing Gaussian, Epanechnikov, and triangular kernels for a KDE of PM 2.5, always with the same bandwidth. What advice best reflects how KDEs behave?",
+    "choices": [
+      "Try several bandwidths instead; the bandwidth matters far more than the kernel",
+      "Keep comparing kernels; the kernel's shape decides whether the modes appear",
+      "Use the box kernel, since it is the only kernel that makes \\( \\hat{f} \\) integrate to 1",
+      "Use whichever kernel gives the most peaks, since it shows the most detail"
+    ],
+    "answer": 0,
+    "explain": "With the bandwidth fixed, different smooth kernels give nearly identical curves. Changing the bandwidth, by contrast, can turn one hump into several peaks or merge several peaks into one."
+  },
+  {
+    "id": "density-035",
+    "section": "6.3",
+    "q": "For about 200 cities with PM 2.5 between 3 and 20, `geom_density(bw = 0.05)` shows dozens of narrow peaks. What is the best interpretation?",
+    "choices": [
+      "The data truly have dozens of modes, which a larger bandwidth would hide",
+      "The bandwidth is too large, so nearby cities merge into separate peaks",
+      "The Gaussian kernel is unsuitable here and should be replaced by a box",
+      "The bandwidth is too small, so the peaks mostly reflect sampling noise, not real modes"
+    ],
+    "answer": 3,
+    "explain": "With a tiny bandwidth each bump is a narrow spike at a single observation, so \\( \\hat{f} \\) reproduces the accidents of this particular sample. Real structure should persist across a reasonable range of bandwidths."
+  },
+  {
+    "id": "density-036",
+    "section": "6.3",
+    "q": "City PM 2.5 values form two clear clusters, around 6 and 14, plus one city at 35. What would a Gaussian KDE with a very large bandwidth, say \\( b = 10 \\), most likely show?",
+    "choices": [
+      "Two sharp peaks at 6 and 14, with a small separate bump at 35",
+      "Many narrow spikes, one at each city's value, including one at 35",
+      "One broad hump that hides both the two clusters and the outlier",
+      "Two broad humps at 6 and 14, with the city at 35 clearly separate"
+    ],
+    "answer": 2,
+    "explain": "Each bump has standard deviation 10, wider than the gap between the clusters, so the bumps blur into one wide curve and the lone city at 35 is absorbed into its tail. Too large a bandwidth hides modes and outliers; too small a bandwidth invents them."
+  },
+  {
+    "id": "density-037",
+    "section": "6.3",
+    "q": "What does `geom_density(adjust = 1/2)` do, compared with `geom_density()`?",
+    "choices": [
+      "Halves the height of the curve so it fits under the bars",
+      "Uses half the default bandwidth, giving a wigglier curve",
+      "Estimates the density from a random half of the data",
+      "Uses twice the default bandwidth, giving a smoother curve"
+    ],
+    "answer": 1,
+    "explain": "`adjust` multiplies the default bandwidth, so 1/2 makes each bump half as wide and the estimate more sensitive to local detail. The total area stays 1 whatever `adjust` is."
+  },
+  {
+    "id": "density-038",
+    "section": "6.3",
+    "q": "This KDE looks too wiggly. Which change makes it smoother?\n```r\nggplot(pm, aes(x = pm25)) +\n  geom_density(bw = 0.5)\n```",
+    "choices": [
+      "Change `bw = 0.5` to `bw = 2`",
+      "Change `bw = 0.5` to `bw = 0.1`",
+      "Add `kernel = \"rectangular\"`",
+      "Add `n = 1024`"
+    ],
+    "answer": 0,
+    "explain": "A larger bandwidth widens every bump, so the curve averages over more neighbors and is smoother. A rectangular (box) kernel makes the curve rougher, and `n` only sets how many points the curve is evaluated at."
+  },
+  {
+    "id": "density-039",
+    "section": "6.3",
+    "q": "If the bandwidth \\( b \\) of a Gaussian KDE is halved, what happens to the bump each observation contributes?",
+    "choices": [
+      "It becomes half as wide and keeps its height, so its area is halved",
+      "It becomes half as tall and twice as wide, so its area is unchanged",
+      "It keeps its shape but moves halfway toward the sample mean \\( \\bar{x} \\)",
+      "It becomes half as wide and twice as tall, so its area is unchanged"
+    ],
+    "answer": 3,
+    "explain": "The bump is \\( \\frac{1}{b}\\varphi\\left(\\frac{x_i - x}{b}\\right) \\): halving \\( b \\) squeezes it to half the width, and the \\( 1/b \\) doubles its height, so its area stays the same. Narrower bumps make \\( \\hat{f} \\) bumpier."
+  },
+  {
+    "id": "density-040",
+    "section": "6.3",
+    "q": "Which weakness of the histogram does the Gaussian KDE address?",
+    "choices": [
+      "It needs no tuning choices, so every analyst gets the same curve from the data",
+      "It is immune to sampling noise, so each of its bumps reflects a real mode",
+      "It uses each observation's exact value, not just which bin the value fell in",
+      "It plots counts on the y-axis, so samples of different sizes compare directly"
+    ],
+    "answer": 2,
+    "explain": "Each bump is centered at the observation's own value, so moving a point within what would have been a bin changes the curve, and the result is smooth rather than a step function. The bandwidth is still a tuning choice, and a too-small bandwidth still shows noise."
+  },
+  {
+    "id": "density-041",
+    "section": "6.3",
+    "q": "This code overlays KDEs for 2000 (300 cities) and 2019 (900 cities).\n```r\npm |>\n  filter(year %in% c(2000, 2019)) |>\n  ggplot(aes(x = pm25, color = factor(year))) +\n  geom_density()\n```\nWhy is the 2019 curve **not** about three times taller than the 2000 curve?",
+    "choices": [
+      "`geom_density()` drops cities at random so that both years end up using just 300 cities",
+      "Each KDE has total area 1, since its \\( 1/n \\) averages over that year's cities",
+      "`factor(year)` converts the counts into percentages before the curves are estimated",
+      "The default bandwidth is three times larger for 2019, which flattens its curve"
+    ],
+    "answer": 1,
+    "explain": "A KDE averages \\( n \\) bumps of area 1, so its total area is 1 whatever the sample size. Overlaid densities therefore compare the shapes of the distributions, whereas count-scale histograms of these years would differ in height by a factor of about three."
+  },
+  {
+    "id": "density-042",
+    "section": "6.3",
+    "q": "With the same bandwidth, a local histogram looks jagged while a Gaussian KDE is smooth. Why?",
+    "choices": [
+      "A point's box weight jumps between 1 and 0 as the window passes; Gaussian weights fade",
+      "The local histogram still uses fixed bin edges, so it jumps wherever one of those edges falls",
+      "The Gaussian KDE ignores far-away observations, while the local histogram counts all of them",
+      "The local histogram is on the count scale, while the Gaussian KDE is divided by \\( nb \\)"
+    ],
+    "answer": 0,
+    "explain": "The indicator \\( \\mathbf{1}\\{|x_i - x| < b/2\\} \\) switches abruptly when \\( x \\) comes within \\( b/2 \\) of an observation, so \\( \\hat{f} \\) jumps there. The Gaussian kernel \\( \\varphi \\) decreases smoothly with distance, so the sum of bumps is smooth."
+  },
+  {
+    "id": "density-043",
+    "section": "7",
+    "q": "Which question calls for kernel smoothing rather than kernel density estimation?",
+    "choices": [
+      "Which monthly counts are common and which are rare over the record",
+      "Whether the distribution of the monthly counts has one mode or two",
+      "How spread out the monthly counts are, and whether they are skewed",
+      "How the typical monthly wavy turban count has changed over time"
+    ],
+    "answer": 3,
+    "explain": "A smoother estimates a relationship, the trend of \\( y \\) (the count) against \\( x \\) (time). The other questions are about the distribution of a single variable, which is what a KDE estimates."
+  },
+  {
+    "id": "density-044",
+    "section": "7",
+    "q": "In the kernel smoother \\( \\hat{y}(x) = \\sum_{i=1}^n w_i y_i \\) with \\( w_i = K_b(x_i - x) / \\sum_{j=1}^n K_b(x_j - x) \\), which statement about the weights is true?",
+    "choices": [
+      "They are nonnegative, sum to \\( n \\), and are largest when \\( x_i \\) is near \\( x \\)",
+      "They are nonnegative, sum to 1, and are largest when \\( y_i \\) is near \\( \\hat{y}(x) \\)",
+      "They are nonnegative, sum to 1, and are largest when \\( x_i \\) is near \\( x \\)",
+      "They all equal \\( 1/n \\), whatever the value of \\( x \\) and the bandwidth \\( b \\)"
+    ],
+    "answer": 2,
+    "explain": "Dividing each kernel value by the sum of all of them forces the weights to add to 1, so \\( \\hat{y}(x) \\) is a weighted average of the \\( y_i \\). The kernel depends only on the distance \\( x_i - x \\), so observations close to \\( x \\) count most; the \\( y \\) values play no part in the weights."
+  },
+  {
+    "id": "density-045",
+    "section": "7",
+    "q": "Observed counts \\( y_i \\) range from 12 to 80. Can a kernel smoother \\( \\hat{y}(x) = \\sum_i w_i y_i \\), with \\( w_i = K_b(x_i - x)/\\sum_j K_b(x_j - x) \\), ever give \\( \\hat{y}(x) = 95 \\)?",
+    "choices": [
+      "Yes: with a small enough bandwidth some weights exceed 1, pushing it past 80",
+      "No: its weights are nonnegative and sum to 1, so it stays between 12 and 80",
+      "Yes: near the edges of the data it extrapolates the trend past the observed values",
+      "No: it always returns one of the observed \\( y_i \\) values, all of which are at most 80"
+    ],
+    "answer": 1,
+    "explain": "A weighted average with nonnegative weights summing to 1 always lies between the smallest and largest values being averaged. It is usually a blend of several \\( y_i \\) rather than one of them, and it never extrapolates beyond them."
+  },
+  {
+    "id": "density-046",
+    "section": "7",
+    "q": "Data: \\( x = (1, 2.4, 3, 3.8, 5) \\) and \\( y = (10, 4, 6, 11, 2) \\). A box kernel gives equal weight to observations with \\( |x_i - 3| < 1 \\) and zero weight to the rest, as `ksmooth(x, y, kernel = \"box\", bandwidth = 2, x.points = 3)` does. What is \\( \\hat{y}(3) \\)?",
+    "choices": [
+      "7",
+      "6",
+      "6.6",
+      "21"
+    ],
+    "answer": 0,
+    "explain": "Only \\( x = 2.4, 3, 3.8 \\) fall inside the window, each with weight \\( 1/3 \\), so \\( \\hat{y}(3) = (4 + 6 + 11)/3 = 7 \\). Using only the point at \\( x = 3 \\) gives 6, averaging all five \\( y \\) values gives 6.6, and 21 is the sum without normalizing the weights."
+  },
+  {
+    "id": "density-047",
+    "section": "7",
+    "q": "Both lines smooth the same monthly counts. Which statement about the two curves is correct?\n```r\nbox  <- ksmooth(t, count, kernel = \"box\",    bandwidth = 12, x.points = t)\nnorm <- ksmooth(t, count, kernel = \"normal\", bandwidth = 12, x.points = t)\n```",
+    "choices": [
+      "The normal curve is rougher, since its weights reach points beyond the window",
+      "The curves are identical, since they share a bandwidth and evaluation points",
+      "The box curve is smoother, since every point in its window has equal weight",
+      "The box curve is rougher, since points enter and leave its window abruptly with full weight"
+    ],
+    "answer": 3,
+    "explain": "With the box kernel an observation's weight drops from full to zero the moment it leaves the window, so \\( \\hat{y} \\) jumps as \\( x \\) moves. The normal kernel's weights decline gradually with distance, which gives a smoother curve."
+  },
+  {
+    "id": "density-048",
+    "section": "7",
+    "q": "At some \\( x \\), three observations have kernel values \\( K_b(x_i - x) = 1, 4, 5 \\) and responses \\( y_i = 3, 6, 9 \\). What is \\( \\hat{y}(x) \\)?",
+    "choices": [
+      "72",
+      "6",
+      "7.2",
+      "24"
+    ],
+    "answer": 2,
+    "explain": "The weights are \\( 1/10, 4/10, 5/10 \\), so \\( \\hat{y}(x) = 0.1(3) + 0.4(6) + 0.5(9) = 7.2 \\). Skipping the division by \\( \\sum_j K_b = 10 \\) gives 72, dividing by \\( n = 3 \\) instead gives 24, and 6 is the unweighted mean."
+  },
+  {
+    "id": "density-049",
+    "section": "7",
+    "q": "The trend from this code follows every little up and down in the counts. Which change gives a flatter, less wiggly trend?\n```r\ntrend <- ksmooth(t, count, kernel = \"normal\", bandwidth = 6, x.points = t)\n```",
+    "choices": [
+      "Change `bandwidth = 6` to `bandwidth = 2`",
+      "Change `bandwidth = 6` to `bandwidth = 36`",
+      "Change `kernel = \"normal\"` to `kernel = \"box\"`",
+      "Use `x.points = seq(1, max(t), by = 0.5)`"
+    ],
+    "answer": 1,
+    "explain": "A larger bandwidth spreads the weight over more months, so each \\( \\hat{y}(x) \\) averages more observations and the curve is smoother. The box kernel makes the curve rougher, and a finer grid of evaluation points only draws the same curve in more detail."
+  },
+  {
+    "id": "density-050",
+    "section": "7",
+    "q": "Months are numbered `t` = 1, …, 240. What is in the `y` component this code returns?\n```r\nksmooth(t, count, kernel = \"box\", bandwidth = 1000, x.points = t)\n```",
+    "choices": [
+      "The overall mean of `count`, repeated at every one of the 240 months",
+      "The original values of `count`, since every month is in the window",
+      "A smooth curve that follows the seasonal ups and downs of `count`",
+      "Missing values (`NA`), since the window runs far past the data"
+    ],
+    "answer": 0,
+    "explain": "A box window 1000 wide around any month covers all 240 months, so every observation gets weight \\( 1/240 \\) at every \\( x \\) and \\( \\hat{y}(x) = \\bar{y} \\). This is the extreme case of a large bandwidth flattening the trend."
+  },
+  {
+    "id": "density-051",
+    "section": "7",
+    "q": "Monthly counts have risen steadily for ten years. With a large bandwidth, the smooth at the most recent months sits clearly below the latest observations. Why?",
+    "choices": [
+      "Near the end, the kernel gives the latest observations less weight than it gives the earlier ones",
+      "The smoother extrapolates the trend past the end of the data and overshoots downward",
+      "The weights near the end of the series sum to less than 1, shrinking the fit toward zero",
+      "At the end, the window holds only earlier, lower observations, which pull the average down"
+    ],
+    "answer": 3,
+    "explain": "At the right boundary the window has neighbors only on the left, and with a rising trend those neighbors have smaller \\( y \\), so the weighted average lies below the truth. A larger bandwidth reaches further back and makes this boundary bias worse."
+  },
+  {
+    "id": "density-052",
+    "section": "7",
+    "q": "No counts were recorded in 2015 or 2016, but a normal-kernel smooth with a wide bandwidth draws a continuous trend line straight through those two years. How should the curve inside the gap be read?",
+    "choices": [
+      "As the smoother's estimate of the missed counts, as trustworthy as the curve elsewhere",
+      "As evidence that the counts changed smoothly from their 2014 level to their 2017 level",
+      "As a blend of the data on either side, which says nothing about the gap itself",
+      "As a sign the bandwidth was too small, since a gap should pull the curve down to zero"
+    ],
+    "answer": 2,
+    "explain": "Inside the gap every weight goes to observations before or after it, so \\( \\hat{y}(x) \\) just interpolates between the two sides. The smoother draws a curve where there are no data; mark the gap or break the line rather than read meaning into it."
+  },
+  {
+    "id": "density-053",
+    "section": "7",
+    "q": "In one month the observed wavy turban count is 84 and the smoothed trend is 70. What is the percent change relative to the trend?",
+    "choices": [
+      "14%",
+      "20%",
+      "16.7%",
+      "120%"
+    ],
+    "answer": 1,
+    "explain": "Percent change relative to trend is \\( \\frac{\\text{observed} - \\text{smooth}}{\\text{smooth}} \\times 100 = \\frac{84 - 70}{70} \\times 100 = 20\\% \\). The residual is 14, dividing by the observed count instead gives 16.7%, and 120% is the ratio rather than the change."
+  },
+  {
+    "id": "density-054",
+    "section": "7",
+    "q": "Two months from the wavy turban series:\n```\n# A tibble: 2 × 3\n  month   count trend\n  <chr>   <dbl> <dbl>\n1 2010-06    30    20\n2 2020-06   130   110\n```\nWhich month is further above its trend?",
+    "choices": [
+      "2020-06 by raw residual (20 vs. 10), but 2010-06 by percent change (50% vs. about 18%)",
+      "2020-06 by both measures, because both its count and its residual are the larger ones",
+      "2010-06 by both measures, because a residual of 10 on a trend of 20 is the bigger jump",
+      "2010-06 by raw residual, but 2020-06 by percent change, because its trend is larger"
+    ],
+    "answer": 0,
+    "explain": "The residuals are 30 − 20 = 10 and 130 − 110 = 20, while the percent changes are 10/20 = 50% and 20/110 ≈ 18%. When the trend level changes over time, percent change puts deviations from different years on a comparable scale."
+  },
+  {
+    "id": "density-055",
+    "section": "7",
+    "q": "In the wavy turban analysis, why look at percent change relative to the trend rather than only at the raw residuals (observed − smooth)?",
+    "choices": [
+      "Raw residuals always add up to zero, so they cannot show months above or below the trend",
+      "Percent change removes the trend from the counts, whereas raw residuals still contain it",
+      "The trend that `ksmooth()` returns is on a log scale, so it has to be compared in percents",
+      "Seasonal swings scale with the trend level, and percents put all the years on one scale"
+    ],
+    "answer": 3,
+    "explain": "A year with a high trend tends to have bigger absolute ups and downs than a quiet year. Dividing the residual by the trend expresses each deviation relative to the level at that time, so the same seasonal effect looks the same every year. Both measures already have the trend removed."
+  },
+  {
+    "id": "density-056",
+    "section": "7",
+    "q": "After removing the trend, a boxplot of percent change by calendar month has medians near +40% for June through August and near −30% for December through February, and the pattern repeats in nearly every year. What does it indicate?",
+    "choices": [
+      "A long-term upward trend in the counts that the smoother failed to remove",
+      "Boundary bias, since a smoother is least accurate at the start and end of each year",
+      "Seasonality: summer months run well above the trend and winter months below it",
+      "Sampling noise, since whatever is left after smoothing is purely random error"
+    ],
+    "answer": 2,
+    "explain": "Once the trend is removed, a pattern that lines up by calendar month and recurs year after year is the seasonal component. A leftover long-term trend would show up as residuals drifting over the years, not as a pattern by month, and boundary bias affects only the ends of the whole series."
+  },
+  {
+    "id": "density-057",
+    "section": "7",
+    "q": "Data frame `turban` has columns `t` (months since the start), `month` (1 to 12), and `count`, sorted by `t`. Fill in the blank so `pct` is the percent change relative to the trend.\n```r\nturban <- turban |>\n  mutate(trend = ksmooth(t, count, kernel = \"normal\",\n                         bandwidth = 24, x.points = t)$y,\n         pct = ____)\n```",
+    "choices": [
+      "`100 * (trend - count) / trend`",
+      "`100 * (count - trend) / trend`",
+      "`100 * (count - trend) / count`",
+      "`100 * count / trend`"
+    ],
+    "answer": 1,
+    "explain": "Percent change relative to trend is (observed − smooth) / smooth × 100. Reversing the subtraction flips the sign, dividing by `count` measures against the wrong baseline, and `count / trend` gives the ratio (100 means on trend) rather than the change."
+  },
+  {
+    "id": "density-058",
+    "section": "7",
+    "q": "Continuing with `turban` (20 years of monthly data, with `pct` computed), what does this return?\n```r\nturban |>\n  group_by(month) |>\n  summarize(avg_pct = mean(pct))\n```",
+    "choices": [
+      "12 rows, one per calendar month, averaging its `pct` over the 20 years",
+      "240 rows, one per month of the series, each giving that month's own value of `pct`",
+      "20 rows, one per year, each averaging `pct` over that year's 12 months",
+      "1 row giving the average `pct` over the entire 20-year series"
+    ],
+    "answer": 0,
+    "explain": "`month` takes the values 1 through 12, so grouping by it pools, for example, every January across the 20 years. Averages well above or below 0 for particular months are the seasonal pattern."
+  },
+  {
+    "id": "density-059",
+    "section": "7",
+    "q": "In `mutate(trend = ksmooth(t, count, kernel = \"normal\", bandwidth = 24, x.points = t)$y)`, why is `x.points = t` supplied?",
+    "choices": [
+      "So the smoother averages `t` rather than `count` as the response variable",
+      "So the bandwidth is measured in months rather than in units of `count`",
+      "So only observations with exactly the same `t` receive positive weight",
+      "So the smooth is evaluated at each observed month, giving one trend value per row"
+    ],
+    "answer": 3,
+    "explain": "Without `x.points`, `ksmooth()` evaluates the curve on its own evenly spaced grid of at least 100 points, which need not match the rows of `turban`. Evaluating at `t` lines the smooth up with the observations, so residuals and percent changes can be computed row by row."
+  },
+  {
+    "id": "density-060",
+    "section": "7",
+    "q": "To separate trend from seasonality in monthly counts, why is a bandwidth of only two or three months a poor choice for the trend?",
+    "choices": [
+      "The smooth would be almost flat, so the residuals would still contain the long-term trend",
+      "The weights would no longer sum to 1, putting the trend on a different scale from the counts",
+      "The smooth would track the seasonal cycle, leaving little seasonality in the residuals",
+      "The boundary bias at the two ends of the series would spread to every month in between"
+    ],
+    "answer": 2,
+    "explain": "A trend should capture change over years, so its bandwidth must span well over a year. A window of a few months follows the seasonal ups and downs, so the seasonal signal is absorbed into the trend and the residuals no longer show it."
+  }
+]

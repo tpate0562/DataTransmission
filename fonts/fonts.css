@@ -1,0 +1,43 @@
+/* Computer Modern Unicode (CMU) fonts by Donald Knuth, OFL-licensed (see OFL.txt).
+   Woff2 files from the computer-modern npm package. */
+@font-face {
+    font-family: "CMU Serif";
+    font-style: normal;
+    font-weight: 400;
+    src: url("cmu-serif-500-roman.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "CMU Serif";
+    font-style: italic;
+    font-weight: 400;
+    src: url("cmu-serif-500-italic.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "CMU Serif";
+    font-style: normal;
+    font-weight: 700;
+    src: url("cmu-serif-700-roman.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "CMU Serif";
+    font-style: italic;
+    font-weight: 700;
+    src: url("cmu-serif-700-italic.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "CMU Typewriter Text";
+    font-style: normal;
+    font-weight: 400;
+    src: url("cmu-typewriter-text-500-roman.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "CMU Typewriter Text";
+    font-style: normal;
+    font-weight: 700;
+    src: url("cmu-typewriter-text-700-roman.woff2") format("woff2");
+}

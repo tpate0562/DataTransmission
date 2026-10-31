@@ -1,0 +1,781 @@
+[
+  {
+    "id": "sampling-001",
+    "section": "4.1",
+    "q": "Which description fits the **sampling frame** (also called the access frame) of a study?",
+    "choices": [
+      "The full group of units the study wants to draw conclusions about",
+      "The units that could actually be selected by the sampling procedure",
+      "The units whose measurements end up in the final dataset",
+      "The part of the target population that is easiest to measure"
+    ],
+    "answer": 1,
+    "explain": "The frame is who *could* be sampled; the target population is who we want to learn about, and the sample is who we actually observe. The frame isn't simply a convenient piece of the target population: it can include units outside it and miss units inside it."
+  },
+  {
+    "id": "sampling-002",
+    "section": "4.1",
+    "q": "A polling firm wants to learn how **likely voters** in an upcoming city election plan to vote. It buys a list of cell phone numbers of city residents, texts a random subset of the list, and analyzes the replies. Where does this resident belong: her number is on the list, she does not plan to vote, and she was not texted?",
+    "choices": [
+      "In the target population and the frame, but not the sample",
+      "In the target population only, since she was not texted",
+      "Outside the target population, the frame, and the sample",
+      "In the frame, but not the target population or the sample"
+    ],
+    "answer": 3,
+    "explain": "Being on the list puts her in the frame: she could have been texted. She isn't a likely voter, so she's outside the target population, which shows that a frame is not necessarily a subset of the target population."
+  },
+  {
+    "id": "sampling-003",
+    "section": "4.1",
+    "q": "A pollster surveys **likely voters** by texting random numbers from a purchased list of residents' cell phone numbers. Which person is in the **target population but not the frame**?",
+    "choices": [
+      "A likely voter whose cell number is on the list but who wasn't texted",
+      "A resident who won't vote but whose cell number is on the list",
+      "A likely voter who was texted and replied to the survey",
+      "A likely voter who has a landline but no cell phone"
+    ],
+    "answer": 3,
+    "explain": "A voter with no cell phone is someone we want to learn about who can never be texted, so they're in the target population but outside the frame. The listed voter who wasn't texted is in the frame; they just weren't selected."
+  },
+  {
+    "id": "sampling-004",
+    "section": "4.1",
+    "q": "In a text-message survey of likely voters (random texts to numbers on a purchased cell phone list), a likely voter's number is on the list and she receives the survey text, but she never replies. How is she classified?",
+    "choices": [
+      "Target population, frame, and sample",
+      "Target population and frame, but not the sample",
+      "Frame and sample, but not the target population",
+      "Target population only, since she gave no data"
+    ],
+    "answer": 1,
+    "explain": "She's a likely voter (target population) who could be, and was, contacted (frame). The sample is who we actually observe, and since she never replied we have no data from her, so she isn't in the sample."
+  },
+  {
+    "id": "sampling-005",
+    "section": "4.1",
+    "q": "Biologists want to learn about hawks of three species that migrate through eastern Iowa each fall. They trap and measure hawks that fly within range of their nets at one observation site near Iowa City during the fall. Where does a red-tailed hawk belong that migrates through eastern Iowa along a route that never passes near the site?",
+    "choices": [
+      "In the frame but not the target population",
+      "In the target population, the frame, and the sample",
+      "In the frame and the sample, but not the target population",
+      "In the target population but not the frame"
+    ],
+    "answer": 3,
+    "explain": "The hawk is one of the migrating hawks the biologists want to learn about, but it can never be caught at that site, so it's outside the frame (and so outside the sample). Trapping more birds at the same site can't fix this coverage gap."
+  },
+  {
+    "id": "sampling-006",
+    "section": "4.1",
+    "q": "A hawk study's target population is hawks of three species migrating through eastern Iowa; the data are hawks trapped at one site during the fall. A Cooper's hawk that lives year-round beside the site and never migrates is caught and measured in October. How is it classified?",
+    "choices": [
+      "In the target population, the frame, and the sample",
+      "In the target population and the sample, but not the frame",
+      "In the frame and the sample, but not the target population",
+      "In the target population only, since it lives nearby"
+    ],
+    "answer": 2,
+    "explain": "It was caught, so it's in the sample and therefore in the frame. But it doesn't migrate, so it isn't one of the hawks the study wants to describe: a frame, and even a sample, can contain units outside the target population."
+  },
+  {
+    "id": "sampling-007",
+    "section": "4.1",
+    "q": "Which relationship between the target population, the frame, and the sample always holds?",
+    "choices": [
+      "Every unit in the frame is also in the target population",
+      "Every unit in the target population is also in the frame",
+      "Every unit in the sample is also in the target population",
+      "Every unit in the sample is also in the frame"
+    ],
+    "answer": 3,
+    "explain": "The sample is drawn from the frame, so it sits inside the frame. The frame can both miss target units (voters without cell phones) and include outsiders (non-voters on the list), so a sample can include outsiders too."
+  },
+  {
+    "id": "sampling-008",
+    "section": "4.1",
+    "q": "What makes a study a **census** rather than a sample?",
+    "choices": [
+      "The data include every unit in the population",
+      "Units are chosen at random from a full population list",
+      "The data are collected by a government agency",
+      "The population is too large to observe, so part is measured"
+    ],
+    "answer": 0,
+    "explain": "In a census, the sample is the whole population. Who runs the study doesn't matter, and choosing units at random from a list is sampling, not a census."
+  },
+  {
+    "id": "sampling-009",
+    "section": "4.1",
+    "q": "For which study is a census, rather than a sample, the most realistic plan?",
+    "choices": [
+      "Studying the vaquita, a porpoise with only a handful left",
+      "Estimating the average commute time of all workers in California",
+      "Estimating the share of US adults who exercise every week",
+      "Testing a factory's light bulbs by running each until it burns out"
+    ],
+    "answer": 0,
+    "explain": "With only a handful of vaquitas left, trying to observe every one is conceivable. Measuring every worker or every adult is far too costly, and testing every bulb to destruction would leave nothing to sell."
+  },
+  {
+    "id": "sampling-010",
+    "section": "4.1",
+    "q": "A census records a variable for every unit in a population, with no measurement error and no missing responses. The mean computed from these data is:",
+    "choices": [
+      "Exactly the population mean, with no sampling variability",
+      "An unbiased but noisy estimate of the population mean",
+      "Approximately \\( \\mathcal{N}(\\mu, \\sigma^2/N) \\) by the CLT, with \\( N \\) units",
+      "Close to the population mean only when \\( N \\) is large"
+    ],
+    "answer": 0,
+    "explain": "When the sample is the whole population, nothing about which units are included is random, so the computed mean is \\( \\mu \\) itself. Sampling variability, and the CLT approximation, come from observing only some units chosen at random."
+  },
+  {
+    "id": "sampling-011",
+    "section": "4.1",
+    "q": "The BRFSS is a telephone survey that dials randomly selected landline and cell phone numbers. Which adult can **never** appear in the BRFSS data?",
+    "choices": [
+      "An adult who has only a cell phone",
+      "An adult who has only a landline",
+      "An adult with both a landline and a cell phone",
+      "An adult with no telephone of any kind"
+    ],
+    "answer": 3,
+    "explain": "BRFSS reaches people only through phone numbers, so an adult with no phone is outside the frame and has zero chance of being interviewed. Since both landlines and cell phones are dialed, people with either kind of phone can be reached."
+  },
+  {
+    "id": "sampling-012",
+    "section": "4.1",
+    "q": "What is the sampling frame of the BRFSS?",
+    "choices": [
+      "All non-institutionalized adults living in the United States",
+      "The adults who completed a BRFSS interview that year",
+      "The landline and cell phone numbers that can be randomly dialed",
+      "The household addresses listed in the most recent US census"
+    ],
+    "answer": 2,
+    "explain": "BRFSS selects phone numbers at random, so the frame is the set of numbers it can dial. Non-institutionalized US adults are the target population, and the adults who completed interviews are the sample."
+  },
+  {
+    "id": "sampling-013",
+    "section": "4.1",
+    "q": "BRFSS's target population is adults (18 and older), and it reaches them by dialing random phone numbers. Which number is **in the frame but leads to no one in the target population**?",
+    "choices": [
+      "A cell phone used only by a 16-year-old",
+      "A landline in a home with three adults",
+      "The cell phone of an adult who refuses the interview",
+      "The cell phone of an adult who completes the interview"
+    ],
+    "answer": 0,
+    "explain": "Any dialable number is in the frame, but a phone used only by a minor reaches nobody BRFSS wants to study. The adult who refuses is in the target population and the frame but not the sample, which is a different problem (nonresponse)."
+  },
+  {
+    "id": "sampling-014",
+    "section": "4.1",
+    "q": "When BRFSS reaches a landline in a household with several adults, who is interviewed?",
+    "choices": [
+      "Every adult who lives in the household",
+      "One adult chosen at random from the household",
+      "Whichever adult happens to answer the phone",
+      "The adult whose name is on the phone account"
+    ],
+    "answer": 1,
+    "explain": "For landlines, BRFSS interviews a randomly selected adult in the household, so the person who picks up doesn't decide who is measured. (On a cell phone, the adult who answers is interviewed, since a cell phone usually belongs to one person.)"
+  },
+  {
+    "id": "sampling-015",
+    "section": "4.1",
+    "q": "BRFSS can't reach adults without phones, and it excludes adults living in institutions such as prisons and nursing homes. Its estimates are therefore best read as describing:",
+    "choices": [
+      "All US residents, including children and teenagers",
+      "All US adults, including those living in institutions",
+      "Non-institutionalized US adults who can be reached by phone",
+      "Only US adults who still have a landline at home"
+    ],
+    "answer": 2,
+    "explain": "Conclusions only reach as far as the frame: people who could never be sampled aren't represented, however large the sample. Since cell phones are dialed too, the data aren't limited to landline households."
+  },
+  {
+    "id": "sampling-016",
+    "section": "4.1",
+    "q": "Could you use the public BRFSS data files to look up a particular person's answers?",
+    "choices": [
+      "Yes; each row includes the phone number that was dialed for the call",
+      "No; the public files are de-identified, with no names or numbers",
+      "Yes; rows are labeled by name so interviews can be audited",
+      "Only for the respondents who were reached on a landline"
+    ],
+    "answer": 1,
+    "explain": "BRFSS releases de-identified data: each row is a respondent, but identifying details such as names, phone numbers, and addresses are removed, so answers can't be traced back to a person."
+  },
+  {
+    "id": "sampling-017",
+    "section": "4.1",
+    "q": "The Stanford Education Data Archive (SEDA) is built from state standardized test results. Which population do its test-score data cover?",
+    "choices": [
+      "A random sample of US high-school students",
+      "All US students in grades K–12, public and private",
+      "US public-school students in grades 3 through 8",
+      "Students who volunteered to take a Stanford-designed test"
+    ],
+    "answer": 2,
+    "explain": "SEDA is assembled from the math and reading tests that states give public-school students in grades 3–8. Private-school students and other grades aren't covered, and nobody is randomly selected or volunteers."
+  },
+  {
+    "id": "sampling-018",
+    "section": "4.1",
+    "q": "Roughly what share of its population does SEDA capture?",
+    "choices": [
+      "About 1%, the share a typical national survey reaches",
+      "Nearly all of it, covering almost every public school district",
+      "About half of it, chosen by randomly selecting school districts",
+      "Only the districts that volunteered to share their test results"
+    ],
+    "answer": 1,
+    "explain": "States test nearly every public-school student in grades 3–8, so SEDA covers almost the entire population rather than a small random fraction of it."
+  },
+  {
+    "id": "sampling-019",
+    "section": "4.1",
+    "q": "Which description best fits the kind of data in SEDA?",
+    "choices": [
+      "A simple random sample drawn from the list of US public-school students",
+      "Administrative data compiled from tests that states already give",
+      "A voluntary online survey of parents and teachers",
+      "A randomized experiment run in a selection of schools"
+    ],
+    "answer": 1,
+    "explain": "SEDA repurposes test results that states already collect for school accountability, which makes it administrative data covering nearly the whole population. Nobody was selected at random, so it isn't a typical sample."
+  },
+  {
+    "id": "sampling-020",
+    "section": "4.1",
+    "q": "Which student's test results could **not** be part of SEDA?",
+    "choices": [
+      "A third grader at a public school in California",
+      "A seventh grader at a private school in Ohio",
+      "A sixth grader at a public school in Texas",
+      "An eighth grader at a public school in New York"
+    ],
+    "answer": 1,
+    "explain": "SEDA is built from state tests given in public schools, so private-school students are outside its coverage. Public-school students in grades 3–8 are exactly the population SEDA is built to cover, wherever they live."
+  },
+  {
+    "id": "sampling-021",
+    "section": "4.1",
+    "q": "A SEDA-style file is previewed with `head(seda)`:\n```r\n# A tibble: 6 × 5\n  district_id state grade subject mean_score\n        <dbl> <chr> <dbl> <chr>        <dbl>\n1      600001 CA        3 math         -0.12\n2      600001 CA        3 reading      -0.05\n3      600001 CA        4 math         -0.21\n4      600001 CA        4 reading      -0.18\n5      600002 CA        3 math          0.31\n6      600002 CA        3 reading       0.27\n```\nWhat does one row represent?",
+    "choices": [
+      "One student's score on one state test",
+      "One district's average score for one grade and subject",
+      "One district's average over all grades and subjects",
+      "One state's average across its districts for one grade and subject"
+    ],
+    "answer": 1,
+    "explain": "The same `district_id` appears on several rows that differ in `grade` and `subject`, so each row is one district–grade–subject combination. The scores are district averages, not individual students' results."
+  },
+  {
+    "id": "sampling-022",
+    "section": "4.1",
+    "q": "A SEDA-style file's documentation says it has one row per district, grade, and subject, covering 500 districts, grades 3 through 8, and two subjects (math and reading). If the file matches its documentation, what should `nrow(seda)` return?",
+    "choices": [
+      "5000",
+      "3000",
+      "6000",
+      "1000"
+    ],
+    "answer": 2,
+    "explain": "Grades 3 through 8 are six grades, so there are \\( 500 \\times 6 \\times 2 = 6000 \\) district–grade–subject rows. Counting only five grades gives 5000, and forgetting the two subjects gives 3000."
+  },
+  {
+    "id": "sampling-023",
+    "section": "4.1",
+    "q": "After reading in survey data, `dim(survey)` prints `[1] 2500   12`, but the codebook describes 2,500 respondents and 13 variables. What is the sensible next step?",
+    "choices": [
+      "Trust `dim()` and move on, since codebooks are often out of date anyway",
+      "Add an empty column to the data so its dimensions match the codebook",
+      "Compare `names(survey)` with the codebook to find the missing variable",
+      "Drop rows until the dimensions of the data agree with the codebook"
+    ],
+    "answer": 2,
+    "explain": "A mismatch between data and documentation is a signal to investigate, not to paper over. The row count matches, so checking the column names against the codebook shows whether a variable was dropped, renamed, or merged during import."
+  },
+  {
+    "id": "sampling-024",
+    "section": "4.1",
+    "q": "The codebook entry for the BRFSS ACE variable `ACEDEPRS` (\"Did you live with anyone who was depressed, mentally ill, or suicidal?\") lists the codes 1 = Yes, 2 = No, 7 = Don't know/Not sure, 9 = Refused. A student runs `mean(ace$ACEDEPRS)` to get the share who answered Yes. What is wrong?",
+    "choices": [
+      "Nothing; Yes is coded 1, so the mean is the share answering Yes",
+      "The mean is right but must be divided by 9, the largest code",
+      "Dropping the 7s and 9s first would make the mean equal the Yes share",
+      "The values are category codes; their mean isn't a share of anything"
+    ],
+    "answer": 3,
+    "explain": "Each value is a label for a response, not a count. Even with the 7s and 9s removed, the mean of the 1s and 2s is \\( 2 - p \\), where \\( p \\) is the share of Yes, so the codebook is needed to recode the column before summarizing."
+  },
+  {
+    "id": "sampling-025",
+    "section": "4.1",
+    "q": "In a text-message survey of likely voters, `residents` has one row per city resident, with logical columns `likely_voter` and `on_list` (their cell number is on the purchased list the pollster texts from). What does this code return?\n```r\nresidents |>\n  filter(on_list, !likely_voter)\n```",
+    "choices": [
+      "Residents in the target population but outside the frame",
+      "Residents in the frame but outside the target population",
+      "Residents in both the frame and the target population",
+      "Residents in exactly one of the frame and the target population"
+    ],
+    "answer": 1,
+    "explain": "Comma-separated conditions in `filter()` are combined with AND, so this keeps residents on the list (the frame) who are not likely voters (outside the target population). `filter(likely_voter, !on_list)` would instead give the voters the survey can't reach."
+  },
+  {
+    "id": "sampling-026",
+    "section": "4.2",
+    "q": "What defines a simple random sample (SRS) drawn from a frame?",
+    "choices": [
+      "Units are chosen so the sample matches the population's demographics",
+      "The researcher picks units that seem typical of the population",
+      "The first \\( n \\) units on the frame's list are selected",
+      "Every unit in the frame has the same chance of being selected"
+    ],
+    "answer": 3,
+    "explain": "In an SRS, chance alone decides who is selected, with every unit equally likely. Matching demographics (quota sampling), hand-picking typical units, and taking the top of a list all let something other than chance decide."
+  },
+  {
+    "id": "sampling-027",
+    "section": "4.2",
+    "q": "Why does simple random sampling guard against **systematic** bias in who gets selected?",
+    "choices": [
+      "It guarantees the sample mean exactly equals the population mean",
+      "It fixes the problems caused by target units missing from the frame",
+      "It makes sure every selected unit agrees to respond to the survey",
+      "No trait of a unit affects its chance of being chosen"
+    ],
+    "answer": 3,
+    "explain": "A random mechanism, not the researcher or the units themselves, decides who is chosen, so no group is consistently over- or under-represented. SRS still has chance error, and it can't help with units missing from the frame or with nonresponse."
+  },
+  {
+    "id": "sampling-028",
+    "section": "4.2",
+    "q": "A registrar gives you a list of all 26,000 enrolled students. Which procedure produces a simple random sample of 400 students?",
+    "choices": [
+      "Survey the first 400 students who walk into the library",
+      "Email every student and keep the first 400 replies",
+      "Use `sample()` to choose 400 student IDs from the full list",
+      "Take the first 400 names on the list, sorted by last name"
+    ],
+    "answer": 2,
+    "explain": "Only the computer draw from the full list gives every student the same chance. Library visitors and quick email responders select themselves, and the first 400 alphabetical names are chosen by surname, not by chance."
+  },
+  {
+    "id": "sampling-029",
+    "section": "4.2",
+    "q": "Which describes the output of `sample(1:10, 3)`?",
+    "choices": [
+      "Three integers from 1 to 10, possibly with repeats",
+      "Always the first three values, `1 2 3`",
+      "Ten integers, each one between 1 and 3",
+      "Three different integers from 1 to 10, in random order"
+    ],
+    "answer": 3,
+    "explain": "`sample()` draws without replacement by default (`replace = FALSE`), so the three values are distinct. Repeats are possible only with `replace = TRUE`."
+  },
+  {
+    "id": "sampling-030",
+    "section": "4.2",
+    "q": "What happens when you run `sample(1:10, 12)`?",
+    "choices": [
+      "All 10 values in random order, plus a warning about `size`",
+      "An error: without replacement, at most 10 values can be drawn",
+      "Twelve values from 1 to 10, two of which are repeats",
+      "Twelve distinct values, drawn from the integers 1 to 12"
+    ],
+    "answer": 1,
+    "explain": "With the default `replace = FALSE`, each element of `x` can be used at most once, so asking for 12 of 10 values fails (\"cannot take a sample larger than the population\"). Adding `replace = TRUE` makes 12 draws possible."
+  },
+  {
+    "id": "sampling-031",
+    "section": "4.2",
+    "q": "Which output could `sample(1:10, 12, replace = TRUE)` produce?",
+    "choices": [
+      "`[1]  4  9  4  1 10  7  7  2  5  3  8  6`",
+      "`[1]  4  9  1 10  7  2  5  3  8  6`",
+      "`[1]  4  9 12  1 10  7 11  2  5  3  8  6`",
+      "`[1]  0  9  4  1 10  7  7  2  5  3  8  6`"
+    ],
+    "answer": 0,
+    "explain": "With replacement, every draw comes from 1 to 10 and values can repeat, so 12 draws must include at least one repeat. The other outputs have the wrong length or contain values (0, 11, 12) that aren't in `1:10`."
+  },
+  {
+    "id": "sampling-032",
+    "section": "4.2",
+    "q": "About how many `\"A\"`s will this produce?\n```r\nsample(c(\"A\", \"B\"), 1000, replace = TRUE, prob = c(0.8, 0.2))\n```",
+    "choices": [
+      "Exactly 800, since `prob` fixes the proportions",
+      "About 800, since each draw is `\"A\"` with probability 0.8",
+      "About 500, since there are two possible values",
+      "About 200, since the weights apply in reverse order"
+    ],
+    "answer": 1,
+    "explain": "`prob` gives each element of `x` its selection probability on every draw, in the same order as `x`, so each draw is `\"A\"` with probability 0.8. The count is still random, so it lands near 800 but rarely exactly on it."
+  },
+  {
+    "id": "sampling-033",
+    "section": "4.2",
+    "q": "What does calling `set.seed(42)` before your sampling code guarantee?",
+    "choices": [
+      "Re-running the code from that line reproduces the same random draws",
+      "Every later call to `sample()` in the session returns the same values",
+      "The sample that is drawn will be representative of the population",
+      "The draws are truly random rather than pseudo-random"
+    ],
+    "answer": 0,
+    "explain": "The seed fixes the starting point of R's pseudo-random number generator, so the same sequence of draws comes out each time the code is re-run. Successive calls still give different values, and a seed says nothing about whether a sample is representative."
+  },
+  {
+    "id": "sampling-034",
+    "section": "4.2",
+    "q": "Consider this code:\n```r\nset.seed(1)\nx1 <- sample(1:100, 5)\nx2 <- sample(1:100, 5)\nset.seed(1)\nx3 <- sample(1:100, 5)\n```\nWhich statement is true?",
+    "choices": [
+      "`x1`, `x2`, and `x3` are all identical",
+      "All three differ, since each call makes new draws",
+      "`x1` and `x2` are identical, but `x3` differs from them",
+      "`x1` and `x3` are identical, but `x2` differs from `x1`"
+    ],
+    "answer": 3,
+    "explain": "Resetting the seed to 1 restarts the random number stream, so `x3` repeats `x1`. In between, `x2` continues the stream from where `x1` left off, so it gets new draws."
+  },
+  {
+    "id": "sampling-035",
+    "section": "4.2",
+    "q": "`hawks` has a `species` column with three species, each with many hawks. What does this code return?\n```r\nhawks |>\n  group_by(species) |>\n  slice_sample(n = 5)\n```",
+    "choices": [
+      "5 rows chosen at random from all hawks, ignoring species",
+      "15 rows: 5 randomly chosen hawks of each species",
+      "15 rows: the first 5 hawks listed for each species",
+      "3 rows: one per species, each summarizing 5 random hawks"
+    ],
+    "answer": 1,
+    "explain": "On a grouped data frame, `slice_sample()` works within each group, so it draws 5 rows at random from each of the 3 species. To draw 5 hawks from the whole data, sample before grouping (or `ungroup()` first)."
+  },
+  {
+    "id": "sampling-036",
+    "section": "4.2",
+    "q": "`df` has 20,000 rows. What does `df |> slice_sample(prop = 0.05)` return?",
+    "choices": [
+      "The first 1,000 rows of `df`, in their original order",
+      "1,000 rows chosen at random, with no row repeated",
+      "A random number of rows, each kept independently with probability 0.05",
+      "5 rows chosen at random, with no row repeated"
+    ],
+    "answer": 1,
+    "explain": "`prop = 0.05` asks for 5% of the rows, exactly 1,000 here, drawn at random without replacement (the default `replace = FALSE`). The number of rows is fixed; it isn't decided by a separate coin flip for each row."
+  },
+  {
+    "id": "sampling-037",
+    "section": "4.2",
+    "q": "A survey file has 400,000 rows sorted by state. You want a 5,000-row subset to explore quickly, with every row equally likely to be included. Which line does that?",
+    "choices": [
+      "`survey |> slice_head(n = 5000)`",
+      "`survey |> slice_sample(n = 5000)`",
+      "`survey |> slice_tail(n = 5000)`",
+      "`survey |> arrange(age) |> slice_head(n = 5000)`"
+    ],
+    "answer": 1,
+    "explain": "`slice_sample()` draws rows at random, so the subset isn't tied to how the file is ordered. `slice_head()` and `slice_tail()` would return only the first or last few states, and sorting by age first would keep only the youngest respondents."
+  },
+  {
+    "id": "sampling-038",
+    "section": "4.3",
+    "q": "Under simple random sampling, what makes \\( \\hat{\\mu} = \\frac{1}{n}\\sum_{i=1}^{n} Y_i \\) a random variable?",
+    "choices": [
+      "The population values \\( L_1, \\dots, L_N \\) change every time the study is run",
+      "Which units end up in the sample is decided at random",
+      "Dividing by \\( n \\) introduces rounding error into the average",
+      "The sample size \\( n \\) is chosen at random before each study"
+    ],
+    "answer": 1,
+    "explain": "The population values are fixed numbers; the randomness comes from the sampling step, which decides which of them become \\( Y_1, \\dots, Y_n \\). A different random sample gives different \\( Y_i \\) and so a different \\( \\hat{\\mu} \\)."
+  },
+  {
+    "id": "sampling-039",
+    "section": "4.3",
+    "q": "A tiny population has \\( N = 4 \\) units with values \\( \\{2, 4, 4, 9\\} \\). One unit is drawn at random. What is \\( P(Y_1 = 4) \\)?",
+    "choices": [
+      "\\( 1/2 \\)",
+      "\\( 1/4 \\)",
+      "\\( 1/3 \\)",
+      "\\( 4/19 \\)"
+    ],
+    "answer": 0,
+    "explain": "Each unit is equally likely, \\( P(Y_1 = L_j) = 1/N = 1/4 \\), and two of the four units have the value 4, so \\( P(Y_1 = 4) = 2/4 = 1/2 \\). Counting distinct values (giving \\( 1/3 \\)) ignores that the value 4 belongs to two units."
+  },
+  {
+    "id": "sampling-040",
+    "section": "4.3",
+    "q": "A population has values \\( L_1, \\dots, L_N \\), and \\( Y_1 \\) is the value of one unit drawn by simple random sampling. What is the distribution of \\( Y_1 \\)?",
+    "choices": [
+      "\\( P(Y_1 = L_j) = 1/n \\) for each unit \\( j \\), where \\( n \\) is the sample size",
+      "\\( P(Y_1 = L_j) = 1/N \\) for each unit \\( j \\), so it matches the population",
+      "Approximately \\( \\mathcal{N}(\\mu, \\sigma^2/n) \\) once the sample size \\( n \\) is large",
+      "Normal with mean \\( \\mu \\) and variance \\( \\sigma^2 \\), whatever the population"
+    ],
+    "answer": 1,
+    "explain": "A single draw is equally likely to be any of the \\( N \\) units, so \\( Y_1 \\) has the population's distribution, skew and all. The \\( \\mathcal{N}(\\mu, \\sigma^2/n) \\) approximation describes the sample mean \\( \\hat{\\mu} \\), not one draw."
+  },
+  {
+    "id": "sampling-041",
+    "section": "4.3",
+    "q": "From the population \\( \\{1, 3\\} \\), two values are drawn independently **with replacement**, and \\( \\hat{\\mu} \\) is their average. What is \\( P(\\hat{\\mu} = 2) \\)?",
+    "choices": [
+      "\\( 1/4 \\)",
+      "\\( 0 \\), since 2 is not a population value",
+      "\\( 1 \\), since 2 is the population mean",
+      "\\( 1/2 \\)"
+    ],
+    "answer": 3,
+    "explain": "The four equally likely samples (1, 1), (1, 3), (3, 1), (3, 3) have means 1, 2, 2, 3, so \\( P(\\hat{\\mu} = 2) = 2/4 \\). The sampling distribution of \\( \\hat{\\mu} \\) can take values no single unit has, which is why it differs from the distribution of one draw."
+  },
+  {
+    "id": "sampling-042",
+    "section": "4.3",
+    "q": "What does the sampling distribution of \\( \\hat{\\mu} \\) describe?",
+    "choices": [
+      "The spread of the measured values within the one sample that was collected",
+      "How the variable's values are spread across every unit in the population",
+      "How \\( \\hat{\\mu} \\) settles down as more and more units are added to one sample",
+      "The values \\( \\hat{\\mu} \\) would take over many imagined repeats of the study"
+    ],
+    "answer": 3,
+    "explain": "The sampling distribution is counterfactual: it describes what would happen if the same sampling design were repeated over and over, even though in practice we see only one \\( \\hat{\\mu} \\). The spread within one sample is the sample distribution, and the spread across all units is the population distribution."
+  },
+  {
+    "id": "sampling-043",
+    "section": "4.3",
+    "q": "A researcher draws one simple random sample and computes \\( \\hat{\\mu} = 12.3 \\). Which statement is correct?",
+    "choices": [
+      "12.3 is the center of the sampling distribution of \\( \\hat{\\mu} \\)",
+      "12.3 is one draw from the sampling distribution of \\( \\hat{\\mu} \\)",
+      "A histogram of this sample shows the sampling distribution of \\( \\hat{\\mu} \\)",
+      "With only one sample taken, \\( \\hat{\\mu} \\) has no sampling distribution"
+    ],
+    "answer": 1,
+    "explain": "Another random sample would have given a different value; 12.3 is just the one we happened to observe. The sampling distribution is centered at the population mean \\( \\mu \\), not at our estimate, and it exists whether or not the study is ever repeated."
+  },
+  {
+    "id": "sampling-044",
+    "section": "4.3",
+    "q": "Samples are drawn from a large population with standard deviation \\( \\sigma \\). If the sample size goes from \\( n = 25 \\) to \\( n = 100 \\), what happens to the standard deviation of \\( \\hat{\\mu} \\)?",
+    "choices": [
+      "It is cut in half",
+      "It is cut to one quarter",
+      "It stays the same, since \\( \\sigma \\) is unchanged",
+      "It doubles"
+    ],
+    "answer": 0,
+    "explain": "The standard deviation of \\( \\hat{\\mu} \\) is \\( \\sigma/\\sqrt{n} \\), which goes from \\( \\sigma/5 \\) to \\( \\sigma/10 \\). Quadrupling \\( n \\) divides the variance \\( \\sigma^2/n \\) by 4, but the standard deviation only by \\( \\sqrt{4} = 2 \\)."
+  },
+  {
+    "id": "sampling-045",
+    "section": "4.3",
+    "q": "You want the standard deviation of \\( \\hat{\\mu} \\) to be one third of what it is now. By what factor must the sample size \\( n \\) be multiplied?",
+    "choices": [
+      "3",
+      "9",
+      "6",
+      "\\( \\sqrt{3} \\)"
+    ],
+    "answer": 1,
+    "explain": "Since \\( \\operatorname{SD}(\\hat{\\mu}) = \\sigma/\\sqrt{n} \\), dividing it by 3 requires \\( \\sqrt{n} \\) to triple, so \\( n \\) must grow by a factor of \\( 3^2 = 9 \\). Tripling \\( n \\) shrinks the standard deviation only by a factor of \\( \\sqrt{3} \\)."
+  },
+  {
+    "id": "sampling-046",
+    "section": "4.3",
+    "q": "Which statement of the Central Limit Theorem for the sample mean is correct?",
+    "choices": [
+      "For large \\( n \\), the values in the population become approximately normal",
+      "For large \\( n \\), a histogram of the sampled values looks approximately normal",
+      "For large \\( n \\), \\( \\hat{\\mu} \\approx \\mathcal{N}(\\mu, \\sigma^2/n) \\), even for a non-normal population",
+      "For any \\( n \\), \\( \\hat{\\mu} \\) is exactly \\( \\mathcal{N}(\\mu, \\sigma^2) \\), whatever the population looks like"
+    ],
+    "answer": 2,
+    "explain": "The CLT is about the sampling distribution of \\( \\hat{\\mu} \\). The population's shape never changes, and a histogram of one large sample looks like the population, not like a normal curve."
+  },
+  {
+    "id": "sampling-047",
+    "section": "4.3",
+    "q": "Household incomes in a county are strongly right-skewed. You take a simple random sample of \\( n = 400 \\) households. What does the sampling distribution of \\( \\hat{\\mu} \\) look like?",
+    "choices": [
+      "Right-skewed, with the same shape as the income distribution",
+      "Approximately normal, centered at the sample mean you observed",
+      "Approximately normal, centered at the population mean income",
+      "Spread evenly over the incomes of the households in the county"
+    ],
+    "answer": 2,
+    "explain": "With \\( n = 400 \\), the CLT says \\( \\hat{\\mu} \\) is approximately \\( \\mathcal{N}(\\mu, \\sigma^2/n) \\) even though incomes are skewed. It's centered at the population mean \\( \\mu \\); your observed \\( \\hat{\\mu} \\) is just one value from it."
+  },
+  {
+    "id": "sampling-048",
+    "section": "4.3",
+    "q": "Household incomes in a county are strongly right-skewed. What will a histogram of the incomes in one simple random sample of \\( n = 400 \\) households most likely look like?",
+    "choices": [
+      "Approximately normal, because \\( n = 400 \\) is large",
+      "Approximately normal, with spread \\( \\sigma/\\sqrt{400} \\)",
+      "Right-skewed, resembling the population of incomes",
+      "A single tall spike at the sample mean \\( \\hat{\\mu} \\)"
+    ],
+    "answer": 2,
+    "explain": "A histogram of one sample shows the sample distribution, which mirrors the population, so a large sample from a skewed population looks skewed. The CLT's normal shape belongs to the distribution of \\( \\hat{\\mu} \\) across many samples."
+  },
+  {
+    "id": "sampling-049",
+    "section": "4.3",
+    "q": "`pop` holds all 5,000 units of a population (variable `y`), `samp <- pop |> slice_sample(n = 50)` is one sample, and `sims` has 2,000 rows whose column `mu_hat` is the mean of `y` from each of 2,000 separate samples of size 50. Which plot approximates the sampling distribution of \\( \\hat{\\mu} \\)?",
+    "choices": [
+      "`ggplot(samp, aes(x = y)) + geom_histogram()`",
+      "`ggplot(pop, aes(x = y)) + geom_histogram()`",
+      "`ggplot(sims, aes(x = mu_hat)) + geom_histogram()`",
+      "`ggplot(samp, aes(x = mean(y))) + geom_histogram()`"
+    ],
+    "answer": 2,
+    "explain": "Each `mu_hat` is one realization of \\( \\hat{\\mu} \\), so their histogram approximates its sampling distribution. Plotting `y` from `samp` shows the sample distribution, plotting it from `pop` shows the population distribution, and `mean(y)` is a single number, so it gives one bar."
+  },
+  {
+    "id": "sampling-050",
+    "section": "4.3",
+    "q": "`pop` holds a population with a numeric variable `y`, and `samp <- pop |> slice_sample(n = 50)`. What does `ggplot(samp, aes(x = y)) + geom_histogram()` display?",
+    "choices": [
+      "The sampling distribution of \\( \\hat{\\mu} \\) for samples of size 50",
+      "The distribution of `y` among all units in the population",
+      "The distribution of 50 separate sample means of `y`",
+      "The distribution of `y` among the 50 sampled units"
+    ],
+    "answer": 3,
+    "explain": "This is the sample distribution: the spread of `y` within one sample, which roughly resembles the population distribution. Seeing the sampling distribution requires many values of \\( \\hat{\\mu} \\), one from each sample."
+  },
+  {
+    "id": "sampling-051",
+    "section": "4.3",
+    "q": "A population has mean \\( \\mu = 70 \\) and standard deviation \\( \\sigma = 12 \\). For a simple random sample of \\( n = 36 \\), which approximation does the CLT give? (Notation: \\( \\mathcal{N}(\\text{mean}, \\text{variance}) \\).)",
+    "choices": [
+      "\\( \\hat{\\mu} \\approx \\mathcal{N}(70, 2) \\)",
+      "\\( \\hat{\\mu} \\approx \\mathcal{N}(70, 144) \\)",
+      "\\( \\hat{\\mu} \\approx \\mathcal{N}(70, 1/3) \\)",
+      "\\( \\hat{\\mu} \\approx \\mathcal{N}(70, 4) \\)"
+    ],
+    "answer": 3,
+    "explain": "The variance of \\( \\hat{\\mu} \\) is \\( \\sigma^2/n = 144/36 = 4 \\), so its standard deviation is 2. Putting 2 in the variance slot confuses the standard deviation with the variance, and 144 is the variance of a single draw."
+  },
+  {
+    "id": "sampling-052",
+    "section": "4.3",
+    "q": "Which change makes the sampling distribution of \\( \\hat{\\mu} \\) narrower?",
+    "choices": [
+      "Increasing the sample size \\( n \\) of the study",
+      "Imagining a larger number of repetitions of the study",
+      "Reporting \\( \\hat{\\mu} \\) with more decimal places",
+      "Plotting simulated values with narrower histogram bins"
+    ],
+    "answer": 0,
+    "explain": "The spread of \\( \\hat{\\mu} \\) is \\( \\sigma/\\sqrt{n} \\), so only a larger sample in each study narrows it. More repetitions, real or simulated, trace out the same sampling distribution more completely; they don't change it."
+  },
+  {
+    "id": "sampling-053",
+    "section": "4.3",
+    "q": "In \\( \\hat{\\mu} = \\frac{1}{n}\\sum_{i=1}^{n} Y_i \\), what is \\( Y_i \\)?",
+    "choices": [
+      "The value of the \\( i \\)th sampled unit, which is random",
+      "The \\( i \\)th value in the population list, which is fixed",
+      "The mean of the \\( i \\)th of many repeated samples",
+      "The number of times unit \\( i \\) is selected"
+    ],
+    "answer": 0,
+    "explain": "\\( Y_i \\) is whatever value the \\( i \\)th draw happens to produce, so it changes from sample to sample. The fixed population values are written \\( L_1, \\dots, L_N \\), and each \\( Y_i \\) is one of them chosen at random."
+  },
+  {
+    "id": "sampling-054",
+    "section": "4.3",
+    "q": "A student argues: \"By the CLT, \\( \\hat{\\mu} \\) is approximately normal, so a single draw \\( Y_1 \\) from the population must be approximately normal too.\" What is wrong with this reasoning?",
+    "choices": [
+      "Nothing; any single draw is approximately normal once \\( N \\) is large",
+      "\\( Y_1 \\) is approximately normal only when the sample size \\( n \\) is large",
+      "\\( Y_1 \\) has the population's distribution, which need not be normal",
+      "\\( Y_1 \\) is approximately normal, but with variance \\( \\sigma^2/n \\)"
+    ],
+    "answer": 2,
+    "explain": "One draw is equally likely to be any unit, so \\( Y_1 \\) is distributed like the population itself, skewed or not. Averaging many draws is what produces the CLT's normal shape for \\( \\hat{\\mu} \\)."
+  },
+  {
+    "id": "sampling-055",
+    "section": "4.3",
+    "q": "Each time you run the code below, you get a different number. What does each run return, and why do the runs differ?\n```r\npop |>\n  slice_sample(n = 30) |>\n  summarize(mu_hat = mean(y))\n```",
+    "choices": [
+      "A 30 × 1 tibble of sample means; the population mean changes each run",
+      "A 1 × 1 tibble with the population mean \\( \\mu \\); runs differ only by rounding",
+      "A 30 × 2 tibble of sampled values and their mean; `y` is regenerated each run",
+      "A 1 × 1 tibble with one value of \\( \\hat{\\mu} \\); each run samples new rows"
+    ],
+    "answer": 3,
+    "explain": "`summarize()` collapses the 30 sampled rows into a single row and column: one realization of \\( \\hat{\\mu} \\). The population in `pop` is fixed; what changes between runs is which 30 rows `slice_sample()` picks."
+  },
+  {
+    "id": "sampling-056",
+    "section": "4.3",
+    "q": "From the population \\( \\{2, 4, 9\\} \\), a simple random sample of size 2 is drawn **without replacement**. Which describes the sampling distribution of \\( \\hat{\\mu} \\)?",
+    "choices": [
+      "Values 2, 4, and 9, each with probability \\( 1/3 \\)",
+      "The single value 5, the population mean, with probability 1",
+      "Values 3, 5.5, and 6.5, each with probability \\( 1/3 \\)",
+      "Values 3, 5.5, and 6.5, with 5.5 more likely than the others"
+    ],
+    "answer": 2,
+    "explain": "The three possible samples {2, 4}, {2, 9}, {4, 9} are equally likely, with means 3, 5.5, and 6.5. The values 2, 4, 9 with probability \\( 1/3 \\) each describe one draw \\( Y_1 \\), not the mean; note the three means average to 5, the population mean."
+  },
+  {
+    "id": "sampling-057",
+    "section": "4.3",
+    "q": "A population is strongly right-skewed. For simple random samples of size \\( n = 3 \\), what does the sampling distribution of \\( \\hat{\\mu} \\) look like?",
+    "choices": [
+      "Exactly normal, by the Central Limit Theorem",
+      "Still right-skewed, though less so than the population",
+      "Symmetric, since averaging cancels skewness right away",
+      "Left-skewed, mirroring the shape of the population"
+    ],
+    "answer": 1,
+    "explain": "The CLT's normal approximation needs a large \\( n \\); averaging only three values reduces the skewness but doesn't remove it. The more skewed the population, the larger \\( n \\) must be before \\( \\hat{\\mu} \\) looks normal."
+  },
+  {
+    "id": "sampling-058",
+    "section": "4.3",
+    "q": "True or false: under simple random sampling, the first draw \\( Y_1 \\) and the second draw \\( Y_2 \\) have the same distribution, each equally likely to be any unit in the population.",
+    "choices": [
+      "True",
+      "False"
+    ],
+    "answer": 0,
+    "explain": "Before the sample is drawn, every position in the sample is equally likely to hold any of the \\( N \\) units, so each \\( Y_i \\) has the population distribution. The two values usually differ in a particular sample; it's their distributions that match.",
+    "fixed": true
+  },
+  {
+    "id": "sampling-059",
+    "section": "4.3",
+    "q": "Under simple random sampling from a fixed population, which quantity is **not** random?",
+    "choices": [
+      "\\( \\hat{\\mu} \\), the sample mean",
+      "\\( Y_1 \\), the first sampled value",
+      "The largest value in the sample",
+      "\\( \\mu \\), the population mean"
+    ],
+    "answer": 3,
+    "explain": "\\( \\mu \\) is computed from all \\( N \\) fixed population values, so it's a fixed (if unknown) number. Anything computed from the sampled units, including \\( \\hat{\\mu} \\), changes with the sample."
+  },
+  {
+    "id": "sampling-060",
+    "section": "4.3",
+    "q": "A population has mean \\( \\mu = 50 \\) and standard deviation \\( \\sigma = 20 \\). Using the CLT with \\( n = 100 \\), between which values would \\( \\hat{\\mu} \\) fall in about 95% of repeated samples?",
+    "choices": [
+      "48 and 52",
+      "10 and 90",
+      "49.6 and 50.4",
+      "46 and 54"
+    ],
+    "answer": 3,
+    "explain": "The standard deviation of \\( \\hat{\\mu} \\) is \\( 20/\\sqrt{100} = 2 \\), and about 95% of a normal distribution lies within 2 standard deviations of its mean, giving \\( 50 \\pm 4 \\). Using \\( \\sigma = 20 \\) itself gives 10 to 90, the range for single draws if the population were normal."
+  }
+]

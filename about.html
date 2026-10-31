@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Dashcards - About</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="theme-color" content="#000000">
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" id="logo">Dashcards</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="createdeck.html">Create Deck</a>
+            <a href="about.html">About</a>
+        </nav>
+    </div>
+    <div id="content">
+        <div>
+            <h2 class="section-title">What is Dashcards?</h2>
+            <p>Dashcards is a free, open-source flashcard website created by Tejas Patel and Miguel Diaz, based on Tejas's
+                <a href="https://github.com/tpate0562/Quizlet-main/blob/master/main.cpp" class="text-link">original C++ CLI program</a>.
+                Our design philosophy, and the namesake of the website, is speed: the ability to study quickly and efficiently without being bogged down by page loads and animations.</p>
+        </div>
+
+        <div>
+            <h2 class="section-title">How the queue works</h2>
+            <p>Every session puts its questions in a shuffled queue. Answer a question correctly on the first try and it's cleared.
+                Miss it and it goes to the back of the queue; from then on it only clears once you answer it correctly
+                two times in a row, and any miss sends it back again with the count reset. The session ends when the queue is empty.
+                At the end you get a list of everything you missed, most-missed first, and can drill just those again.</p>
+            <p>Progress is saved in your browser after every answer, so you can close the tab and resume later.</p>
+        </div>
+
+        <div>
+            <h2 class="section-title">How to Use</h2>
+            <p>Pick a deck on the home page. The PSTAT 100 midterm practice test lets you choose which topics to include and how many questions to draw.
+                To use your own cards, create a deck in
+                <a href="createdeck.html" class="text-link">Create Deck</a>
+                with a minimum of 5 terms, download it, and open it with Load File on the home page.</p>
+            <p>Keys: 1&ndash;4 or A&ndash;D answer, Enter goes to the next question.</p>
+        </div>
+
+        <div>
+            <h2 class="section-title">A Note on Presets</h2>
+            <p>Besides the PSTAT 100 practice test, the presets are the vocab lists for Mr. Coursey's AP English classes, plus a few miscellaneous decks.
+                If you would like a new preset to be added, please contact us or submit a pull request!</p>
+        </div>
+
+        <div>
+            <h2 class="section-title">Contact</h2>
+            <p><a href="mailto:inside-atom02@icloud.com" class="text-link">Email</a>
+            &ndash; inside-atom02@icloud.com
+            &middot; <a href="https://github.com/tpate0562/Dashcards" class="text-link">GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
